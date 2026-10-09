@@ -49,7 +49,10 @@ export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="on-navy relative overflow-hidden bg-surface-navy text-white">
+    <footer
+      data-nav-theme="dark"
+      className="on-navy relative overflow-hidden bg-surface-navy text-white"
+    >
       {/* A last route line, running off the top edge of the footer. */}
       <svg
         aria-hidden="true"

@@ -11,6 +11,8 @@ export type MobileMenuProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   isHome: boolean;
+  /** The header is currently over a dark surface. */
+  inverted?: boolean;
 };
 
 /** Three lines that become a cross, animated as transforms rather than a swap. */
@@ -38,7 +40,7 @@ function MenuGlyph({ open }: { open: boolean }) {
  * the page stays visible behind it, which keeps the sense of place. Items
  * stagger in on open, and the whole sheet is `inert` to the keyboard when shut.
  */
-export function MobileMenu({ open, onOpenChange, isHome }: MobileMenuProps) {
+export function MobileMenu({ open, onOpenChange, isHome, inverted = false }: MobileMenuProps) {
   const sheetRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -75,7 +77,10 @@ export function MobileMenu({ open, onOpenChange, isHome }: MobileMenuProps) {
         aria-expanded={open}
         aria-controls="mobile-menu"
         aria-label={open ? 'Close menu' : 'Open menu'}
-        className="-mr-1.5 grid h-11 w-11 place-items-center rounded-full text-navy-800 transition-colors duration-base hover:bg-navy-50 lg:hidden"
+        className={cn(
+          '-mr-1.5 grid h-11 w-11 place-items-center rounded-full transition-colors duration-base lg:hidden',
+          inverted ? 'text-white hover:bg-white/10' : 'text-navy-800 hover:bg-navy-50',
+        )}
       >
         <MenuGlyph open={open} />
       </button>

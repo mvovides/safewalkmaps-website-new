@@ -4,7 +4,11 @@ import { siteConfig } from '@/lib/config';
 
 export function MissionSection() {
   return (
-    <section id="mission" className="on-navy relative overflow-hidden bg-surface-navy py-section-lg text-white">
+    <section
+      id="mission"
+      data-nav-theme="dark"
+      className="on-navy relative overflow-hidden bg-surface-navy py-section-lg text-white"
+    >
       {/* The network, behind the statement. */}
       <div
         aria-hidden="true"

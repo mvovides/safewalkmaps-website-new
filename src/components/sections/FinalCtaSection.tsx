@@ -7,8 +7,15 @@ import { useGsapContext } from '@/hooks/useGsapContext';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { gsap } from '@/lib/motion';
 
-/** The route arrives from the bottom of the page and completes in the shield. */
-const ARRIVAL_PATH = 'M 600 640 V 560 H 494 V 480 H 600 V 404';
+/**
+ * The closing beat: one last route climbing into the shield, echoing the
+ * gesture the page opened with.
+ *
+ * The composition is an inline block of fixed proportions rather than a
+ * section-sized background, so the shield always lands directly above the
+ * headline instead of drifting with the section's height.
+ */
+const ARRIVAL_PATH = 'M 20 300 H 110 V 236 H 200 V 126';
 
 export function FinalCtaSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -23,81 +30,79 @@ export function FinalCtaSection() {
         strokeDasharray: 1,
         strokeDashoffset: 1,
       });
-      gsap.set('[data-cta="shield"]', { opacity: 0, scale: 0.86, transformOrigin: '50% 70%' });
+      gsap.set('[data-cta="shield"]', { opacity: 0, scale: 0.84, transformOrigin: '50% 80%' });
 
       gsap
         .timeline({
-          scrollTrigger: { trigger: scope, start: 'top 82%', end: 'center 58%', scrub: 0.6 },
+          scrollTrigger: { trigger: scope, start: 'top 85%', end: 'center 62%', scrub: 0.6 },
           defaults: { ease: 'none' },
         })
-        .to('[data-cta="route"], [data-cta="route-casing"]', { strokeDashoffset: 0, duration: 0.6 }, 0)
-        .to('[data-cta="shield"]', { opacity: 1, scale: 1, duration: 0.3, ease: 'power2.out' }, 0.45);
+        .to(
+          '[data-cta="route"], [data-cta="route-casing"]',
+          { strokeDashoffset: 0, duration: 0.62 },
+          0,
+        )
+        .to(
+          '[data-cta="shield"]',
+          { opacity: 1, scale: 1, duration: 0.3, ease: 'power2.out' },
+          0.46,
+        );
     },
     [reduced],
   );
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative overflow-hidden bg-surface pb-section-lg pt-section-lg"
-    >
-      {/* Route and shield */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 top-0">
-        <svg
-          viewBox="0 0 1200 700"
-          preserveAspectRatio="xMidYMax slice"
-          className="h-full w-full"
-        >
-          <g fill="none" stroke="rgb(6 42 94 / 0.05)" strokeWidth="2">
-            <path d="M 0 480 H 1200" />
-            <path d="M 0 560 H 1200" />
-            <path d="M 0 640 H 1200" />
-            <path d="M 300 380 V 700" />
-            <path d="M 900 380 V 700" />
-          </g>
+    <section ref={sectionRef} className="relative overflow-hidden bg-surface pb-section-lg pt-24">
+      <div className="shell flex flex-col items-center text-center">
+        {/* Route into the shield */}
+        <div className="relative w-full max-w-[26rem]" data-reveal="fade">
+          <svg viewBox="0 0 400 320" className="h-auto w-full" aria-hidden="true">
+            <g stroke="rgb(6 42 94 / 0.07)" strokeWidth="2" fill="none">
+              <path d="M 110 320 V 120" />
+              <path d="M 200 320 V 120" />
+              <path d="M 290 320 V 120" />
+              <path d="M 0 236 H 400" />
+              <path d="M 0 300 H 400" />
+            </g>
 
-          <path
-            d={ARRIVAL_PATH}
-            fill="none"
-            stroke="#FFFFFF"
-            strokeWidth="13"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            pathLength={1}
-            data-cta="route-casing"
-          />
-          <path
-            d={ARRIVAL_PATH}
-            fill="none"
-            stroke="var(--brand-green)"
-            strokeWidth="6"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            pathLength={1}
-            data-cta="route"
-          />
+            <path
+              d={ARRIVAL_PATH}
+              fill="none"
+              stroke="#FFFFFF"
+              strokeWidth="14"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              pathLength={1}
+              data-cta="route-casing"
+            />
+            <path
+              d={ARRIVAL_PATH}
+              fill="none"
+              stroke="var(--brand-green)"
+              strokeWidth="6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              pathLength={1}
+              data-cta="route"
+            />
 
-          <svg
-            x={548}
-            y={252}
-            width={104}
-            height={145}
-            viewBox={SHIELD_VIEWBOX}
-            data-cta="shield"
-            overflow="visible"
-          >
-            <ShieldMarkPaths />
+            <svg
+              x={160}
+              y={20}
+              width={80}
+              height={111}
+              viewBox={SHIELD_VIEWBOX}
+              data-cta="shield"
+              overflow="visible"
+            >
+              <ShieldMarkPaths />
+            </svg>
           </svg>
-        </svg>
-      </div>
-
-      <div className="shell relative flex flex-col items-center text-center">
-        {/* Leaves room for the shield above the headline. */}
-        <div aria-hidden="true" className="h-[clamp(7rem,16vh,11rem)]" />
+        </div>
 
         <h2
-          className="max-w-[18ch] text-display-xl font-semibold text-ink-primary"
-          data-reveal="mask"
+          className="mt-4 max-w-[17ch] text-display-xl font-semibold text-ink-primary"
+          data-reveal
         >
           Take the route that considers more.
         </h2>

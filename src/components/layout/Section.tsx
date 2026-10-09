@@ -39,6 +39,8 @@ export function Section({
   return (
     <section
       id={id}
+      // Tells the fixed header to invert while this surface is behind it.
+      data-nav-theme={tone === 'navy' ? 'dark' : undefined}
       className={cn('relative', tones[tone], spacings[spacing], className)}
       {...rest}
     >

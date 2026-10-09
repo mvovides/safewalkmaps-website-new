@@ -24,7 +24,7 @@ const transparency = [
     label: 'Data confidence',
     value: route.confidencePercent,
     suffix: '%',
-    body: 'How reliable, how complete and how recent the underlying data is. When confidence drops, the score is scored more conservatively rather than presented as firm.',
+    body: 'How reliable, how complete and how recent the underlying data is. When confidence drops, the route is scored more cautiously rather than a shaky number being presented as a firm one.',
   },
 ];
 

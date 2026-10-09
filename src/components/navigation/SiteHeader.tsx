@@ -5,6 +5,7 @@ import { Logo } from '@/components/brand/Logo';
 import { ButtonLink } from '@/components/ui/Button';
 import { navLinks, navSectionIds } from '@/data/navigation';
 import { useActiveSection } from '@/hooks/useActiveSection';
+import { useNavOverDark } from '@/hooks/useNavOverDark';
 import { cn } from '@/lib/cn';
 
 import { MobileMenu } from './MobileMenu';
@@ -18,6 +19,9 @@ export function SiteHeader() {
   const [condensed, setCondensed] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const activeSection = useActiveSection(isHome ? navSectionIds : []);
+  // Invert over the navy surfaces so the glass never reads as a grey band.
+  const overDark = useNavOverDark();
+  const inverted = overDark && !menuOpen;
 
   const listRef = useRef<HTMLUListElement>(null);
   const [indicator, setIndicator] = useState<{ left: number; width: number } | null>(null);
@@ -74,7 +78,9 @@ export function SiteHeader() {
       className={cn(
         'fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow,backdrop-filter] duration-slow ease-out-expo',
         condensed || menuOpen
-          ? 'bg-white/82 shadow-[0_1px_0_0_rgb(6_42_94_/_0.08)] backdrop-blur-xl backdrop-saturate-150'
+          ? inverted
+            ? 'bg-navy-950/55 shadow-[0_1px_0_0_rgb(255_255_255_/_0.1)] backdrop-blur-xl'
+            : 'bg-white/82 shadow-[0_1px_0_0_rgb(6_42_94_/_0.08)] backdrop-blur-xl backdrop-saturate-150'
           : 'bg-transparent',
       )}
     >
@@ -85,7 +91,11 @@ export function SiteHeader() {
           aria-label="SafeWalkMaps — home"
           onClick={() => setMenuOpen(false)}
         >
-          <Logo className="text-[0.95rem]" markClassName="h-[1.85rem]" />
+          <Logo
+            variant={inverted ? 'mono-light' : 'brand'}
+            className="text-[0.95rem]"
+            markClassName="h-[1.85rem]"
+          />
         </Link>
 
         {/* Desktop navigation */}
@@ -111,8 +121,12 @@ export function SiteHeader() {
                   className={cn(
                     'inline-flex h-10 items-center rounded-lg px-3.5 text-body-sm font-medium transition-colors duration-base',
                     activeSection === link.sectionId
-                      ? 'text-navy-800'
-                      : 'text-ink-secondary hover:text-navy-800',
+                      ? inverted
+                        ? 'text-white'
+                        : 'text-navy-800'
+                      : inverted
+                        ? 'text-white/65 hover:text-white'
+                        : 'text-ink-secondary hover:text-navy-800',
                   )}
                 >
                   {link.label}
@@ -125,7 +139,7 @@ export function SiteHeader() {
         <div className="flex items-center gap-2">
           <ButtonLink
             href={isHome ? '#waitlist' : '/#waitlist'}
-            variant="primary"
+            variant={inverted ? 'accent' : 'primary'}
             size="sm"
             routeHover
             className="hidden sm:inline-flex"
@@ -133,7 +147,12 @@ export function SiteHeader() {
             Join waitlist
           </ButtonLink>
 
-          <MobileMenu open={menuOpen} onOpenChange={setMenuOpen} isHome={isHome} />
+          <MobileMenu
+            open={menuOpen}
+            onOpenChange={setMenuOpen}
+            isHome={isHome}
+            inverted={inverted}
+          />
         </div>
       </div>
     </header>

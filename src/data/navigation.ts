@@ -20,8 +20,8 @@ export const footerColumns = [
     title: 'Product',
     links: [
       { label: 'How it works', href: '/#how-it-works' },
-      { label: 'The safety layer', href: '/#how-it-works' },
       { label: 'Safety score', href: '/#safety-score' },
+      { label: 'Compare routes', href: '/#routes' },
       { label: 'Features', href: '/#features' },
       { label: 'iOS waitlist', href: '/#waitlist' },
     ],
