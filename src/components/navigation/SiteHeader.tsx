@@ -87,7 +87,7 @@ export function SiteHeader() {
       <div className="shell flex h-[var(--nav-height)] items-center justify-between gap-6">
         <Link
           to="/"
-          className="shrink-0 rounded-sm"
+          className="-my-1 shrink-0 rounded-lg py-1"
           aria-label="SafeWalkMaps — home"
           onClick={() => setMenuOpen(false)}
         >

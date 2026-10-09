@@ -6,7 +6,7 @@ import { signalLayers } from '@/data/signals';
 import { useGsapContext } from '@/hooks/useGsapContext';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { cn } from '@/lib/cn';
-import { gsap } from '@/lib/motion';
+import { gsap, scrubFor } from '@/lib/motion';
 
 /** Five data layers, then a sixth beat where they resolve into one route. */
 const STEP_COUNT = signalLayers.length + 1;
@@ -70,7 +70,7 @@ export function SafetyLayerSection() {
           trigger: scope,
           start: 'top top',
           end: 'bottom bottom',
-          scrub: 0.7,
+          scrub: scrubFor(0.7),
           // Phase text is driven by a step index, not by a value that changes
           // every frame, so React re-renders six times across the whole section.
           onUpdate: (self) => setStep(stepAt(self.progress)),
@@ -157,7 +157,11 @@ export function SafetyLayerSection() {
 
   return (
     <section id="how-it-works" className="bg-surface">
-      <div ref={wrapRef} className="relative" style={{ height: `${STEP_COUNT * 72}svh` }}>
+      <div
+        ref={wrapRef}
+        className="relative"
+        style={{ height: `calc(var(--signal-step) * ${STEP_COUNT})` }}
+      >
         <div className="sticky top-0 h-[100svh] overflow-hidden">
           <div className="shell flex h-full flex-col justify-center gap-7 lg:flex-row lg:items-center lg:gap-12">
             {/* Map — above the copy on mobile, beside it on desktop.

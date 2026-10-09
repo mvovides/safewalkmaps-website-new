@@ -53,8 +53,32 @@
     /* Layout */
     --nav-height: 4.5rem;
 
+    /**
+     * Scroll distance per beat of a pinned scroll story.
+     *
+     * Pinned scrolling reads as much longer than it measures — nothing passes
+     * by, so the only feedback is the thing changing on screen. On a phone the
+     * whole page is already a long thumb journey, so each beat gets less
+     * distance — but not so little that the beat is over before it is read.
+     *
+     * The sticky stage eats one viewport of the total, so the figure that
+     * matters is what is left over per beat:
+     *   phone    (58svh x 6) - 100svh = ~41svh per beat
+     *   desktop  (72svh x 6) - 100svh = ~55svh per beat
+     * Roughly one thumb flick, and one comfortable wheel turn, respectively.
+     */
+    --signal-step: 58svh;
+    --hero-intro: 165svh;
+
     color-scheme: light;
     -webkit-tap-highlight-color: transparent;
+  }
+
+  @media (min-width: 1024px) {
+    :root {
+      --signal-step: 72svh;
+      --hero-intro: 205svh;
+    }
   }
 
   * {
@@ -270,6 +294,65 @@
   }
   [data-reveal-stagger] > *:nth-child(n + 7) {
     transition-delay: 420ms;
+  }
+
+  /**
+   * Reveals are quicker and travel less on a phone.
+   *
+   * A thumb covers far more of the page per gesture than a wheel does, so a
+   * 700ms reveal with a 20px rise is still animating as the element leaves the
+   * screen — which reads as lag rather than as motion. Shorter and closer keeps
+   * the same gesture but lands it in time.
+   */
+  @media (max-width: 1023px) {
+    [data-reveal],
+    [data-reveal-stagger] > * {
+      transition-duration: 460ms;
+    }
+
+    .motion-ready [data-reveal][data-visible='false'],
+    .motion-ready [data-reveal-stagger][data-visible='false'] > * {
+      transform: translate3d(0, 0.75rem, 0);
+    }
+
+    .motion-ready [data-reveal='scale'][data-visible='false'] {
+      transform: translate3d(0, 1rem, 0) scale(0.985);
+    }
+
+    [data-reveal-stagger] > *:nth-child(2) {
+      transition-delay: 45ms;
+    }
+    [data-reveal-stagger] > *:nth-child(3) {
+      transition-delay: 90ms;
+    }
+    [data-reveal-stagger] > *:nth-child(4) {
+      transition-delay: 135ms;
+    }
+    [data-reveal-stagger] > *:nth-child(5) {
+      transition-delay: 180ms;
+    }
+    [data-reveal-stagger] > *:nth-child(n + 6) {
+      transition-delay: 225ms;
+    }
+  }
+
+  /**
+   * Decorative pulse.
+   *
+   * Identical to `animate-node-pulse`, but stands down below `lg`. A phone
+   * running a dozen compositor animations at once spends frames and battery on
+   * detail that is a few pixels across at that size. The ring stays visible as
+   * a static halo, so nothing disappears — it just stops moving.
+   */
+  .pulse-decorative {
+    animation: node-pulse 3s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  }
+
+  @media (max-width: 1023px) {
+    .pulse-decorative {
+      animation: none;
+      opacity: 0.4;
+    }
   }
 
   /* Dynamic viewport height that behaves on mobile Safari. */

@@ -6,7 +6,7 @@ import { getRoute, ILLUSTRATIVE_NOTE, saferRouteDelta } from '@/data/city';
 import { useGsapContext } from '@/hooks/useGsapContext';
 import { cn } from '@/lib/cn';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
-import { gsap } from '@/lib/motion';
+import { gsap, scrubFor } from '@/lib/motion';
 
 const fastest = getRoute('fastest');
 const safer = getRoute('safer');
@@ -77,7 +77,7 @@ export function ProblemSection() {
             trigger: scope,
             start: 'top 72%',
             end: 'bottom 72%',
-            scrub: 0.7,
+            scrub: scrubFor(0.7),
           },
           defaults: { ease: 'none' },
         })

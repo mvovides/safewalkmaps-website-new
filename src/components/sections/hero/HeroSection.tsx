@@ -9,7 +9,7 @@ import { ILLUSTRATIVE_NOTE, saferRouteDelta } from '@/data/city';
 import { useGsapContext } from '@/hooks/useGsapContext';
 import { useMagnetic } from '@/hooks/useMagnetic';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
-import { gsap } from '@/lib/motion';
+import { gsap, scrubFor } from '@/lib/motion';
 
 import { HeroIntroCanvas } from './HeroIntroCanvas';
 
@@ -66,7 +66,12 @@ function HeroIntro() {
 
     // ---- Beats 2 and 3, on scroll.
     const timeline = gsap.timeline({
-      scrollTrigger: { trigger: scope, start: 'top top', end: 'bottom bottom', scrub: 0.8 },
+      scrollTrigger: {
+        trigger: scope,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: scrubFor(0.8),
+      },
       defaults: { ease: 'none' },
     });
 
@@ -87,19 +92,20 @@ function HeroIntro() {
         0.3,
       )
       .to('[data-hero="caption-2"]', { opacity: 1, y: 0, duration: 0.12 }, 0.42)
-      // Recede, and hand over.
+      // Hand over. Only the captions leave — they have said their piece.
+      //
+      // The composition deliberately does not fade. Once the pin releases, the
+      // stage still has a full viewport to travel before the hero fills the
+      // screen; fading it out left that whole screen empty. Letting it scroll
+      // away intact turns the gap into an ordinary, legible transition.
       .to('[data-hero="caption-2"]', { opacity: 0, y: -18, duration: 0.1 }, 0.8)
-      .to(
-        '[data-hero="canvas"]',
-        { opacity: 0, scale: 1.07, y: -36, duration: 0.2, ease: 'power1.in' },
-        0.8,
-      );
+      .to('[data-hero="canvas"]', { scale: 1.03, duration: 0.2, ease: 'power1.in' }, 0.8);
     // No manual teardown: `gsap.context` reverts these timelines and disposes
     // the ScrollTrigger it created when the hook unmounts.
   }, []);
 
   return (
-    <div ref={wrapRef} className="relative h-[185svh] lg:h-[205svh]">
+    <div ref={wrapRef} className="relative h-[var(--hero-intro)]">
       <div
         data-hero="stage"
         className="sticky top-0 h-[100svh] overflow-hidden"

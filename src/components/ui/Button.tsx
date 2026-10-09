@@ -7,7 +7,9 @@ type Variant = 'primary' | 'accent' | 'secondary' | 'ghost' | 'inverse';
 type Size = 'sm' | 'md' | 'lg';
 
 const base =
-  'group/button relative inline-flex select-none items-center justify-center gap-2 overflow-hidden whitespace-nowrap rounded-pill font-semibold transition-[transform,box-shadow,background-color,color,border-color] duration-base ease-out-expo disabled:pointer-events-none disabled:opacity-55';
+  'group/button relative inline-flex select-none items-center justify-center gap-2 overflow-hidden whitespace-nowrap rounded-pill font-semibold transition-[transform,box-shadow,background-color,color,border-color] duration-base ease-out-expo ' +
+  'touch-manipulation active:scale-[0.97] motion-reduce:active:scale-100 ' +
+  'disabled:pointer-events-none disabled:opacity-55';
 
 const variants: Record<Variant, string> = {
   primary: 'bg-navy-800 text-white shadow-md hover:bg-navy-700 hover:shadow-lg active:bg-navy-900',

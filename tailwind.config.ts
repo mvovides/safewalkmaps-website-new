@@ -87,7 +87,10 @@ const config: Config = {
       },
       fontFamily: {
         sans: [
-          'InterVariable',
+          // `@fontsource-variable/inter` registers the family as
+          // "Inter Variable" — with the space. Without it the whole stack
+          // silently falls through to the system font.
+          'Inter Variable',
           'Inter',
           '-apple-system',
           'BlinkMacSystemFont',

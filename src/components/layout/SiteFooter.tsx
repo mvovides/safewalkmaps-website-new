@@ -16,7 +16,7 @@ function FooterLink({
   children: React.ReactNode;
 }) {
   const className =
-    'group inline-flex items-center gap-1 rounded-sm text-body-sm text-white/55 transition-colors duration-base hover:text-white';
+    'group -my-1 inline-flex items-center gap-1 rounded-md py-2 text-body-sm text-white/55 transition-colors duration-base hover:text-white lg:py-1';
 
   if (external) {
     return (
@@ -94,7 +94,7 @@ export function SiteFooter() {
                 <h2 className="text-label font-semibold uppercase tracking-[0.12em] text-white/40">
                   {column.title}
                 </h2>
-                <ul className="mt-4 space-y-3">
+                <ul className="mt-4 space-y-1 lg:space-y-2">
                   {column.links.map((link) => (
                     <li key={link.label}>
                       <FooterLink

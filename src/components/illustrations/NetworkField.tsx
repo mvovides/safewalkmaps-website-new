@@ -69,7 +69,7 @@ export function NetworkField({ className }: { className?: string }) {
             r={node.r * 2.6}
             fill="var(--brand-green)"
             opacity="0.1"
-            className="animate-node-pulse"
+            className="pulse-decorative"
             style={{ animationDelay: `${(index % 6) * 0.45}s`, transformOrigin: `${node.x}px ${node.y}px` }}
           />
           <circle cx={node.x} cy={node.y} r={node.r} fill="var(--brand-green)" opacity="0.65" />

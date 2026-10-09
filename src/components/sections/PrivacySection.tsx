@@ -105,7 +105,7 @@ export function PrivacySection() {
             </p>
             <a
               href="/privacy"
-              className="group inline-flex shrink-0 items-center gap-1.5 text-body-sm font-semibold text-navy-800 transition-colors duration-base hover:text-navy-600"
+              className="group -my-2 inline-flex shrink-0 items-center gap-1.5 rounded-md py-2 text-body-sm font-semibold text-navy-800 transition-colors duration-base hover:text-navy-600"
             >
               Read the full policy
               <ArrowRight

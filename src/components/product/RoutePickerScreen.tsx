@@ -117,7 +117,13 @@ export function RoutePickerScreen({
                 role="tab"
                 aria-selected={selected}
                 onClick={() => onSelect?.(option.key)}
-                className={classes}
+                // The segment is drawn at iOS proportions, which is roughly
+                // 30px tall at phone scale. The pseudo-element extends the
+                // touch area past 44px without inflating the mockup.
+                className={cn(
+                  classes,
+                  "relative touch-manipulation active:opacity-70 after:absolute after:inset-x-0 after:-inset-y-[0.62em] after:content-['']",
+                )}
               >
                 {content}
               </button>

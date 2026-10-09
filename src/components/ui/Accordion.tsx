@@ -48,7 +48,7 @@ function AccordionRow({ item, open, onToggle }: RowProps) {
           aria-expanded={open}
           aria-controls={panelId}
           onClick={onToggle}
-          className="group flex w-full items-start justify-between gap-6 py-6 text-left transition-colors duration-base hover:text-navy-700 sm:py-7"
+          className="group flex w-full touch-manipulation items-start justify-between gap-6 py-6 text-left transition-colors duration-base hover:text-navy-700 active:opacity-70 sm:py-7"
         >
           <span className="text-body-lg font-semibold text-ink-primary group-hover:text-navy-700">
             {item.question}

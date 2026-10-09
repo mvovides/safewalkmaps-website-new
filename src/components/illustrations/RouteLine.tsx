@@ -1,5 +1,3 @@
-import { useId } from 'react';
-
 import { cn } from '@/lib/cn';
 
 export type RouteTone = 'brand' | 'alt' | 'muted';
@@ -47,8 +45,6 @@ export function RouteLine({
   className,
   dataRoute,
 }: RouteLineProps) {
-  const uid = useId().replace(/:/g, '');
-  const glowId = `route-glow-${uid}`;
   const clamped = Math.min(1, Math.max(0, progress));
   const offset = 1 - clamped;
 
@@ -61,27 +57,34 @@ export function RouteLine({
 
   return (
     <g className={cn(className)} data-route={dataRoute}>
+      {/* The halo is two stacked translucent strokes rather than a Gaussian
+          blur filter. The route's dash offset animates, so a filter would have
+          to re-run the blur every frame — easily the most expensive thing on
+          the page on a phone. Two extra strokes cost nothing and, at these
+          opacities, are hard to tell apart from a real blur. */}
       {glow && (
-        <defs>
-          <filter id={glowId} x="-30%" y="-30%" width="160%" height="160%">
-            <feGaussianBlur stdDeviation="5" result="blur" />
-            <feComposite in="blur" operator="over" />
-          </filter>
-        </defs>
-      )}
-
-      {glow && (
-        <path
-          {...shared}
-          d={d}
-          stroke={strokes[tone]}
-          strokeWidth={width * 1.7}
-          strokeOpacity={0.13}
-          filter={`url(#${glowId})`}
-          strokeDasharray="1"
-          strokeDashoffset={offset}
-          data-route-layer="glow"
-        />
+        <>
+          <path
+            {...shared}
+            d={d}
+            stroke={strokes[tone]}
+            strokeWidth={width * 2.6}
+            strokeOpacity={0.07}
+            strokeDasharray="1"
+            strokeDashoffset={offset}
+            data-route-layer="glow"
+          />
+          <path
+            {...shared}
+            d={d}
+            stroke={strokes[tone]}
+            strokeWidth={width * 1.8}
+            strokeOpacity={0.11}
+            strokeDasharray="1"
+            strokeDashoffset={offset}
+            data-route-layer="glow"
+          />
+        </>
       )}
 
       {casing && (
@@ -139,7 +142,7 @@ export function RouteEndpoint({ x, y, kind, scale = 1, pulse = false }: RouteEnd
     return (
       <g transform={`translate(${x} ${y}) scale(${scale})`}>
         {pulse && (
-          <circle r={9} fill="var(--brand-navy)" opacity={0.18} className="animate-node-pulse" />
+          <circle r={9} fill="var(--brand-navy)" opacity={0.18} className="pulse-decorative" />
         )}
         <circle r={9} fill="#FFFFFF" />
         <circle r={9} fill="none" stroke="var(--brand-navy)" strokeWidth={2.5} />

@@ -173,7 +173,7 @@ export function ReportLayer({ reports }: { reports: CommunityReport[] }) {
     <g data-layer="reports">
       {reports.map((report) => (
         <g key={report.label} transform={`translate(${report.x} ${report.y})`} data-report-marker>
-          <circle r={19} fill="var(--brand-green)" opacity={0.18} className="animate-node-pulse" />
+          <circle r={19} fill="var(--brand-green)" opacity={0.18} className="pulse-decorative" />
           <circle r={12} fill="#FFFFFF" stroke="var(--brand-green-muted)" strokeWidth={2.25} />
           {/* Exclamation glyph, drawn so it stays crisp at any scale. */}
           <rect x={-1.3} y={-6.5} width={2.6} height={7.5} rx={1.3} fill="var(--brand-green-ink)" />
@@ -251,7 +251,7 @@ export function SafetyNode({ x, y, r = 4, tone = 'brand', pulse = true }: Safety
   const color = tone === 'brand' ? 'var(--brand-green)' : 'var(--brand-navy)';
   return (
     <g transform={`translate(${x} ${y})`}>
-      {pulse && <circle r={r * 2.4} fill={color} opacity={0.2} className="animate-node-pulse" />}
+      {pulse && <circle r={r * 2.4} fill={color} opacity={0.2} className="pulse-decorative" />}
       <circle r={r} fill={color} />
     </g>
   );

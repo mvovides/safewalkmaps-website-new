@@ -5,7 +5,7 @@ import { ButtonLink } from '@/components/ui/Button';
 import { StatusPill } from '@/components/ui/Chip';
 import { useGsapContext } from '@/hooks/useGsapContext';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
-import { gsap } from '@/lib/motion';
+import { gsap, scrubFor } from '@/lib/motion';
 
 /**
  * The closing beat: one last route climbing into the shield, echoing the
@@ -34,7 +34,12 @@ export function FinalCtaSection() {
 
       gsap
         .timeline({
-          scrollTrigger: { trigger: scope, start: 'top 85%', end: 'center 62%', scrub: 0.6 },
+          scrollTrigger: {
+            trigger: scope,
+            start: 'top 85%',
+            end: 'center 62%',
+            scrub: scrubFor(0.6),
+          },
           defaults: { ease: 'none' },
         })
         .to(
