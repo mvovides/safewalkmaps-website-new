@@ -204,7 +204,7 @@ function HeroMain() {
       <div className="relative mx-auto w-full max-w-[20rem] sm:max-w-[21.5rem]" data-reveal="scale">
         <div
           aria-hidden="true"
-          className="absolute -inset-10 -z-10 rounded-[50%] bg-green-500/10 blur-3xl"
+          className="absolute inset-x-0 -inset-y-10 -z-10 rounded-[50%] bg-green-500/10 blur-3xl"
         />
         <PhoneFrame label="The SafeWalkMaps route picker, comparing three walking routes.">
           <RoutePickerScreen activeRoute="safer" />
@@ -232,7 +232,7 @@ function HeroIntroStatic() {
   return (
     <div className="relative overflow-hidden">
       <div className="shell flex min-h-[58svh] flex-col items-center justify-center gap-8 py-20 text-center">
-        <div className="relative h-[280px] w-full max-w-[620px]">
+        <div className="relative aspect-[1200/820] w-full max-w-[32rem]">
           <HeroIntroCanvas revealed />
         </div>
         <div className="space-y-2">

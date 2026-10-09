@@ -27,7 +27,7 @@ export function RouteChoiceSection() {
   const delta = route.minutes - fastest.minutes;
 
   return (
-    <Section id="routes" tone="secondary" spacing="large">
+    <Section id="routes" tone="secondary">
       <SectionHeading
         index="04"
         eyebrow="Three routes"

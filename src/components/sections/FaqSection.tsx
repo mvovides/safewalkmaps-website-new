@@ -5,7 +5,7 @@ import { siteConfig } from '@/lib/config';
 
 export function FaqSection() {
   return (
-    <Section id="faq" tone="secondary" spacing="large">
+    <Section id="faq" tone="secondary">
       <div className="grid gap-12 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.4fr)] lg:gap-16">
         <div className="lg:sticky lg:top-28 lg:self-start">
           <SectionHeading

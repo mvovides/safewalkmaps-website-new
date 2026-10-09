@@ -46,7 +46,7 @@ export function ContactSection() {
   }
 
   return (
-    <Section id="contact" spacing="large">
+    <Section id="contact">
       <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-16">
         <div data-reveal-stagger>
           <h2 className="text-display-md font-semibold text-ink-primary">Get in touch.</h2>

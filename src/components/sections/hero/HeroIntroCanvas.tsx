@@ -70,7 +70,9 @@ export function HeroIntroCanvas({ className, revealed = false }: HeroIntroCanvas
   return (
     <svg
       viewBox="0 0 1200 900"
-      preserveAspectRatio="xMidYMid slice"
+      // Scroll-driven: crop to fill the stage. Static (reduced motion): fit the
+      // whole composition, so the climb from below the fold still reads.
+      preserveAspectRatio={revealed ? 'xMidYMid meet' : 'xMidYMid slice'}
       className={cn('h-full w-full', className)}
       aria-hidden="true"
     >

@@ -59,7 +59,7 @@ function VanishingRoute() {
 
 export function PrivacySection() {
   return (
-    <Section id="privacy" tone="secondary" spacing="large">
+    <Section id="privacy" tone="secondary">
       <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-16">
         <div>
           <SectionHeading
