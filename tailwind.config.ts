@@ -15,10 +15,21 @@ import type { Config } from 'tailwindcss';
  *   green.800      #07704A   6.1:1  AA  green text on white
  *   green.500      #17F58B   1.5:1  graphics only on white — 11.8:1 on navy.900
  */
+/**
+ * Tailwind's stock opacity scale only contains multiples of five, and any
+ * `/N` modifier outside it is silently dropped — `bg-white/96` produces no
+ * rule at all. Glass surfaces need finer control than that, so every integer
+ * from 0 to 100 is registered here.
+ */
+const fineOpacity = Object.fromEntries(
+  Array.from({ length: 101 }, (_, value) => [String(value), String(value / 100)]),
+);
+
 const config: Config = {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
+      opacity: fineOpacity,
       colors: {
         navy: {
           50: '#F2F6FC',

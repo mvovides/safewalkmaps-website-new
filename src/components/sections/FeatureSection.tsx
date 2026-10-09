@@ -37,7 +37,7 @@ function FeatureCard({ title, body, icon, className, children }: CardProps) {
 /** A share link that visibly expires — drawn, not described. */
 function ShareIllustration() {
   return (
-    <svg viewBox="0 0 260 90" className="mt-6 h-[90px] w-full" aria-hidden="true">
+    <svg viewBox="0 0 260 90" className="mt-auto h-[90px] w-full pt-6" aria-hidden="true">
       <rect
         x="1"
         y="18"
@@ -76,7 +76,7 @@ function ReportsIllustration() {
     { label: 'Underpass dark', age: '24 days', opacity: 0.3 },
   ];
   return (
-    <ul className="mt-6 space-y-2">
+    <ul className="mt-auto space-y-2 pt-6">
       {items.map((item) => (
         <li
           key={item.label}
@@ -180,7 +180,7 @@ export function FeatureSection() {
           body="Alerts emergency services with your location, notifies your emergency contacts with a link to follow, and sounds an alarm from your phone."
           icon={<ShieldAlert aria-hidden="true" className="h-5 w-5" />}
         >
-          <p className="mt-5 rounded-lg bg-surface-secondary px-3.5 py-2.5 text-caption leading-relaxed text-ink-tertiary">
+          <p className="mt-auto rounded-lg bg-surface-secondary px-3.5 py-2.5 text-caption leading-relaxed text-ink-tertiary">
             SafeWalkMaps is not an emergency service. In an emergency, contact your local
             emergency number.
           </p>
