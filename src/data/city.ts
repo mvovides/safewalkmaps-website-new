@@ -106,7 +106,7 @@ export const routes: RouteOption[] = [
   {
     key: 'fastest',
     name: 'Fastest',
-    summary: 'Cuts straight across the park',
+    summary: 'Cuts straight across the park.',
     minutes: 21,
     distanceKm: 1.7,
     safetyScore: 61,
@@ -123,7 +123,7 @@ export const routes: RouteOption[] = [
   {
     key: 'balanced',
     name: 'Balanced',
-    summary: 'Skirts the park, keeps to lit streets',
+    summary: 'Skirts the park and keeps to lit streets.',
     minutes: 23,
     distanceKm: 1.9,
     safetyScore: 78,
@@ -140,7 +140,7 @@ export const routes: RouteOption[] = [
   {
     key: 'safer',
     name: 'Safer',
-    summary: 'Main roads the whole way, three minutes more',
+    summary: 'Main roads the whole way.',
     minutes: 24,
     distanceKm: 2.0,
     safetyScore: 86,

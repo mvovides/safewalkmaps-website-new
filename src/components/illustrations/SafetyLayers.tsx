@@ -41,10 +41,10 @@ export function LightingLayer({
       {/* Unlit streets, marked before the light goes on. */}
       <g
         stroke="var(--brand-navy-deep)"
-        strokeWidth={7}
+        strokeWidth={9}
         strokeLinecap="round"
-        strokeOpacity={0.14}
-        strokeDasharray="7 7"
+        strokeOpacity={0.22}
+        strokeDasharray="9 9"
         fill="none"
         data-layer="unlit"
       >
@@ -173,11 +173,11 @@ export function ReportLayer({ reports }: { reports: CommunityReport[] }) {
     <g data-layer="reports">
       {reports.map((report) => (
         <g key={report.label} transform={`translate(${report.x} ${report.y})`} data-report-marker>
-          <circle r={15} fill="var(--brand-green)" opacity={0.14} className="animate-node-pulse" />
-          <circle r={9.5} fill="#FFFFFF" stroke="var(--brand-green-muted)" strokeWidth={1.75} />
+          <circle r={19} fill="var(--brand-green)" opacity={0.18} className="animate-node-pulse" />
+          <circle r={12} fill="#FFFFFF" stroke="var(--brand-green-muted)" strokeWidth={2.25} />
           {/* Exclamation glyph, drawn so it stays crisp at any scale. */}
-          <rect x={-1} y={-5} width={2} height={6} rx={1} fill="var(--brand-green-ink)" />
-          <circle cy={3.4} r={1.2} fill="var(--brand-green-ink)" />
+          <rect x={-1.3} y={-6.5} width={2.6} height={7.5} rx={1.3} fill="var(--brand-green-ink)" />
+          <circle cy={4.4} r={1.6} fill="var(--brand-green-ink)" />
         </g>
       ))}
     </g>
@@ -195,11 +195,11 @@ export function ContextLayer({ markers }: { markers: ContextMarker[] }) {
         if (marker.kind === 'crossing') {
           return (
             <g key={key} transform={`translate(${marker.x} ${marker.y})`} data-context-marker>
-              <g stroke="var(--brand-navy)" strokeOpacity={0.45} strokeWidth={2.5}>
-                <line x1={-9} y1={-6} x2={-9} y2={6} />
-                <line x1={-3} y1={-6} x2={-3} y2={6} />
-                <line x1={3} y1={-6} x2={3} y2={6} />
-                <line x1={9} y1={-6} x2={9} y2={6} />
+              <g stroke="var(--brand-navy)" strokeOpacity={0.75} strokeWidth={3.5}>
+                <line x1={-12} y1={-9} x2={-12} y2={9} />
+                <line x1={-4} y1={-9} x2={-4} y2={9} />
+                <line x1={4} y1={-9} x2={4} y2={9} />
+                <line x1={12} y1={-9} x2={12} y2={9} />
               </g>
             </g>
           );
@@ -208,19 +208,11 @@ export function ContextLayer({ markers }: { markers: ContextMarker[] }) {
         if (marker.kind === 'closure') {
           return (
             <g key={key} transform={`translate(${marker.x} ${marker.y})`} data-context-marker>
-              <rect
-                x={-11}
-                y={-4}
-                width={22}
-                height={8}
-                rx={2}
-                fill="var(--warning)"
-                opacity={0.9}
-              />
-              <g stroke="#FFFFFF" strokeWidth={2} strokeOpacity={0.85}>
-                <line x1={-6} y1={-4} x2={-10} y2={4} />
-                <line x1={1} y1={-4} x2={-3} y2={4} />
-                <line x1={8} y1={-4} x2={4} y2={4} />
+              <rect x={-16} y={-6} width={32} height={12} rx={3} fill="var(--warning)" />
+              <g stroke="#FFFFFF" strokeWidth={2.6} strokeOpacity={0.9}>
+                <line x1={-8} y1={-6} x2={-14} y2={6} />
+                <line x1={2} y1={-6} x2={-4} y2={6} />
+                <line x1={12} y1={-6} x2={6} y2={6} />
               </g>
             </g>
           );
@@ -230,12 +222,12 @@ export function ContextLayer({ markers }: { markers: ContextMarker[] }) {
           <g key={key} transform={`translate(${marker.x} ${marker.y})`} data-context-marker>
             {/* CCTV field of view. */}
             <path
-              d="M 0 0 L 26 -15 A 30 30 0 0 0 26 15 Z"
+              d="M 0 0 L 38 -22 A 44 44 0 0 0 38 22 Z"
               fill="var(--brand-navy-bright)"
-              opacity={0.1}
+              opacity={0.16}
             />
-            <circle r={4.5} fill="var(--brand-navy)" opacity={0.6} />
-            <circle r={1.8} fill="#FFFFFF" />
+            <circle r={6.5} fill="var(--brand-navy)" opacity={0.85} />
+            <circle r={2.6} fill="#FFFFFF" />
           </g>
         );
       })}
