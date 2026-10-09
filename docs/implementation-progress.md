@@ -82,15 +82,14 @@ Checked in a real browser at 375, 390, 430, 768, 1440 and 1728px:
 
 ## Needs your input before production
 
-1. **Legal details.** `src/data/legal.ts` carries visible "needs confirmation" blocks for
-   the operating entity, registered address, governing jurisdiction, liability cap,
-   sub-processor list and whether a DPO is appointed. They render as warning panels on
-   `/privacy` and `/terms`.
-2. **Per-feature status.** The site presents live navigation, re-routing, sharing,
-   reports, offline and SOS the way the current product pages do. If any of those are
-   planned rather than shipped, say which and the copy should mark them.
-3. **Encryption claims.** The current site states end-to-end encryption; this rebuild
-   deliberately does not, because it could not be verified. Restore it only if it is
-   accurate.
-4. **Merging.** This work sits on `feature/website-build`. Per `CLAUDE.md`, merging to
-   `main` waits on your approval.
+Four open items, written up in full in [`before-launch.md`](before-launch.md):
+
+1. **Legal details** — the only hard blocker. Visible placeholder panels on `/privacy` and
+   `/terms` until real text replaces them.
+2. **Per-feature status** — which of the six app features are shipped versus planned.
+3. **The encryption claim** — the current site states end-to-end encryption; this rebuild
+   deliberately does not, because it could not be verified.
+4. **Deployment config** — three environment variables, then a go-live checklist.
+
+Merging is no longer pending: `feature/website-build` was merged to `main` once the above were
+documented.

@@ -205,8 +205,12 @@ path geometry at a constant walking pace. See the comment at the top of `src/dat
 
 ## Before going live
 
-`src/data/legal.ts` contains visible **“needs confirmation”** blocks marking the legal details
-that must be supplied rather than invented — the registered operating entity and address, the
-governing jurisdiction, the liability cap, the sub-processor list and whether a DPO has been
-appointed. These render as warning panels on `/privacy` and `/terms` so they cannot ship
-unnoticed. Replace them with real text reviewed by a qualified adviser.
+**See [`docs/before-launch.md`](docs/before-launch.md)** — four open items, what each one
+blocks, and how to close it.
+
+The short version: `src/data/legal.ts` contains visible **“needs confirmation”** blocks
+marking legal details that must be supplied rather than invented. They render as amber warning
+panels on `/privacy` and `/terms`, so the site cannot quietly ship with made-up legal text.
+Alongside that, three product decisions need your call: which features are shipped versus
+planned, whether the end-to-end encryption claim from the current site is accurate, and the
+environment variables for the host.
