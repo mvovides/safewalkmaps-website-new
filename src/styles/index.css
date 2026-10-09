@@ -591,6 +591,127 @@
 }
 
 /* ===========================================================================
+   Reduced transparency
+
+   Translucency is how this site conveys layering, but it is also the thing
+   that makes text hardest to read for anyone who has asked for less of it.
+   The setting does not mean "remove the layer" — it means make the material
+   frosty and solid, so hierarchy survives and legibility stops depending on
+   whatever happens to be scrolling underneath.
+
+   The phone mockups are deliberately exempt. They are pictures of the iOS app
+   inside a drawn device, not chrome the visitor operates, and flattening them
+   would misrepresent the product rather than help anyone use this page.
+   =========================================================================== */
+@media (prefers-reduced-transparency: reduce) {
+  /* Split from the rule below rather than comma-joined: if a browser cannot
+     parse the `:not()` descendant form it drops the whole rule it appears in,
+     and the navigation must not be collateral. */
+  .nav-glass {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  /* Every Tailwind `backdrop-blur-*` outside a mockup, without enumerating
+     them — a blur that is added later cannot be forgotten here. */
+  [class*='backdrop-blur']:not(.phone-ui *) {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  /* With no blur behind it the bar needs to carry its own opacity, and the
+     soft lower edge has nothing left to soften — so it gets a real edge. */
+  .nav-glass-light {
+    --nav-glass-tint: var(--surface);
+  }
+
+  .nav-glass-dark {
+    --nav-glass-tint: var(--brand-navy-darkest);
+  }
+
+  .nav-glass {
+    height: var(--nav-height);
+    -webkit-mask-image: none;
+    mask-image: none;
+    border-bottom: 1px solid var(--border-strong);
+  }
+
+  .on-navy .nav-glass {
+    border-bottom-color: rgb(255 255 255 / 0.22);
+  }
+}
+
+/* ===========================================================================
+   Increased contrast
+
+   Near-solid surfaces with a defined, contrasting border — so every edge is
+   read from the border rather than inferred from a tint.
+   =========================================================================== */
+@media (prefers-contrast: more) {
+  :root {
+    --border: rgb(6 42 94 / 0.38);
+    --border-strong: rgb(6 42 94 / 0.62);
+    --text-secondary: #354964;
+    --text-tertiary: #4f6485;
+  }
+
+  .nav-glass-light {
+    --nav-glass-tint: var(--surface);
+  }
+
+  .nav-glass-dark {
+    --nav-glass-tint: var(--brand-navy-darkest);
+  }
+
+  .nav-glass {
+    border-bottom: 1px solid var(--border-strong);
+  }
+
+  /**
+   * The Tailwind palette is defined as literal hex in tailwind.config.ts, not
+   * as `var()` references — deliberately, because the `/alpha` modifiers used
+   * across the site need a colour Tailwind can decompose. So raising the
+   * custom properties above does not reach the utilities, and the utilities
+   * have to be restated here.
+   *
+   * These rules sit outside `@layer`, which beats Tailwind's layered utilities
+   * in the cascade without needing `!important`.
+   *
+   * Measured against #FFFFFF:
+   *   ink.secondary  #4A5F7D  6.51:1  ->  #354964  9.18:1
+   *   ink.tertiary   #788CA6  3.44:1  ->  #4F6485  6.01:1  (AA at any size)
+   */
+  .text-ink-secondary {
+    color: var(--text-secondary);
+  }
+
+  .text-ink-tertiary,
+  .demo-note,
+  .eyebrow {
+    color: var(--text-tertiary);
+  }
+
+  /* Edges should be read from a border, not inferred from a tint. */
+  .border-line {
+    border-color: var(--border);
+  }
+
+  .border-line-strong {
+    border-color: var(--border-strong);
+  }
+
+  .hairline,
+  .eyebrow-rule {
+    background-color: var(--border-strong);
+  }
+
+  /* The focus ring is the one thing that must never be subtle. */
+  :focus-visible {
+    outline-width: 3px;
+  }
+}
+
+/* ===========================================================================
    Reduced motion
 
    Everything decorative stops. Reveal states are forced visible so no content

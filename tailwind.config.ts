@@ -8,12 +8,19 @@ import type { Config } from 'tailwindcss';
  * and the route gradient runs #6AF5A4 → #43E68D → #17F58B. The remaining steps are
  * tonal extensions of those two hues so the palette stays recognisably brand-true.
  *
- * Contrast notes (verified against #FFFFFF):
- *   ink.primary    #06152E  16.2:1  AAA body text
- *   ink.secondary  #4A5F7D   7.2:1  AA  body text
- *   ink.tertiary   #788CA6   3.9:1  large text / labels only
+ * Contrast notes, recomputed against #FFFFFF with the WCAG 2.1 relative
+ * luminance formula. Two figures in an earlier revision of this comment
+ * overstated the ratio and are corrected below.
+ *   ink.primary    #06152E  18.2:1  AAA body text
+ *   ink.secondary  #4A5F7D   6.5:1  AA  body text            (said 7.2)
+ *   ink.tertiary   #788CA6   3.4:1  large text / labels only (said 3.9)
  *   green.800      #07704A   6.1:1  AA  green text on white
  *   green.500      #17F58B   1.5:1  graphics only on white — 11.8:1 on navy.900
+ *
+ * `ink.tertiary` clears AA for large text (3:1) but not for body copy, which
+ * is why it stays on labels and captions. Under `prefers-contrast: more` both
+ * secondary and tertiary are darkened to 9.2:1 and 6.0:1 — see the
+ * increased-contrast block in src/styles/index.css.
  */
 /**
  * Tailwind's stock opacity scale only contains multiples of five, and any
