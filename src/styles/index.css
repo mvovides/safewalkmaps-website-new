@@ -439,11 +439,20 @@
    readable if JS fails, and search engines always see real content.
    =========================================================================== */
 @layer utilities {
+  /**
+   * Reveals settle rather than coast.
+   *
+   * `ease-out-expo` over 700ms leaves most of its duration in a very slow
+   * tail — the element is nearly in place for the last third and then creeps,
+   * which is what made reveals read as floaty. A critically damped spring
+   * covers the same distance and comes to rest, so the page uses the same
+   * motion language as the controls on it.
+   */
   [data-reveal] {
     transition:
-      opacity var(--duration-slower) var(--ease-out-expo),
-      transform var(--duration-slower) var(--ease-out-expo),
-      clip-path var(--duration-slower) var(--ease-out-expo);
+      opacity var(--duration-spring) var(--ease-spring),
+      transform var(--duration-spring) var(--ease-spring),
+      clip-path var(--duration-spring) var(--ease-spring);
   }
 
   .motion-ready [data-reveal][data-visible='false'] {
@@ -478,8 +487,8 @@
   /* Staggered children. */
   [data-reveal-stagger] > * {
     transition:
-      opacity var(--duration-slower) var(--ease-out-expo),
-      transform var(--duration-slower) var(--ease-out-expo);
+      opacity var(--duration-spring) var(--ease-spring),
+      transform var(--duration-spring) var(--ease-spring);
   }
 
   .motion-ready [data-reveal-stagger][data-visible='false'] > * {
@@ -518,9 +527,13 @@
    * Reveals are quicker and travel less on a phone.
    *
    * A thumb covers far more of the page per gesture than a wheel does, so a
-   * 700ms reveal with a 20px rise is still animating as the element leaves the
+   * long reveal with a 20px rise is still animating as the element leaves the
    * screen — which reads as lag rather than as motion. Shorter and closer keeps
    * the same gesture but lands it in time.
+   *
+   * Overriding only the duration still leaves a real spring: a critically
+   * damped curve is invariant under time scaling, so 460ms is the same spring
+   * at a 0.31s response rather than the desktop 0.4s.
    */
   @media (max-width: 1023px) {
     [data-reveal],
