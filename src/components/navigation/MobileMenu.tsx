@@ -17,16 +17,13 @@ export type MobileMenuProps = {
 
 /** Three lines that become a cross, animated as transforms rather than a swap. */
 function MenuGlyph({ open }: { open: boolean }) {
-  const bar = 'absolute left-0 h-[1.6px] w-full rounded-full bg-current transition-all duration-slow ease-out-expo';
+  const bar =
+    'absolute left-0 h-[1.6px] w-full rounded-full bg-current transition-all duration-slow ease-out-expo';
   return (
     <span aria-hidden="true" className="relative block h-[11px] w-[19px]">
       <span className={cn(bar, open ? 'top-[4.7px] rotate-45' : 'top-0')} />
       <span
-        className={cn(
-          bar,
-          'top-[4.7px]',
-          open ? 'scale-x-0 opacity-0' : 'scale-x-100 opacity-100',
-        )}
+        className={cn(bar, 'top-[4.7px]', open ? 'scale-x-0 opacity-0' : 'scale-x-100 opacity-100')}
       />
       <span className={cn(bar, open ? 'top-[4.7px] -rotate-45' : 'top-[9.4px]')} />
     </span>
@@ -78,7 +75,7 @@ export function MobileMenu({ open, onOpenChange, isHome, inverted = false }: Mob
         aria-controls="mobile-menu"
         aria-label={open ? 'Close menu' : 'Open menu'}
         className={cn(
-          '-mr-1.5 grid h-11 w-11 place-items-center rounded-full transition-colors duration-base lg:hidden',
+          'tappable -mr-1.5 grid h-11 w-11 place-items-center rounded-full active:scale-[0.94] motion-reduce:active:scale-100 lg:hidden',
           inverted ? 'text-white hover:bg-white/10' : 'text-navy-800 hover:bg-navy-50',
         )}
       >

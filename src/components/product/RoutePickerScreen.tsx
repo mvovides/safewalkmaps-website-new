@@ -104,7 +104,7 @@ export function RoutePickerScreen({
               </>
             );
             const classes = cn(
-              'flex flex-col items-center justify-center rounded-[0.72em] py-[0.42em] transition-all duration-base ease-out-expo',
+              'tappable flex flex-col items-center justify-center rounded-[0.72em] py-[0.42em]',
               selected
                 ? 'bg-white text-navy-800 shadow-[0_0.15em_0.5em_-0.15em_rgba(6,42,94,0.25)]'
                 : 'text-ink-secondary',
@@ -122,7 +122,7 @@ export function RoutePickerScreen({
                 // touch area past 44px without inflating the mockup.
                 className={cn(
                   classes,
-                  "relative touch-manipulation active:opacity-70 after:absolute after:inset-x-0 after:-inset-y-[0.62em] after:content-['']",
+                  "relative touch-manipulation after:absolute after:-inset-y-[0.62em] after:inset-x-0 after:content-[''] active:opacity-70",
                 )}
               >
                 {content}
@@ -178,7 +178,10 @@ export function RoutePickerScreen({
               <li key={factor.label} className="flex items-start gap-[0.5em]">
                 <Icon
                   aria-hidden="true"
-                  className={cn('mt-[0.12em] h-[0.78em] w-[0.78em] shrink-0', factorColor[factor.tone])}
+                  className={cn(
+                    'mt-[0.12em] h-[0.78em] w-[0.78em] shrink-0',
+                    factorColor[factor.tone],
+                  )}
                   strokeWidth={2.5}
                 />
                 <span className="text-[0.74em] leading-snug text-ink-secondary">

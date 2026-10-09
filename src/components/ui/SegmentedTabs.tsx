@@ -81,7 +81,7 @@ export function SegmentedTabs<T extends string>({
       <span
         aria-hidden="true"
         className={cn(
-          'pointer-events-none absolute bottom-1.5 top-1.5 rounded-xl transition-transform duration-slow ease-out-expo',
+          'pointer-events-none absolute bottom-1.5 top-1.5 rounded-xl transition-transform duration-spring-snappy ease-spring',
           inverse ? 'bg-white shadow-sm' : 'bg-white shadow-sm',
         )}
         style={{
@@ -104,7 +104,7 @@ export function SegmentedTabs<T extends string>({
             tabIndex={selected ? 0 : -1}
             onClick={() => onChange(option.value)}
             className={cn(
-              'relative z-10 flex min-h-11 touch-manipulation flex-col items-center justify-center rounded-xl px-2 py-2 transition-colors duration-base active:opacity-70',
+              'tappable relative z-10 flex min-h-11 touch-manipulation flex-col items-center justify-center rounded-xl px-2 py-2 active:scale-[0.97] active:opacity-70 motion-reduce:active:scale-100',
               selected
                 ? 'text-navy-800'
                 : inverse
