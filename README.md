@@ -137,6 +137,35 @@ components that own scroll stories render an alternative static layout rather th
 screen. The safety-layer section, for example, becomes a readable list beside a map showing all
 five layers at once.
 
+### Motion on touch
+
+Mobile is not the desktop timeline scaled down. Four things differ, each for a reason:
+
+| | Phone | Desktop |
+| --- | --- | --- |
+| Scroll per pinned beat | ~41svh (`--signal-step`) | ~55svh |
+| Scrub lag (`scrubFor`) | 0.35 | 0.6 – 0.8 |
+| Reveal duration / travel | 460ms / 12px | 700ms / 20px |
+| Decorative map pulses | static halo | animating |
+
+A thumb covers far more of the page per gesture than a wheel does, so a long scrub reads as
+the animation being detached from your hand, and a 700ms reveal is still running as the
+element leaves the screen. The pinned stories get less distance — but not so little that a
+beat ends before it can be read.
+
+Two rules worth keeping if you extend this:
+
+- **Never put an SVG filter on a path that animates.** The route halo is two stacked
+  translucent strokes, not a Gaussian blur, because the dash offset animates and the filter
+  would re-run every frame. That one change removed most of the dropped frames on mobile.
+- **Hover does not exist on touch.** Every control has an `:active` state and
+  `touch-action: manipulation`, or a tap gives no acknowledgement at all.
+
+Measured on the production build, 4× CPU throttle, 390×844, scrolling the full page: p99
+frame time 17ms, five frames over 32ms, worst frame 33ms, no long tasks. The probes used are
+throwaway scripts, not part of the repo — see "Regenerating brand assets" for how Playwright
+is used here.
+
 ---
 
 ## Regenerating brand assets

@@ -18,9 +18,44 @@ Status as of the initial build of the redesigned site. Branch: `feature/website-
 | Assets | Favicon set, PWA icons, 1200×630 social preview, all generated from the logo. |
 | Deployment | Vercel, Netlify and Cloudflare Pages configuration committed. |
 
+## Mobile pass
+
+Measured on a 4x-throttled phone profile (390 x 844), production build:
+
+| | Before | After |
+| --- | --- | --- |
+| Frames over 32ms, full-page scroll | 81 | 5 |
+| Worst frame | 83ms | 33ms |
+| Long tasks | 1 | 0 |
+| p99 frame time | 33ms | 17ms |
+| Total scroll length | 28.2 screens | 26.8 screens |
+
+What changed, and why:
+
+- **Inter was never loading.** The font stack said `InterVariable`; the package registers
+  `Inter Variable`. The whole site had been rendering in a system fallback.
+- **An SVG Gaussian blur sat behind an animating path.** The route halo re-blurred every
+  frame. Replaced with two stacked translucent strokes.
+- **25 infinite animations ran at once.** Decorative map pulses now stand down below `lg`
+  and leave a static halo.
+- **Pinned stories were too long on a phone.** Tuned via `--signal-step` and `--hero-intro`
+  to roughly one thumb flick per beat.
+- **Scrub lag was tuned for a wheel.** `scrubFor()` drops it to 0.35 on touch.
+- **Reveals outlasted the gesture.** Shorter and closer below `lg`.
+- **No press feedback on touch.** Added `:active` states and `touch-action: manipulation`.
+- **Tap targets.** The phone mockup's segmented control gets a pseudo-element hit area past
+  44px; footer navigation links went from 24px to 40px. Inline links inside sentences were
+  left alone — WCAG 2.5.8 exempts them.
+- **A blank viewport between the hero intro and the hero.** The composition now scrolls away
+  intact rather than fading into an empty stage.
+
+Two things were measured and then *not* changed: removing the header's backdrop blur made
+frame timing slightly worse (run-to-run noise dominates — it is not a bottleneck), and the
+static heat-blob filter on the safety map is rasterised once, so it stays.
+
 ## Verified
 
-Checked in a real browser at 375, 390, 768, 1440 and 1728px:
+Checked in a real browser at 375, 390, 430, 768, 1440 and 1728px:
 
 - No console errors or warnings on any route, in dev and in the production build.
 - No horizontal overflow at any tested width.
