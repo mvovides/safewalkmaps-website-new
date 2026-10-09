@@ -47,7 +47,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy || undefined}
         className={cn(
-          'h-13 w-full rounded-xl border px-4 text-body outline-none transition-all duration-base ease-out-expo',
+          'h-13 w-full rounded-xl border px-4 text-body outline-none transition-[border-color,background-color,box-shadow] duration-base ease-out-expo',
           'placeholder:text-ink-tertiary',
           inverse
             ? 'border-white/16 bg-white/8 text-white placeholder:text-white/35 focus:border-green-500 focus:bg-white/12 focus:ring-4 focus:ring-green-500/18'

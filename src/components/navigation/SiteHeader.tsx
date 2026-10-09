@@ -13,6 +13,19 @@ import { MobileMenu } from './MobileMenu';
 /** Pixels scrolled before the header takes on its glass surface. */
 const CONDENSE_AT = 24;
 
+/**
+ * Base width of the active-section indicator, in pixels.
+ *
+ * The indicator is drawn at this width once and then transformed, so moving it
+ * between nav items costs a compositor transform rather than a layout pass per
+ * frame. Animating `left`/`width` — which this used to do — reflows the header
+ * on every one of the ~26 frames the transition runs for.
+ *
+ * Keeping the base close to a real nav item's width keeps the X scale factor
+ * near 1, so the 1px radius on a 2px-tall bar stays visually round.
+ */
+const INDICATOR_BASE_WIDTH = 100;
+
 export function SiteHeader() {
   const { pathname } = useLocation();
   const isHome = pathname === '/';
@@ -25,6 +38,11 @@ export function SiteHeader() {
 
   const listRef = useRef<HTMLUListElement>(null);
   const [indicator, setIndicator] = useState<{ left: number; width: number } | null>(null);
+  // Held so the indicator can fade out where it last sat, rather than sliding
+  // to the left edge on its way out — things should leave from where they are.
+  const lastIndicator = useRef<{ left: number; width: number } | null>(null);
+  if (indicator) lastIndicator.current = indicator;
+  const indicatorBox = indicator ?? lastIndicator.current;
 
   // One passive scroll listener, coalesced into a single rAF, flipping one
   // boolean — cheap enough to leave running for the whole session.
@@ -101,16 +119,21 @@ export function SiteHeader() {
         {/* Desktop navigation */}
         <nav aria-label="Primary" className="hidden lg:block">
           <ul ref={listRef} className="relative flex items-center gap-1">
-            {/* Sliding active indicator */}
+            {/* Sliding active indicator — transform only, never layout. */}
             <span
               aria-hidden="true"
               className={cn(
-                'pointer-events-none absolute -bottom-0.5 h-[2px] rounded-full bg-green-500 transition-all duration-slow ease-out-expo',
+                'pointer-events-none absolute -bottom-0.5 left-0 h-[2px] origin-left rounded-full bg-green-500',
+                'transition-[transform,opacity] duration-spring-snappy ease-spring',
                 indicator ? 'opacity-100' : 'opacity-0',
               )}
               style={{
-                left: indicator?.left ?? 0,
-                width: indicator?.width ?? 0,
+                width: INDICATOR_BASE_WIDTH,
+                transform: indicatorBox
+                  ? `translate3d(${indicatorBox.left}px, 0, 0) scaleX(${
+                      indicatorBox.width / INDICATOR_BASE_WIDTH
+                    })`
+                  : 'translate3d(0, 0, 0) scaleX(0)',
               }}
             />
             {navLinks.map((link) => (

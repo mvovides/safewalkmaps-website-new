@@ -23,9 +23,11 @@ function WeightBar({ weight, active }: { weight: number; active: boolean }) {
   return (
     <div className="flex items-center gap-3">
       <div className="h-1 w-24 overflow-hidden rounded-full bg-navy-100">
+        {/* Scaled rather than resized: `width` reflows on every frame, and
+            this bar animates while the pinned story is being scrubbed. */}
         <div
-          className="h-full rounded-full bg-green-500 transition-[width] duration-slower ease-out-expo"
-          style={{ width: active ? `${weight * 100}%` : '0%' }}
+          className="h-full w-full origin-left rounded-full bg-green-500 transition-transform duration-spring ease-spring"
+          style={{ transform: `scaleX(${active ? weight : 0})` }}
         />
       </div>
       <span className="tabular text-caption text-ink-tertiary">
@@ -207,7 +209,7 @@ export function SafetyLayerSection() {
                       key={index}
                       aria-current={index === step ? 'step' : undefined}
                       className={cn(
-                        'h-1 rounded-full transition-all duration-slow ease-out-expo',
+                        'h-1 rounded-full transition-[width,background-color] duration-spring-snappy ease-spring',
                         index === step ? 'w-7 bg-green-500' : 'w-3 bg-navy-200',
                       )}
                     />

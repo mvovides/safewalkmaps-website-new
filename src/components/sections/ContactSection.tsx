@@ -123,7 +123,7 @@ export function ContactSection() {
                   onChange={() => messageError && setMessageError(undefined)}
                   placeholder="What's on your mind?"
                   className={cn(
-                    'w-full resize-y rounded-xl border border-line-strong bg-white px-4 py-3 text-body outline-none transition-all duration-base ease-out-expo',
+                    'w-full resize-y rounded-xl border border-line-strong bg-white px-4 py-3 text-body outline-none transition-[border-color,background-color,box-shadow] duration-base ease-out-expo',
                     'placeholder:text-ink-tertiary focus:border-navy-600 focus:ring-4 focus:ring-navy-600/12',
                     messageError && 'border-danger focus:border-danger focus:ring-danger/15',
                   )}

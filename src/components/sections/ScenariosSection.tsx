@@ -39,7 +39,7 @@ export function ScenariosSection() {
               index === 4 ? 'lg:col-start-2 lg:mt-10' : '',
             ].join(' ')}
           >
-            <article className="flex h-full flex-col rounded-2xl border border-line bg-white p-6 shadow-xs transition-all duration-slow ease-out-expo hover:-translate-y-0.5 hover:shadow-md sm:p-7">
+            <article className="flex h-full flex-col rounded-2xl border border-line bg-white p-6 shadow-xs transition-[transform,box-shadow] duration-spring ease-spring hover:-translate-y-0.5 hover:shadow-md sm:p-7">
               <p className="tabular inline-flex w-fit items-center gap-2 rounded-pill bg-navy-50 px-3 py-1 text-caption font-semibold text-navy-700">
                 <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-green-500" />
                 {scenario.time}
