@@ -50,6 +50,37 @@
     --duration-slow: 420ms;
     --duration-slower: 700ms;
 
+    /**
+     * Press response.
+     *
+     * A press has to register as contact, so it engages almost immediately and
+     * releases more slowly — the asymmetry is what makes a control feel
+     * physical rather than animated. 240ms in (the old `base`) reads as lag on
+     * the way down, which is the one place latency is least forgivable.
+     */
+    --duration-press-in: 90ms;
+    --duration-press-out: 320ms;
+
+    /**
+     * Springs.
+     *
+     * Generated from spring physics by `scripts/generate-spring-easings.mjs` —
+     * run it to change them. A cubic-bezier cannot express a spring: it has no
+     * overshoot and the wrong tail. `linear()` can, by sampling the real curve.
+     *
+     * Each easing is only correct at the duration it was sampled for, so the
+     * pairs below must be used together: `--ease-spring` with
+     * `--duration-spring`, and so on.
+     *
+     * The values here are the pre-`linear()` fallback; the @supports block
+     * below swaps in the real curves where the browser can parse them.
+     */
+    --ease-spring: var(--ease-out-quint);
+    --ease-spring-sheet: var(--ease-out-expo);
+    --duration-spring: 588ms;
+    --duration-spring-snappy: 441ms;
+    --duration-spring-sheet: 405ms;
+
     /* Layout */
     --nav-height: 4.5rem;
 
@@ -72,6 +103,34 @@
 
     color-scheme: light;
     -webkit-tap-highlight-color: transparent;
+  }
+
+  /**
+   * Real spring curves, where `linear()` parses (Safari 17.2+, Chrome 113+,
+   * Firefox 112+). Older browsers keep the decelerating béziers above, which
+   * land in the same place with a less physical tail — a graceful degradation
+   * rather than a broken transition.
+   *
+   * Sampled values come from `scripts/generate-spring-easings.mjs`.
+   * `--ease-spring-snappy` is deliberately absent: a critically damped spring's
+   * normalised curve is invariant under time scaling, so it is the same curve
+   * as `--ease-spring` at a shorter duration.
+   */
+  @supports (transition-timing-function: linear(0, 1)) {
+    :root {
+      /* damping 1.0, response 0.4s */
+      --ease-spring: linear(
+        0, 0.0467, 0.1503, 0.2739, 0.3972, 0.51, 0.608, 0.6904, 0.7579, 0.8123,
+        0.8555, 0.8894, 0.9158, 0.9362, 0.9518, 0.9638, 0.9728, 0.9797, 0.9848,
+        0.9887, 0.9916, 0.9938, 0.9954, 0.9966, 0.9975, 0.9982, 0.9986, 1
+      );
+      /* damping 0.8, response 0.3s — peaks at 1.015, a 1.5% overshoot */
+      --ease-spring-sheet: linear(
+        0, 0.0417, 0.1406, 0.2666, 0.3993, 0.5257, 0.6387, 0.7348, 0.8134,
+        0.8753, 0.9223, 0.9567, 0.9809, 0.997, 1.0069, 1.0124, 1.0148, 1.0151,
+        1.0141, 1.0124, 1.0105, 1.0085, 1.0066, 1.005, 1.0036, 1.0025, 1.0016, 1
+      );
+    }
   }
 
   @media (min-width: 1024px) {

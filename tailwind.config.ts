@@ -155,12 +155,24 @@ const config: Config = {
         'out-quint': 'cubic-bezier(0.22, 1, 0.36, 1)',
         'in-out-soft': 'cubic-bezier(0.65, 0, 0.35, 1)',
         'out-back': 'cubic-bezier(0.34, 1.4, 0.64, 1)',
+        // Spring curves. Defined in index.css so a @supports block can swap the
+        // real `linear()` sampling in over a bezier fallback. Each one is only
+        // correct at its paired duration below.
+        spring: 'var(--ease-spring)',
+        'spring-sheet': 'var(--ease-spring-sheet)',
       },
       transitionDuration: {
         fast: '150ms',
         base: '240ms',
         slow: '420ms',
         slower: '700ms',
+        // Press feedback is asymmetric: near-instant in, unhurried out.
+        'press-in': 'var(--duration-press-in)',
+        'press-out': 'var(--duration-press-out)',
+        // Settle times of the generated springs — see generate-spring-easings.mjs.
+        spring: 'var(--duration-spring)',
+        'spring-snappy': 'var(--duration-spring-snappy)',
+        'spring-sheet': 'var(--duration-spring-sheet)',
       },
       keyframes: {
         'node-pulse': {
