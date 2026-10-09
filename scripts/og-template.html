@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SafeWalkMaps social preview</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      body {
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+        background: #ffffff;
+        font-family: 'Inter', system-ui, sans-serif;
+        color: #06152e;
+        position: relative;
+      }
+      .map {
+        position: absolute;
+        inset: 0;
+      }
+      .content {
+        position: relative;
+        height: 100%;
+        padding: 66px 72px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .lockup {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .wordmark {
+        font-size: 36px;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        color: #062a5e;
+        line-height: 1;
+      }
+      .wordmark i {
+        font-style: normal;
+        color: #32d583;
+      }
+      h1 {
+        max-width: 15ch;
+        font-size: 76px;
+        font-weight: 600;
+        line-height: 0.98;
+        letter-spacing: -0.042em;
+      }
+      h1 span {
+        color: #788ca6;
+      }
+      .footer {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 11px;
+        border: 1px solid rgb(6 42 94 / 0.16);
+        border-radius: 999px;
+        padding: 11px 20px;
+        font-size: 21px;
+        font-weight: 500;
+        color: #4a5f7d;
+      }
+      .dot {
+        width: 11px;
+        height: 11px;
+        border-radius: 999px;
+        background: #17f58b;
+      }
+      .meta {
+        font-size: 21px;
+        color: #788ca6;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Street grid and the two routes: the whole product in one picture. -->
+    <svg class="map" viewBox="0 0 1200 630" fill="none">
+      <g stroke="rgb(6 42 94 / 0.07)" stroke-width="2">
+        <path d="M 760 0 V 630" />
+        <path d="M 900 0 V 630" />
+        <path d="M 1040 0 V 630" />
+        <path d="M 660 110 H 1200" />
+        <path d="M 660 250 H 1200" />
+        <path d="M 660 390 H 1200" />
+        <path d="M 660 520 H 1200" />
+      </g>
+      <g stroke="rgb(6 42 94 / 0.13)" stroke-width="6" stroke-linecap="round">
+        <path d="M 900 0 V 630" />
+        <path d="M 660 390 H 1200" />
+      </g>
+
+      <!-- Fastest: a diagonal cut across the block. -->
+      <path
+        d="M 790 560 L 1000 350 H 1040 V 250"
+        stroke="#FFFFFF"
+        stroke-width="18"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M 790 560 L 1000 350 H 1040 V 250"
+        stroke="#5B7FB5"
+        stroke-width="8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        opacity="0.75"
+      />
+
+      <!-- Safer: main roads. -->
+      <path
+        d="M 790 560 H 900 V 390 H 1040 V 250"
+        stroke="#FFFFFF"
+        stroke-width="22"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M 790 560 H 900 V 390 H 1040 V 250"
+        stroke="#17F58B"
+        stroke-width="10"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+
+      <!-- Origin -->
+      <circle cx="790" cy="560" r="13" fill="#FFFFFF" />
+      <circle cx="790" cy="560" r="13" fill="none" stroke="#062A5E" stroke-width="4" />
+      <circle cx="790" cy="560" r="5" fill="#062A5E" />
+
+      <!-- Destination -->
+      <g transform="translate(1040 250)">
+        <path
+          d="M 0 14 C -10 2 -15.4 -5 -15.4 -11.8 C -15.4 -21.1 -8.5 -28 0 -28 C 8.5 -28 15.4 -21.1 15.4 -11.8 C 15.4 -5 10 2 0 14 Z"
+          fill="#031B3D"
+        />
+        <circle cy="-12" r="5.7" fill="#17F58B" />
+      </g>
+
+      <!-- Soft white falloff so the type always sits on clean paper. -->
+      <rect
+        width="1200"
+        height="630"
+        fill="url(#fade)"
+      />
+      <defs>
+        <linearGradient id="fade" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0.3" stop-color="#ffffff" stop-opacity="1" />
+          <stop offset="0.62" stop-color="#ffffff" stop-opacity="0" />
+        </linearGradient>
+      </defs>
+    </svg>
+
+    <div class="content">
+      <div class="lockup">
+        <img src="./icon.svg" width="54" height="54" alt="" />
+        <span class="wordmark">Safe<i>Walk</i>Maps</span>
+      </div>
+
+      <h1>The safer route.<br /><span>Not just the<br />fastest one.</span></h1>
+
+      <div class="footer">
+        <span class="pill"><span class="dot"></span>Coming soon on iOS</span>
+        <span class="meta">safewalkmaps.com</span>
+      </div>
+    </div>
+  </body>
+</html>

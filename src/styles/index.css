@@ -1,0 +1,409 @@
+@import '@fontsource-variable/inter/wght.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===========================================================================
+   Design tokens
+
+   Sampled from `safewalkmaps_logo.svg`. These custom properties exist so that
+   inline SVG illustrations and GSAP timelines can reach the same values the
+   Tailwind utilities use (see tailwind.config.ts for the full scale).
+   =========================================================================== */
+@layer base {
+  :root {
+    /* Brand — straight from the logo gradients */
+    --brand-navy: #062a5e;
+    --brand-navy-bright: #062e6f;
+    --brand-navy-deep: #031b3d;
+    --brand-navy-darkest: #020f24;
+    --brand-green: #17f58b;
+    --brand-green-light: #6af5a4;
+    --brand-green-mid: #43e68d;
+    --brand-green-muted: #0a9159;
+    --brand-green-ink: #07704a;
+
+    /* Surfaces */
+    --surface: #ffffff;
+    --surface-secondary: #f6f8fb;
+    --surface-tertiary: #edf2f8;
+    --surface-navy: #031b3d;
+
+    /* Text */
+    --text-primary: #06152e;
+    --text-secondary: #4a5f7d;
+    --text-tertiary: #788ca6;
+
+    /* Lines & status */
+    --border: rgb(6 42 94 / 0.09);
+    --border-strong: rgb(6 42 94 / 0.16);
+    --danger: #d92d20;
+    --warning: #f79009;
+
+    /* Motion */
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+    --duration-fast: 150ms;
+    --duration-base: 240ms;
+    --duration-slow: 420ms;
+    --duration-slower: 700ms;
+
+    /* Layout */
+    --nav-height: 4.5rem;
+
+    /**
+     * Scroll distance per beat of a pinned scroll story.
+     *
+     * Pinned scrolling reads as much longer than it measures — nothing passes
+     * by, so the only feedback is the thing changing on screen. On a phone the
+     * whole page is already a long thumb journey, so each beat gets less
+     * distance — but not so little that the beat is over before it is read.
+     *
+     * The sticky stage eats one viewport of the total, so the figure that
+     * matters is what is left over per beat:
+     *   phone    (58svh x 6) - 100svh = ~41svh per beat
+     *   desktop  (72svh x 6) - 100svh = ~55svh per beat
+     * Roughly one thumb flick, and one comfortable wheel turn, respectively.
+     */
+    --signal-step: 58svh;
+    --hero-intro: 165svh;
+
+    color-scheme: light;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  @media (min-width: 1024px) {
+    :root {
+      --signal-step: 72svh;
+      --hero-intro: 205svh;
+    }
+  }
+
+  * {
+    @apply border-line;
+  }
+
+  html {
+    @apply scroll-smooth antialiased;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-surface font-sans text-body text-ink-primary;
+    margin: 0;
+    min-height: 100svh;
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'cv11' 1; /* single-storey 'a' feels closer to SF */
+    overflow-x: clip;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-semibold text-ink-primary;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Anchor targets clear the fixed navigation. */
+  [id] {
+    scroll-margin-top: calc(var(--nav-height) + 1.5rem);
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--brand-navy);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  .on-navy :focus-visible {
+    outline-color: var(--brand-green);
+  }
+
+  ::selection {
+    background: var(--brand-green);
+    color: var(--brand-navy-deep);
+  }
+
+  svg {
+    /* Illustrations are decorative geometry: never let them capture taps. */
+    @apply pointer-events-none;
+  }
+
+  svg.is-interactive,
+  svg.is-interactive * {
+    @apply pointer-events-auto;
+  }
+}
+
+/* ===========================================================================
+   Reusable pieces
+   =========================================================================== */
+@layer components {
+  .shell {
+    @apply mx-auto w-full max-w-shell px-gutter;
+  }
+
+  .shell-wide {
+    @apply mx-auto w-full max-w-shell-wide px-gutter;
+  }
+
+  /* Small all-caps section index, e.g. "01 — The problem" */
+  .eyebrow {
+    @apply flex items-center gap-2.5 font-sans text-label font-semibold uppercase text-ink-tertiary;
+  }
+
+  .eyebrow-rule {
+    @apply h-px w-8 bg-line-strong;
+  }
+
+  /* Illustrative-data disclaimer used beside demo visuals. */
+  .demo-note {
+    @apply text-caption text-ink-tertiary;
+  }
+
+  .hairline {
+    @apply h-px w-full border-0 bg-line;
+  }
+
+  /**
+   * Phone mockup scaling.
+   *
+   * The app UI is designed at iPhone's 393pt width. Making the screen a size
+   * container and driving its font-size from container width lets every
+   * element inside be sized in `em`, so the whole interface scales
+   * proportionally at any rendered width instead of breaking apart.
+   * 4.071cqw === 16px when the screen is 393px wide.
+   */
+  .phone-screen {
+    container-type: inline-size;
+  }
+
+  .phone-ui {
+    font-size: 1rem;
+  }
+
+  @supports (font-size: 1cqw) {
+    .phone-ui {
+      font-size: 4.071cqw;
+    }
+  }
+
+  /* Numerals that should not jiggle while animating. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+  }
+}
+
+/* ===========================================================================
+   Scroll reveal system
+
+   Elements opt in with `data-reveal`. A single IntersectionObserver
+   (see useScrollReveal) flips `data-visible`, so there is one observer for the
+   whole page rather than one animation per component. Until the controller
+   marks the document `motion-ready`, nothing is hidden — so the page is fully
+   readable if JS fails, and search engines always see real content.
+   =========================================================================== */
+@layer utilities {
+  [data-reveal] {
+    transition:
+      opacity var(--duration-slower) var(--ease-out-expo),
+      transform var(--duration-slower) var(--ease-out-expo),
+      clip-path var(--duration-slower) var(--ease-out-expo);
+  }
+
+  .motion-ready [data-reveal][data-visible='false'] {
+    opacity: 0;
+    transform: translate3d(0, 1.25rem, 0);
+  }
+
+  .motion-ready [data-reveal][data-visible='true'] {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  /* Variants */
+  .motion-ready [data-reveal='fade'][data-visible='false'] {
+    transform: none;
+  }
+
+  .motion-ready [data-reveal='scale'][data-visible='false'] {
+    transform: translate3d(0, 1.75rem, 0) scale(0.975);
+  }
+
+  .motion-ready [data-reveal='mask'][data-visible='false'] {
+    clip-path: inset(0 0 100% 0);
+    opacity: 1;
+    transform: none;
+  }
+
+  .motion-ready [data-reveal='mask'][data-visible='true'] {
+    clip-path: inset(0 0 -10% 0);
+  }
+
+  /* Staggered children. */
+  [data-reveal-stagger] > * {
+    transition:
+      opacity var(--duration-slower) var(--ease-out-expo),
+      transform var(--duration-slower) var(--ease-out-expo);
+  }
+
+  .motion-ready [data-reveal-stagger][data-visible='false'] > * {
+    opacity: 0;
+    transform: translate3d(0, 1.25rem, 0);
+  }
+
+  .motion-ready [data-reveal-stagger][data-visible='true'] > * {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  [data-reveal-stagger] > *:nth-child(1) {
+    transition-delay: 0ms;
+  }
+  [data-reveal-stagger] > *:nth-child(2) {
+    transition-delay: 70ms;
+  }
+  [data-reveal-stagger] > *:nth-child(3) {
+    transition-delay: 140ms;
+  }
+  [data-reveal-stagger] > *:nth-child(4) {
+    transition-delay: 210ms;
+  }
+  [data-reveal-stagger] > *:nth-child(5) {
+    transition-delay: 280ms;
+  }
+  [data-reveal-stagger] > *:nth-child(6) {
+    transition-delay: 350ms;
+  }
+  [data-reveal-stagger] > *:nth-child(n + 7) {
+    transition-delay: 420ms;
+  }
+
+  /**
+   * Reveals are quicker and travel less on a phone.
+   *
+   * A thumb covers far more of the page per gesture than a wheel does, so a
+   * 700ms reveal with a 20px rise is still animating as the element leaves the
+   * screen — which reads as lag rather than as motion. Shorter and closer keeps
+   * the same gesture but lands it in time.
+   */
+  @media (max-width: 1023px) {
+    [data-reveal],
+    [data-reveal-stagger] > * {
+      transition-duration: 460ms;
+    }
+
+    .motion-ready [data-reveal][data-visible='false'],
+    .motion-ready [data-reveal-stagger][data-visible='false'] > * {
+      transform: translate3d(0, 0.75rem, 0);
+    }
+
+    .motion-ready [data-reveal='scale'][data-visible='false'] {
+      transform: translate3d(0, 1rem, 0) scale(0.985);
+    }
+
+    [data-reveal-stagger] > *:nth-child(2) {
+      transition-delay: 45ms;
+    }
+    [data-reveal-stagger] > *:nth-child(3) {
+      transition-delay: 90ms;
+    }
+    [data-reveal-stagger] > *:nth-child(4) {
+      transition-delay: 135ms;
+    }
+    [data-reveal-stagger] > *:nth-child(5) {
+      transition-delay: 180ms;
+    }
+    [data-reveal-stagger] > *:nth-child(n + 6) {
+      transition-delay: 225ms;
+    }
+  }
+
+  /**
+   * Decorative pulse.
+   *
+   * Identical to `animate-node-pulse`, but stands down below `lg`. A phone
+   * running a dozen compositor animations at once spends frames and battery on
+   * detail that is a few pixels across at that size. The ring stays visible as
+   * a static halo, so nothing disappears — it just stops moving.
+   */
+  .pulse-decorative {
+    animation: node-pulse 3s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  }
+
+  @media (max-width: 1023px) {
+    .pulse-decorative {
+      animation: none;
+      opacity: 0.4;
+    }
+  }
+
+  /* Dynamic viewport height that behaves on mobile Safari. */
+  .min-h-screen-dvh {
+    min-height: 100svh;
+  }
+
+  .h-screen-dvh {
+    height: 100svh;
+  }
+
+  .safe-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+
+  /* Edge-fade for horizontally scrolling rails on mobile. */
+  .fade-edges-x {
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 1.25rem,
+      #000 calc(100% - 1.25rem),
+      transparent 100%
+    );
+  }
+}
+
+/* ===========================================================================
+   Reduced motion
+
+   Everything decorative stops. Reveal states are forced visible so no content
+   can be stranded behind an animation that will never run.
+   =========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .motion-ready [data-reveal],
+  .motion-ready [data-reveal-stagger] > * {
+    opacity: 1 !important;
+    clip-path: none !important;
+    transform: none !important;
+  }
+}

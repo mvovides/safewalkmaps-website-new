@@ -15,10 +15,21 @@ import type { Config } from 'tailwindcss';
  *   green.800      #07704A   6.1:1  AA  green text on white
  *   green.500      #17F58B   1.5:1  graphics only on white — 11.8:1 on navy.900
  */
+/**
+ * Tailwind's stock opacity scale only contains multiples of five, and any
+ * `/N` modifier outside it is silently dropped — `bg-white/96` produces no
+ * rule at all. Glass surfaces need finer control than that, so every integer
+ * from 0 to 100 is registered here.
+ */
+const fineOpacity = Object.fromEntries(
+  Array.from({ length: 101 }, (_, value) => [String(value), String(value / 100)]),
+);
+
 const config: Config = {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
+      opacity: fineOpacity,
       colors: {
         navy: {
           50: '#F2F6FC',
@@ -76,7 +87,10 @@ const config: Config = {
       },
       fontFamily: {
         sans: [
-          'InterVariable',
+          // `@fontsource-variable/inter` registers the family as
+          // "Inter Variable" — with the space. Without it the whole stack
+          // silently falls through to the system font.
+          'Inter Variable',
           'Inter',
           '-apple-system',
           'BlinkMacSystemFont',
@@ -90,7 +104,7 @@ const config: Config = {
       fontSize: {
         // Fluid editorial display scale.
         'display-2xl': ['clamp(2.875rem, 9.4vw, 8rem)', { lineHeight: '0.94', letterSpacing: '-0.045em' }],
-        'display-xl': ['clamp(2.5rem, 7.4vw, 6rem)', { lineHeight: '0.98', letterSpacing: '-0.04em' }],
+        'display-xl': ['clamp(2.5rem, 6.6vw, 5.25rem)', { lineHeight: '0.98', letterSpacing: '-0.04em' }],
         'display-lg': ['clamp(2.125rem, 5.4vw, 4.25rem)', { lineHeight: '1.02', letterSpacing: '-0.035em' }],
         'display-md': ['clamp(1.75rem, 3.9vw, 3rem)', { lineHeight: '1.06', letterSpacing: '-0.03em' }],
         'display-sm': ['clamp(1.4375rem, 2.6vw, 2.125rem)', { lineHeight: '1.14', letterSpacing: '-0.022em' }],
@@ -102,6 +116,7 @@ const config: Config = {
         label: ['0.6875rem', { lineHeight: '1.4', letterSpacing: '0.12em' }],
       },
       spacing: {
+        13: '3.25rem', // iOS-sized form control height
         section: 'clamp(5rem, 11vh, 9.5rem)',
         'section-lg': 'clamp(6.5rem, 15vh, 13rem)',
         gutter: 'clamp(1.25rem, 4vw, 2.5rem)',

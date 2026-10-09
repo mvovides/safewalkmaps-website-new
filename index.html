@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+    <title>SafeWalkMaps — Safety-Aware Walking Navigation</title>
+    <meta
+      name="description"
+      content="SafeWalkMaps compares walking routes using street lighting, police crime data, foot traffic and community reports, then shows you why each route scored the way it did. Coming soon on iOS."
+    />
+    <link rel="canonical" href="https://safewalkmaps.com/" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#031b3d" media="(prefers-color-scheme: dark)" />
+    <meta name="color-scheme" content="light" />
+    <meta name="author" content="SafeWalkMaps" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <!-- Icons -->
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" sizes="any" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="apple-mobile-web-app-title" content="SafeWalkMaps" />
+
+    <!-- OpenGraph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SafeWalkMaps" />
+    <meta property="og:url" content="https://safewalkmaps.com/" />
+    <meta property="og:title" content="SafeWalkMaps — Safety-Aware Walking Navigation" />
+    <meta
+      property="og:description"
+      content="The safer route. Not just the fastest one. Compare walking routes on lighting, crime data, foot traffic and community reports. Coming soon on iOS."
+    />
+    <meta property="og:image" content="https://safewalkmaps.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="SafeWalkMaps — the safer route, not just the fastest one."
+    />
+    <meta property="og:locale" content="en_GB" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="SafeWalkMaps — Safety-Aware Walking Navigation" />
+    <meta
+      name="twitter:description"
+      content="The safer route. Not just the fastest one. Compare walking routes on lighting, crime data, foot traffic and community reports. Coming soon on iOS."
+    />
+    <meta name="twitter:image" content="https://safewalkmaps.com/og-image.png" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://safewalkmaps.com/#organization",
+            "name": "SafeWalkMaps",
+            "url": "https://safewalkmaps.com/",
+            "logo": "https://safewalkmaps.com/icon.svg",
+            "email": "safewalkmaps@gmail.com",
+            "parentOrganization": {
+              "@type": "Organization",
+              "name": "Marvian Tech",
+              "url": "https://marvian.tech"
+            }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://safewalkmaps.com/#website",
+            "url": "https://safewalkmaps.com/",
+            "name": "SafeWalkMaps",
+            "inLanguage": "en-GB",
+            "publisher": { "@id": "https://safewalkmaps.com/#organization" }
+          },
+          {
+            "@type": "MobileApplication",
+            "@id": "https://safewalkmaps.com/#app",
+            "name": "SafeWalkMaps",
+            "applicationCategory": "NavigationApplication",
+            "operatingSystem": "iOS",
+            "description": "Safety-aware walking navigation. SafeWalkMaps compares walking routes using street lighting, police crime data, foot traffic and community reports, and explains why each route scored the way it did.",
+            "url": "https://safewalkmaps.com/",
+            "publisher": { "@id": "https://safewalkmaps.com/#organization" },
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "GBP",
+              "availability": "https://schema.org/PreOrder"
+            }
+          }
+        ]
+      }
+    </script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How does SafeWalkMaps work out which route is safer?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Every street segment on a candidate route is scored on street lighting, recent police-recorded incident density, how busy the street tends to be at your departure time, CCTV coverage where that data exists, community reports and context such as roadworks or closed pavements. Segment scores roll up into a length-weighted route score, with penalties for the worst segment on the route and for how much of the walk sits below a low-score threshold — so one long dark stretch cannot hide behind a good average."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does a high Safety Score mean a route is safe?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. A Safety Score is a relative comparison between the routes available to you at a particular time, produced from the data we hold for that area. It is not a guarantee, a prediction, or a substitute for your own judgement. A higher-scoring route is not risk-free and a lower-scoring street is not inherently dangerous."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What data does SafeWalkMaps use?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Council streetlight records, published police incident data, foot traffic patterns, CCTV locations where councils publish them, roadworks and closure feeds, and anonymised community reports from people using the app. Each signal carries a confidence value based on how reliable and how recent it is."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Which cities does SafeWalkMaps cover?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "SafeWalkMaps is in beta in London and Sheffield. Coverage depends on the quality of open data a city publishes, so we are expanding city by city based on demand. Joining the waitlist tells us where to look next."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "When does the iOS app launch?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "SafeWalkMaps is being prepared for iOS and we have not committed to a public launch date. Rather than announce a date we might miss, we email the waitlist first when the build is ready to hand out."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does SafeWalkMaps handle my location?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Your live location is not stored on our servers. Routing happens against map and safety data rather than a history of where you have walked. If you share your walk, that creates a temporary link that expires. Community reports are anonymised, and you can use the app without creating an account."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I just take the fastest route?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Fastest, Balanced and Safer are presented side by side with their times and scores, and you choose. SafeWalkMaps adds information to that decision; it never takes the decision away from you."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does it work at night?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Night is the case it is built for. Lighting carries far more weight after dark, foot traffic is scored against what is normal for that street at that hour, and the same route can score differently at 7pm and at 1am."
+            }
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
