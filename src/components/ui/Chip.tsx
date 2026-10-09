@@ -74,7 +74,12 @@ export function StatusPill({ children, className, inverse = false }: StatusPillP
         'inline-flex items-center gap-2.5 rounded-pill border px-3.5 py-1.5 text-caption font-medium',
         inverse
           ? 'border-white/16 bg-white/8 text-white/80'
-          : 'border-line-strong bg-white/70 text-ink-secondary backdrop-blur-sm',
+          : // Near-solid rather than glass. This pill sits on the hero
+            // illustration, on a plain section and inside the mobile menu's
+            // glass sheet — and a light translucent surface stacked on another
+            // one loses its legibility. Solid also means the dashed route
+            // behind it in the hero no longer reads through the label.
+            'border-line-strong bg-white/92 text-ink-secondary',
         className,
       )}
     >

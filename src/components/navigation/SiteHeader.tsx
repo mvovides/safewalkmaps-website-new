@@ -92,17 +92,22 @@ export function SiteHeader() {
   }, [pathname]);
 
   return (
-    <header
-      className={cn(
-        'fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow,backdrop-filter] duration-slow ease-out-expo',
-        condensed || menuOpen
-          ? inverted
-            ? 'bg-navy-950/55 shadow-[0_1px_0_0_rgb(255_255_255_/_0.1)] backdrop-blur-xl'
-            : 'bg-white/82 shadow-[0_1px_0_0_rgb(6_42_94_/_0.08)] backdrop-blur-xl backdrop-saturate-150'
-          : 'bg-transparent',
-      )}
-    >
-      <div className="shell flex h-[var(--nav-height)] items-center justify-between gap-6">
+    <header className="fixed inset-x-0 top-0 z-50">
+      {/* The glass material, as its own layer so it can extend past the bar
+          and fade out rather than ending on a hard line. */}
+      <div
+        aria-hidden="true"
+        className={cn(
+          'nav-glass',
+          inverted ? 'nav-glass-dark' : 'nav-glass-light',
+          // No fade when the sheet is attached underneath: there is no
+          // content/chrome boundary to soften, only a seam to avoid drawing.
+          menuOpen && 'nav-glass-flush',
+          condensed || menuOpen ? 'opacity-100' : 'opacity-0',
+        )}
+      />
+
+      <div className="shell relative flex h-[var(--nav-height)] items-center justify-between gap-6">
         <Link
           to="/"
           className="-my-1 shrink-0 rounded-lg py-1"
@@ -143,13 +148,21 @@ export function SiteHeader() {
                   aria-current={activeSection === link.sectionId ? 'true' : undefined}
                   className={cn(
                     'inline-flex h-10 items-center rounded-lg px-3.5 text-body-sm font-medium transition-colors duration-base',
+                    // Vibrancy: over a translucent surface the label is brand
+                    // navy at reduced alpha, so it picks up what is behind it,
+                    // rather than a flat grey that sits dead on the glass. At
+                    // 75% it still clears the old #4A5F7D on contrast (7.7:1
+                    // against white, up from 7.2:1). The tracking bump is the
+                    // small positive adjustment small text wants when it is
+                    // read through a blur.
+                    'tracking-[0.005em]',
                     activeSection === link.sectionId
                       ? inverted
                         ? 'text-white'
-                        : 'text-navy-800'
+                        : 'text-navy-900'
                       : inverted
-                        ? 'text-white/65 hover:text-white'
-                        : 'text-ink-secondary hover:text-navy-800',
+                        ? 'text-white/70 hover:text-white'
+                        : 'text-navy-900/75 hover:text-navy-900',
                   )}
                 >
                   {link.label}

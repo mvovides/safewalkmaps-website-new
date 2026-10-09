@@ -85,6 +85,16 @@
     --nav-height: 4.5rem;
 
     /**
+     * How far the navigation's material fades past the bottom of the bar.
+     *
+     * Apple does not rule a line under floating chrome — the material fades
+     * out, so content dissolves into it instead of being cut off by it. Roughly
+     * 40% of the bar height is enough to read as a soft edge without the blur
+     * visibly smearing text that is still well clear of the bar.
+     */
+    --nav-edge-fade: 1.75rem;
+
+    /**
      * Scroll distance per beat of a pinned scroll story.
      *
      * Pinned scrolling reads as much longer than it measures — nothing passes
@@ -315,6 +325,66 @@
   .tappable:active {
     transition-duration: var(--duration-press-in);
     transition-timing-function: var(--ease-out-quint);
+  }
+
+  /**
+   * The navigation's glass material.
+   *
+   * A separate layer rather than a background on the <header>, because it has
+   * to extend past the bar and fade out: the mask takes the tint and the blur
+   * to nothing together, so the material has a soft lower edge instead of the
+   * 1px rule this replaces. Content passing underneath dissolves into the
+   * chrome, which is the "scroll edge effect" rather than a divider.
+   *
+   * `--nav-glass-tint` is set by the variant classes below so the bar can
+   * invert over the navy sections.
+   */
+  .nav-glass {
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: calc(var(--nav-height) + var(--nav-edge-fade));
+    pointer-events: none;
+    background: var(--nav-glass-tint);
+    /* A bar is a small surface, so it reads as thin glass — the sheet below
+       uses a stronger blur because a bigger surface should look thicker. */
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      #000 calc(100% - var(--nav-edge-fade)),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      #000 calc(100% - var(--nav-edge-fade)),
+      transparent 100%
+    );
+    transition:
+      opacity var(--duration-slow) var(--ease-out-expo),
+      background-color var(--duration-slow) var(--ease-out-expo);
+  }
+
+  .nav-glass-light {
+    --nav-glass-tint: rgb(255 255 255 / 0.82);
+  }
+
+  .nav-glass-dark {
+    --nav-glass-tint: rgb(2 15 36 / 0.55);
+  }
+
+  /**
+   * Squared-off variant, used while the mobile sheet is open.
+   *
+   * The fade exists to soften the boundary where content scrolls under the
+   * bar. With the sheet attached directly beneath it there is no such
+   * boundary — the two surfaces are one continuous material — so fading here
+   * would just put a bright seam across the top of the sheet.
+   */
+  .nav-glass-flush {
+    height: var(--nav-height);
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 
   .hairline {

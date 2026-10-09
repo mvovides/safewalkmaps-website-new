@@ -94,7 +94,7 @@ export function MobileMenu({ open, onOpenChange, isHome, inverted = false }: Mob
         aria-hidden="true"
         onClick={() => onOpenChange(false)}
         className={cn(
-          'fixed inset-0 top-[var(--nav-height)] z-40 bg-navy-950/18 backdrop-blur-[2px] transition-opacity duration-slow ease-out-expo lg:hidden',
+          'fixed inset-0 top-[var(--nav-height)] z-40 bg-navy-950/18 backdrop-blur-[2px] transition-opacity duration-spring-sheet ease-spring-sheet lg:hidden',
           open ? 'opacity-100' : 'pointer-events-none opacity-0',
         )}
       />
@@ -104,8 +104,16 @@ export function MobileMenu({ open, onOpenChange, isHome, inverted = false }: Mob
         id="mobile-menu"
         ref={sheetRef}
         className={cn(
-          'fixed inset-x-0 top-[var(--nav-height)] z-40 origin-top overflow-hidden border-b border-line bg-white/96 backdrop-blur-xl transition-[transform,opacity] duration-slow ease-out-expo lg:hidden',
-          open ? 'translate-y-0 opacity-100' : 'pointer-events-none -translate-y-3 opacity-0',
+          'fixed inset-x-0 top-[var(--nav-height)] z-40 origin-top overflow-hidden border-b border-line lg:hidden',
+          // Materialises rather than fades: the blur ramps up with the scale
+          // and the slide, so the surface reads as glass arriving instead of a
+          // flat panel being turned up. A bigger surface than the bar above it,
+          // so a heavier blur — weight is how the two read as different
+          // thicknesses of the same material.
+          'bg-white/96 transition-[transform,opacity,backdrop-filter] duration-spring-sheet ease-spring-sheet',
+          open
+            ? 'translate-y-0 scale-100 opacity-100 backdrop-blur-2xl backdrop-saturate-150'
+            : 'pointer-events-none -translate-y-3 scale-[0.985] opacity-0 backdrop-blur-none',
         )}
       >
         <div className="shell safe-bottom pb-7 pt-3">
@@ -118,7 +126,7 @@ export function MobileMenu({ open, onOpenChange, isHome, inverted = false }: Mob
                     onClick={() => onOpenChange(false)}
                     style={{ transitionDelay: open ? `${90 + index * 55}ms` : '0ms' }}
                     className={cn(
-                      'flex items-center justify-between py-4 text-display-sm font-semibold tracking-[-0.025em] text-ink-primary transition-all duration-slower ease-out-expo',
+                      'flex items-center justify-between py-4 text-display-sm font-semibold tracking-[-0.025em] text-ink-primary transition-[transform,opacity] duration-spring ease-spring',
                       open ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0',
                     )}
                   >
@@ -137,7 +145,7 @@ export function MobileMenu({ open, onOpenChange, isHome, inverted = false }: Mob
           <div
             style={{ transitionDelay: open ? `${90 + navLinks.length * 55}ms` : '0ms' }}
             className={cn(
-              'mt-6 flex flex-col gap-4 transition-all duration-slower ease-out-expo',
+              'mt-6 flex flex-col gap-4 transition-[transform,opacity] duration-spring ease-spring',
               open ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0',
             )}
           >
