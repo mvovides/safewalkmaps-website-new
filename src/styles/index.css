@@ -312,9 +312,17 @@
    * each caller pairs this with `motion-reduce:active:scale-100` so no
    * geometry moves when motion is not wanted.
    */
+  /**
+   * `translate` is listed separately from `transform` on purpose: a
+   * pointer-follow lean written to `translate` composes with the press scale
+   * instead of replacing it (see useMagnetic). Its duration is short because
+   * the travel is a few pixels, and anything longer trails the pointer rather
+   * than following it.
+   */
   .tappable {
     transition:
       transform var(--duration-press-out) var(--ease-spring),
+      translate var(--duration-fast) var(--ease-out-quint),
       box-shadow var(--duration-base) var(--ease-out-expo),
       background-color var(--duration-base) var(--ease-out-expo),
       border-color var(--duration-base) var(--ease-out-expo),
