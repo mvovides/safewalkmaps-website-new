@@ -105,7 +105,7 @@ export function WaitlistSection() {
 
           <div className="relative grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center lg:gap-16">
             <div data-reveal-stagger>
-              <Eyebrow index="09" className="mb-6">
+              <Eyebrow index="04" className="mb-6">
                 Early access
               </Eyebrow>
               <h2 className="text-display-lg font-semibold text-ink-primary">

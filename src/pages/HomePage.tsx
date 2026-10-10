@@ -1,34 +1,25 @@
-import { ContactSection } from '@/components/sections/ContactSection';
-import { FaqSection } from '@/components/sections/FaqSection';
-import { FeatureSection } from '@/components/sections/FeatureSection';
 import { FinalCtaSection } from '@/components/sections/FinalCtaSection';
 import { HeroSection } from '@/components/sections/hero/HeroSection';
-import { MissionSection } from '@/components/sections/MissionSection';
-import { PrivacySection } from '@/components/sections/PrivacySection';
 import { ProblemSection } from '@/components/sections/ProblemSection';
 import { RouteChoiceSection } from '@/components/sections/RouteChoiceSection';
 import { SafetyLayerSection } from '@/components/sections/SafetyLayerSection';
-import { SafetyScoreSection } from '@/components/sections/SafetyScoreSection';
-import { ScenariosSection } from '@/components/sections/ScenariosSection';
 import { WaitlistSection } from '@/components/sections/WaitlistSection';
 import { useDocumentMeta } from '@/hooks/useDocumentMeta';
+import { useStaleHashRedirect } from '@/hooks/useStaleHashRedirect';
 import { siteConfig } from '@/lib/config';
 
 /**
- * The homepage is one continuous argument:
+ * The homepage is the argument, and nothing else:
  *
  *   hero          — the claim
  *   01 problem    — why the claim matters
  *   02 layer      — what it is built from
- *   03 score      — how to read the output
- *   04 routes     — and you still choose
- *   05 features   — what it is like to use
- *   06 privacy    — what it costs you (nothing)
- *   07 scenarios  — when you would reach for it
- *   08 mission    — where it goes next
- *   09 waitlist   — the ask
- *   10 faq        — the objections, answered honestly
- *   contact / final CTA
+ *   03 routes     — and you still choose
+ *   04 waitlist   — the ask
+ *   final CTA
+ *
+ * The detail each of these raises lives on its own route: /safety-score,
+ * /features, /about and /faq.
  */
 export function HomePage() {
   useDocumentMeta({
@@ -36,21 +27,15 @@ export function HomePage() {
     description: `${siteConfig.description} Coming soon on iOS.`,
     path: '/',
   });
+  useStaleHashRedirect();
 
   return (
     <>
       <HeroSection />
       <ProblemSection />
       <SafetyLayerSection />
-      <SafetyScoreSection />
       <RouteChoiceSection />
-      <FeatureSection />
-      <PrivacySection />
-      <ScenariosSection />
-      <MissionSection />
       <WaitlistSection />
-      <FaqSection />
-      <ContactSection />
       <FinalCtaSection />
     </>
   );
