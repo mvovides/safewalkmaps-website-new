@@ -17,8 +17,11 @@ class NoopObserver {
 vi.stubGlobal('IntersectionObserver', NoopObserver);
 vi.stubGlobal('ResizeObserver', NoopObserver);
 
+// Configurable as well as writable, so a test can swap it out with
+// Object.defineProperty and not only assign to it.
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
+  configurable: true,
   value: (query: string) => ({
     matches: false,
     media: query,
