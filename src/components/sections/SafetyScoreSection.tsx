@@ -35,6 +35,12 @@ export type SafetyScoreSectionProps = {
 };
 
 export function SafetyScoreSection({ headingAs = 'h2', className }: SafetyScoreSectionProps = {}) {
+  // Derived, not a fixed `h3`: this section's sub-heading must sit exactly one
+  // level below its own heading. Leading a page as an `h1` makes it an `h2`;
+  // hard-coding `h3` would skip a level there and break the site's contiguous
+  // heading order.
+  const SubHeading = headingAs === 'h1' ? 'h2' : 'h3';
+
   return (
     <Section id="safety-score" tone="navy" spacing="large" className={className}>
       <SectionHeading
@@ -84,9 +90,9 @@ export function SafetyScoreSection({ headingAs = 'h2', className }: SafetyScoreS
 
         {/* Reasons and transparency */}
         <div data-reveal-stagger>
-          <h3 className="text-body-sm font-semibold uppercase tracking-[0.12em] text-white/40">
+          <SubHeading className="text-body-sm font-semibold uppercase tracking-[0.12em] text-white/40">
             Why this route scored {route.safetyScore}
-          </h3>
+          </SubHeading>
 
           <ul className="mt-5 flex flex-wrap gap-2.5">
             {route.factors.map((factor) => (

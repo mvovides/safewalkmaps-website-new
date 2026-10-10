@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
+import { SafetyScoreSection } from '@/components/sections/SafetyScoreSection';
 import { renderWithRouter } from '@/test/renderWithRouter';
 
 import { SafetyScorePage } from './SafetyScorePage';
@@ -34,5 +35,28 @@ describe('SafetyScorePage', () => {
     renderPage();
     const cta = screen.getAllByRole('link').find((a) => /waitlist/i.test(a.textContent ?? ''));
     expect(cta).toHaveAttribute('href', '/#waitlist');
+  });
+
+  it('never skips a heading level', () => {
+    const { container } = renderPage();
+    const levels = Array.from(container.querySelectorAll('h1, h2, h3, h4, h5, h6')).map((heading) =>
+      Number(heading.tagName.slice(1)),
+    );
+
+    expect(levels.length).toBeGreaterThan(1);
+    levels.forEach((level, index) => {
+      const previous = levels[index - 1] ?? 0;
+      expect(level, `heading ${index + 1} (h${level}) follows h${previous}`).toBeLessThanOrEqual(
+        previous + 1,
+      );
+    });
+  });
+});
+
+describe('SafetyScoreSection', () => {
+  it('renders its heading as an h2 when given no props', () => {
+    renderWithRouter(<SafetyScoreSection />);
+    expect(screen.getByRole('heading', { level: 2, name: /Understand the route/i })).toBeVisible();
+    expect(screen.queryByRole('heading', { level: 1 })).not.toBeInTheDocument();
   });
 });
