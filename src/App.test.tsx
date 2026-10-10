@@ -1,6 +1,7 @@
 import { screen, waitFor } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
+import { emulateReducedMotion } from '@/test/reducedMotion';
 import { renderWithRouter } from '@/test/renderWithRouter';
 
 import { App } from './App';
@@ -10,22 +11,55 @@ function renderAt(path: string) {
   return renderWithRouter(<App />, { initialEntries: [path] });
 }
 
-/** Makes `(prefers-reduced-motion: reduce)` match; every other query does not. */
-function emulateReducedMotion() {
-  return vi.spyOn(window, 'matchMedia').mockImplementation(
-    (query: string) =>
-      ({
-        matches: query.includes('prefers-reduced-motion: reduce'),
-        media: query,
-        onchange: null,
-        addEventListener: () => {},
-        removeEventListener: () => {},
-        addListener: () => {},
-        removeListener: () => {},
-        dispatchEvent: () => false,
-      }) as MediaQueryList,
-  );
+const REVEALS = '[data-reveal], [data-reveal-stagger]';
+
+/**
+ * Renders a lazy route the way a first-time visitor meets it: the chunk is still
+ * in flight, so Suspense is showing its fallback.
+ *
+ * A lazy component only suspends the first time it renders in a module graph,
+ * and the routing tests below load every route. That is why this block comes
+ * first and why each test uses a route of its own. The check on the fallback is
+ * there so that reordering these tests fails loudly, instead of quietly
+ * testing a route that is already warm.
+ */
+function renderCold(path: string) {
+  const view = renderAt(path);
+  expect(
+    view.container.querySelector('[aria-busy="true"]'),
+    `${path} was already loaded, so this is not a first visit`,
+  ).not.toBeNull();
+  return view;
 }
+
+describe('App on a first visit to a lazy route', () => {
+  it('arms the scroll reveals for the elements that arrive with the page', async () => {
+    const { container } = renderCold('/features');
+    await screen.findByRole('heading', { level: 1 });
+
+    // Armed means the layout has marked each element, hidden or already shown.
+    // Which of the two depends on a frame this test does not wait for.
+    await waitFor(() => {
+      const reveals = container.querySelectorAll(REVEALS);
+      expect(reveals.length).toBeGreaterThan(0);
+      for (const element of reveals) expect(element).toHaveAttribute('data-visible');
+    });
+    expect(document.documentElement).toHaveClass('motion-ready');
+  });
+
+  it('marks every reveal element visible when the visitor prefers reduced motion', async () => {
+    emulateReducedMotion();
+    const { container } = renderCold('/safety-score');
+    await screen.findByRole('heading', { level: 1 });
+
+    await waitFor(() => {
+      const reveals = container.querySelectorAll(REVEALS);
+      expect(reveals.length).toBeGreaterThan(0);
+      for (const element of reveals) expect(element).toHaveAttribute('data-visible', 'true');
+    });
+    expect(document.documentElement).not.toHaveClass('motion-ready');
+  });
+});
 
 describe('App routing', () => {
   it.each(ROUTES)('renders %s with exactly one h1', async (route) => {
@@ -42,34 +76,5 @@ describe('App routing', () => {
         /does not go anywhere/i,
       );
     });
-  });
-
-  it('marks every reveal element visible when the visitor prefers reduced motion', async () => {
-    const reducedMotion = emulateReducedMotion();
-    try {
-      // /features is a lazy route, so on a cold render the layout's reveal
-      // effect runs while the Suspense fallback is still showing, before any
-      // reveal element exists. Load the page once, then render again with the
-      // chunk resolved so the effect sees the page's real elements.
-      const cold = renderAt('/features');
-      await screen.findByRole('heading', { level: 1 });
-      cold.unmount();
-
-      // Earlier tests in this file may have armed the hidden state on <html>.
-      document.documentElement.classList.remove('motion-ready');
-
-      const { container } = renderAt('/features');
-      const reveals = container.querySelectorAll('[data-reveal], [data-reveal-stagger]');
-
-      // Asserted synchronously: outside reduced motion these start as
-      // data-visible="false" and only turn true on a later animation frame.
-      expect(reveals.length).toBeGreaterThan(0);
-      for (const element of reveals) {
-        expect(element).toHaveAttribute('data-visible', 'true');
-      }
-      expect(document.documentElement).not.toHaveClass('motion-ready');
-    } finally {
-      reducedMotion.mockRestore();
-    }
   });
 });

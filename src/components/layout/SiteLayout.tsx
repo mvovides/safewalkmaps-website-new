@@ -53,10 +53,8 @@ function useRouteScroll(): void {
 }
 
 export function SiteLayout({ children }: { children: ReactNode }) {
-  const { pathname } = useLocation();
-
   useRouteScroll();
-  useScrollReveal(pathname);
+  useScrollReveal();
 
   return (
     <>
