@@ -28,13 +28,19 @@ const transparency = [
   },
 ];
 
-export function SafetyScoreSection() {
+export type SafetyScoreSectionProps = {
+  /** `h1` when this section leads its own route. */
+  headingAs?: 'h1' | 'h2';
+  className?: string;
+};
+
+export function SafetyScoreSection({ headingAs = 'h2', className }: SafetyScoreSectionProps = {}) {
   return (
-    <Section id="safety-score" tone="navy" spacing="large">
+    <Section id="safety-score" tone="navy" spacing="large" className={className}>
       <SectionHeading
-        index="03"
         eyebrow="The safety score"
         tone="inverse"
+        as={headingAs}
         title={
           <>
             Understand the route,
