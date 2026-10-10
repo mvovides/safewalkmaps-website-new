@@ -138,6 +138,122 @@ have been recomputed from the WCAG 2.1 relative luminance formula.
 - **No repo-wide reformat.** 60 files have pre-existing Prettier drift. Fixing it would bury
   this work in churn; it should be its own commit.
 
+## Site architecture
+
+Branch: `feature/site-architecture`. The home page had grown into the whole site. Measured
+on the production build, it was **21.6 screens tall on a desktop and 27.9 on a phone**: a
+visitor had to scroll past the detail of every feature, scenario, FAQ and policy to reach
+the ask. The argument now stays on the home page and the detail lives on its own routes,
+which brings the home page to **12.8 screens on desktop and 14.6 on a phone**.
+
+### What it cost, and where each section went
+
+Per-section scroll cost before the change, in screens of viewport height, and where the
+section lives now. The after figure is the page total in the last row: a section that moved
+costs the home page nothing.
+
+| Section | Desktop | Phone | Now |
+| --- | --- | --- | --- |
+| hero | 3.18 | 3.50 | stays on `/` |
+| problem | 1.31 | 1.62 | stays on `/` |
+| how-it-works | 4.32 | 3.48 | stays on `/` |
+| safety-score | 1.61 | 2.54 | moved to `/safety-score` |
+| routes | 1.39 | 2.18 | stays on `/` |
+| features | 1.66 | 3.39 | moved to `/features` |
+| privacy | 1.06 | 1.67 | moved to `/about` |
+| scenarios | 1.22 | 0.96 | moved to `/features` |
+| mission | 1.07 | 1.35 | moved to `/about` |
+| waitlist | 0.93 | 1.61 | stays on `/` |
+| faq | 1.45 | 2.29 | moved to `/faq` |
+| contact | 0.71 | 1.15 | moved to `/about` |
+| final CTA | 1.13 | 1.05 | stays on `/`, and closes each detail page |
+| **Home page total** | **21.6 → 12.8** | **27.9 → 14.6** | |
+
+The section rows are measured per section and do not add up to the page totals; the
+difference is height that belongs to no listed section.
+
+### Page map
+
+| Route | Carries | Lazy |
+| --- | --- | --- |
+| `/` | Hero, problem, how it works, route choice, waitlist, final CTA | No, in the main bundle |
+| `/safety-score` | The safety score (leads as the `h1`), final CTA | Yes |
+| `/features` | Features (leads as the `h1`), scenarios, final CTA | Yes |
+| `/about` | Mission (leads as the `h1`), privacy, contact. No closing CTA: the contact form is already an ask | Yes |
+| `/faq` | The FAQ (leads as the `h1`), final CTA, `FAQPage` structured data | Yes |
+| `/privacy`, `/terms` | Legal pages | Yes |
+| `*` | The 404 | Yes |
+
+`ROUTES` in `src/data/routes.ts` is the single list of public paths. The router, the
+navigation, the footer and the sitemap are all tested against it.
+
+### What changed
+
+- **Route-based navigation replaces scroll-spy.** The header links to real pages and marks
+  the current one with `aria-current`; the indicator sits under the active item on a
+  sub-page and is hidden on `/`. `useActiveSection`, which tracked the section in view, is
+  deleted.
+- **Eyebrow indices run 01 to 04 without a gap.** Moving sections away left the home page
+  numbered 01, 02, 04, 09; it is renumbered.
+- **Stale hashes are forwarded.** `/#features`, `/#faq`, `/#contact` and the rest forward to
+  the page that now holds the section, with `replace` so Back returns to where the visitor
+  came from. Hashes for sections still on the home page are left alone.
+- **Waitlist links resolve from every route.** A bare `#waitlist` looks for an anchor on the
+  current page, and sub-pages have none. They are now `/#waitlist`.
+- **The sitemap lists the four new pages** at priority 0.8, and a test asserts the sitemap
+  and `ROUTES` agree in both directions. The three host configs already served any path as
+  the SPA shell, so a hard refresh on a new route needs no host change.
+
+### FAQ structured data moved, and what that costs
+
+The `FAQPage` JSON-LD moved out of `index.html` and onto `/faq`, where it is injected when
+the page mounts and removed when it unmounts. It could not stay: it described questions
+from a page that no longer contains them.
+
+**The trade-off, stated plainly:** a crawler that does not execute JavaScript no longer sees
+this structured data. Google renders JavaScript and will read it; other consumers may not.
+
+Doing this exposed an existing defect. The hand-written block in `index.html` was already
+**stale** against the rendered page: it listed 8 questions where the page renders 9 (it
+omitted "Will it cost anything?"), and two of its questions used different wording from the
+page. The schema is now generated from `src/data/faq.ts`, the same data the page renders,
+so the two cannot drift. That fixes a pre-existing SEO defect rather than only relocating
+one.
+
+### Testing
+
+Vitest and Testing Library were added at the start of this work. The project had no test
+runner at all, and `npm run test` was a script CLAUDE.md referred to that did not exist; it
+is now a real script and runs the suite once. At the time of writing that is 69 tests across
+13 files, in jsdom with `IntersectionObserver`, `ResizeObserver`, `matchMedia`, `scrollTo`
+and `scrollIntoView` stubbed in `src/test/setup.ts`. Tests render through
+`renderWithRouter`, which mirrors the router flags the app ships with.
+
+The suite covers:
+
+- **Routing at app level:** every route in `ROUTES` renders exactly one `h1`, an unknown
+  path reaches the 404, and under `prefers-reduced-motion` every reveal element is marked
+  visible rather than left hidden.
+- **Data integrity:** the nav and footer point only at real routes or external URLs, nothing
+  still links to a moved section, and the sitemap and `ROUTES` agree.
+- **Each page:** one `h1`, no skipped heading levels, a document title and canonical path,
+  and the `FAQPage` schema being injected on mount and removed on unmount.
+- **Navigation behaviour:** the header marks the current route and nothing on `/`, and
+  stale hashes forward, replace rather than push, and scroll on the page they land on.
+- **Cross-links:** the waitlist calls to action point at `/#waitlist`, and the hero's
+  secondary link correctly stays local.
+
+It does not cover rendered layout, the GSAP motion, or form submission. Those are checked in
+a real browser.
+
+### Deviation from the spec
+
+The design spec called for a `PageIntro` component to supply each page's `h1`. It was
+deliberately not built. Every moved section already renders its own eyebrow, heading and
+lede, so a page-title block above it would say nearly the same thing twice. Instead
+`SectionHeading` gained an `as` prop, and the lead section on each route renders its
+existing heading as that route's `h1`.
+
 ## Verified
 
 The Apple-design pass was re-verified in Chromium at 390, 768 and 1440px against the
