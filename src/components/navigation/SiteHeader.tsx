@@ -86,6 +86,25 @@ export function SiteHeader() {
     return () => window.removeEventListener('resize', measureIndicator);
   }, [measureIndicator]);
 
+  // Measure again once the web font has loaded. The layout effect above runs
+  // before Inter arrives, so it records fallback-font widths, which are narrower
+  // (111px against a 119px item), and nothing else would correct them: the
+  // indicator no longer tracks scroll, so no scroll or resize follows on its own.
+  // Not redundant — do not remove it.
+  useEffect(() => {
+    // Absent in older engines, and optional in the type lib.
+    const fonts: FontFaceSet | undefined = document.fonts;
+    if (!fonts) return undefined;
+
+    let cancelled = false;
+    void fonts.ready.then(() => {
+      if (!cancelled) measureIndicator();
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [measureIndicator]);
+
   // Close the menu on navigation.
   useEffect(() => {
     setMenuOpen(false);
