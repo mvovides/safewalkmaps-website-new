@@ -10,9 +10,8 @@ import { scenarios } from '@/data/features';
  */
 export function ScenariosSection() {
   return (
-    <Section id="scenarios">
+    <Section id="scenarios" tone="secondary">
       <SectionHeading
-        index="07"
         eyebrow="Built for real walks"
         title={
           <>

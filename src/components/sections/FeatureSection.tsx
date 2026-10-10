@@ -8,13 +8,15 @@ import { cn } from '@/lib/cn';
 
 type CardProps = {
   title: string;
+  /** The tag for the card's title: one level below the section heading. */
+  headingTag: 'h2' | 'h3';
   body: string;
   icon?: ReactNode;
   className?: string;
   children?: ReactNode;
 };
 
-function FeatureCard({ title, body, icon, className, children }: CardProps) {
+function FeatureCard({ title, headingTag: Heading, body, icon, className, children }: CardProps) {
   return (
     <article
       className={cn(
@@ -27,7 +29,7 @@ function FeatureCard({ title, body, icon, className, children }: CardProps) {
           {icon}
         </span>
       )}
-      <h3 className="text-body-lg font-semibold text-ink-primary">{title}</h3>
+      <Heading className="text-body-lg font-semibold text-ink-primary">{title}</Heading>
       <p className="mt-2.5 text-ink-secondary">{body}</p>
       {children}
     </article>
@@ -97,11 +99,23 @@ function ReportsIllustration() {
   );
 }
 
-export function FeatureSection() {
+export type FeatureSectionProps = {
+  /** `h1` when this section leads its own route. */
+  headingAs?: 'h1' | 'h2';
+  className?: string;
+};
+
+export function FeatureSection({ headingAs = 'h2', className }: FeatureSectionProps = {}) {
+  // Derived, not a fixed `h3`: the feature titles must sit exactly one level
+  // below this section's own heading. Leading a page as an `h1` makes them
+  // `h2`s; hard-coding `h3` would skip a level there and break the site's
+  // contiguous heading order.
+  const CardHeading = headingAs === 'h1' ? 'h2' : 'h3';
+
   return (
-    <Section id="features" spacing="large">
+    <Section id="features" spacing="large" className={className}>
       <SectionHeading
-        index="05"
+        as={headingAs}
         eyebrow="Walk with context"
         title={
           <>
@@ -123,9 +137,9 @@ export function FeatureSection() {
             <span className="mb-5 grid h-10 w-10 place-items-center rounded-xl bg-white/10 text-green-500">
               <MapPinned aria-hidden="true" className="h-5 w-5" />
             </span>
-            <h3 className="text-display-sm font-semibold text-white">
+            <CardHeading className="text-display-sm font-semibold text-white">
               Turn-by-turn, with the score in view
-            </h3>
+            </CardHeading>
             <p className="mt-3.5 max-w-prose text-white/60">
               Walking directions that keep the route&rsquo;s score and the reason behind it on
               screen. If a new report lands on the street ahead, SafeWalkMaps offers you a
@@ -149,6 +163,7 @@ export function FeatureSection() {
         {/* Two stacked */}
         <div className="grid gap-5 lg:col-span-5" data-reveal>
           <FeatureCard
+            headingTag={CardHeading}
             title="Report what the data misses"
             body="A light that is out, a pavement that is closed, an underpass that feels wrong. Two taps, anonymous, and it feeds into everyone's routing."
             icon={<MessageSquareWarning aria-hidden="true" className="h-5 w-5" />}
@@ -160,6 +175,7 @@ export function FeatureSection() {
         {/* Wide share panel */}
         <FeatureCard
           className="lg:col-span-5"
+          headingTag={CardHeading}
           title="Share the walk, not your history"
           body="Send someone a temporary link that follows you until you arrive, then expires. No permanent trail, and no account needed to use it."
           icon={<Share2 aria-hidden="true" className="h-5 w-5" />}
@@ -169,6 +185,7 @@ export function FeatureSection() {
 
         <FeatureCard
           className="lg:col-span-3"
+          headingTag={CardHeading}
           title="Works without a signal"
           body="Download an area before you leave and keep navigation and saved scores. Live reports sync back up when you reconnect."
           icon={<CloudOff aria-hidden="true" className="h-5 w-5" />}
@@ -176,6 +193,7 @@ export function FeatureSection() {
 
         <FeatureCard
           className="lg:col-span-4"
+          headingTag={CardHeading}
           title="SOS when you need it"
           body="Alerts emergency services with your location, notifies your emergency contacts with a link to follow, and sounds an alarm from your phone."
           icon={<ShieldAlert aria-hidden="true" className="h-5 w-5" />}
