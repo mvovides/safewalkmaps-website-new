@@ -4,8 +4,13 @@ import { useLocation, useNavigate } from 'react-router-dom';
 /**
  * Anchors that used to resolve on the home page, and where their content went.
  *
- * `#privacy` maps to `/about`, not to the `/privacy` legal page: the old anchor
- * pointed at the privacy *section*, and the policy is a different document.
+ * `#privacy` maps to `/about#privacy`, not to the `/privacy` legal page: the old
+ * anchor pointed at the privacy *section*, and the policy is a different
+ * document.
+ *
+ * A target carries its anchor wherever the section is not the first on its new
+ * page. `#mission` is bare because it opens `/about`, so the top of the page
+ * already is the mission.
  *
  * Hashes for sections still on the home page are deliberately absent —
  * `#routes`, `#waitlist`, `#how-it-works`, `#problem` must not be redirected.
@@ -13,8 +18,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 export const STALE_HASH_ROUTES: Record<string, string> = {
   '#safety-score': '/safety-score',
   '#features': '/features',
-  '#scenarios': '/features',
-  '#privacy': '/about',
+  '#scenarios': '/features#scenarios',
+  '#privacy': '/about#privacy',
   '#mission': '/about',
   '#contact': '/about#contact',
   '#faq': '/faq',

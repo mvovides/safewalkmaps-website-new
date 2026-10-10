@@ -38,7 +38,33 @@ function renderAt(...entries: string[]) {
   );
 }
 
+/** Anchors whose sections are still on the home page, so they must never be forwarded. */
+const HASHES_STILL_ON_HOME = ['#routes', '#waitlist', '#how-it-works', '#problem', '#main'];
+
 describe('useStaleHashRedirect', () => {
+  it('forwards each moved hash to the section it names, and nothing else', () => {
+    // Written out in full rather than derived from the map: the test below only
+    // proves each entry is navigable, not that it is the right entry. #privacy
+    // is the section about data handling and lives on /about, not the /privacy
+    // legal policy; #mission stays a bare path because it is the first section
+    // on /about, so the top of the page already is the mission.
+    expect(STALE_HASH_ROUTES).toEqual({
+      '#safety-score': '/safety-score',
+      '#features': '/features',
+      '#scenarios': '/features#scenarios',
+      '#privacy': '/about#privacy',
+      '#mission': '/about',
+      '#contact': '/about#contact',
+      '#faq': '/faq',
+    });
+  });
+
+  it('never lists a hash whose section is still on the home page', () => {
+    for (const hash of HASHES_STILL_ON_HOME) {
+      expect(Object.keys(STALE_HASH_ROUTES), `${hash} must not be redirected`).not.toContain(hash);
+    }
+  });
+
   it('sends every moved hash to its new route', () => {
     for (const [hash, target] of Object.entries(STALE_HASH_ROUTES)) {
       const { unmount } = renderAt(`/${hash}`);
@@ -48,7 +74,7 @@ describe('useStaleHashRedirect', () => {
   });
 
   it('leaves hashes whose sections are still on the home page alone', () => {
-    for (const hash of ['#routes', '#waitlist', '#how-it-works', '#problem', '#main']) {
+    for (const hash of HASHES_STILL_ON_HOME) {
       const { unmount } = renderAt(`/${hash}`);
       expect(screen.getByText('home'), `${hash} should stay on the home page`).toBeInTheDocument();
       unmount();
