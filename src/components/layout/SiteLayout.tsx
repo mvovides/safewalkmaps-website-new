@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 
 import { SiteHeader } from '@/components/navigation/SiteHeader';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
+import { prefersReducedMotion } from '@/lib/motion';
 
 import { SiteFooter } from './SiteFooter';
 
@@ -36,7 +37,14 @@ function useRouteScroll(): void {
       const seek = () => {
         const target = document.getElementById(id);
         if (target) {
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // An explicit `behavior` overrides the computed `scroll-behavior`, so the
+          // stylesheet's `auto` under prefers-reduced-motion cannot reach this call.
+          // Read at the moment of scrolling: the search can outlive the render that
+          // began it, and the setting can change while a chunk loads.
+          target.scrollIntoView({
+            behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+            block: 'start',
+          });
           return;
         }
         framesLeft -= 1;

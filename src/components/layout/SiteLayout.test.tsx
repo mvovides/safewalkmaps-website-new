@@ -3,6 +3,7 @@ import { lazy, Suspense, type ComponentType } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { emulateReducedMotion } from '@/test/reducedMotion';
 import { renderWithRouter } from '@/test/renderWithRouter';
 
 import { SiteLayout } from './SiteLayout';
@@ -64,6 +65,9 @@ function GoTo({ to }: { to: string }) {
 }
 
 const SCROLL_OPTIONS = { behavior: 'smooth', block: 'start' };
+// `auto` defers to the page's computed scroll-behavior, which the stylesheet
+// sets to `auto` under prefers-reduced-motion. `smooth` would not.
+const REDUCED_MOTION_SCROLL_OPTIONS = { behavior: 'auto', block: 'start' };
 
 describe('SiteLayout hash scrolling', () => {
   let frames: ReturnType<typeof controlFrames>;
@@ -105,6 +109,51 @@ describe('SiteLayout hash scrolling', () => {
     expect(scrollIntoView).toHaveBeenCalledTimes(1);
     expect(scrollIntoView.mock.contexts[0]).toBe(screen.getByTestId('contact'));
     expect(scrollIntoView).toHaveBeenCalledWith(SCROLL_OPTIONS);
+  });
+
+  it('jumps instead of animating when the visitor prefers reduced motion', () => {
+    // An explicit `behavior` in the options overrides the stylesheet's
+    // `scroll-behavior`, so asking for `smooth` here would animate a
+    // multi-screen scroll for someone who asked for no motion at all.
+    emulateReducedMotion();
+    renderWithRouter(
+      <SiteLayout>
+        <Routes>
+          <Route path="/about" element={<section id="contact" />} />
+        </Routes>
+      </SiteLayout>,
+      { initialEntries: ['/about#contact'] },
+    );
+
+    frames.advance(1);
+
+    expect(scrollIntoView).toHaveBeenCalledTimes(1);
+    expect(scrollIntoView).toHaveBeenCalledWith(REDUCED_MOTION_SCROLL_OPTIONS);
+  });
+
+  it('honours the preference as it stands when the scroll happens, not when the search began', async () => {
+    // The search can outlive the render that started it, for as long as a slow
+    // chunk takes to arrive, and the setting can change in that time.
+    const { Page, arrive } = lazyPage(() => <section id="contact" />);
+
+    renderWithRouter(
+      <SiteLayout>
+        <Suspense fallback={<div aria-busy="true" />}>
+          <Routes>
+            <Route path="/about" element={<Page />} />
+          </Routes>
+        </Suspense>
+      </SiteLayout>,
+      { initialEntries: ['/about#contact'] },
+    );
+    frames.advance(2);
+    emulateReducedMotion();
+
+    await arrive();
+    frames.advance(2);
+
+    expect(scrollIntoView).toHaveBeenCalledTimes(1);
+    expect(scrollIntoView).toHaveBeenCalledWith(REDUCED_MOTION_SCROLL_OPTIONS);
   });
 
   it('scrolls on the first frame, once, when the target is already on the page', () => {
