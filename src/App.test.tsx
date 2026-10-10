@@ -5,7 +5,7 @@ import { emulateReducedMotion } from '@/test/reducedMotion';
 import { renderWithRouter } from '@/test/renderWithRouter';
 
 import { App } from './App';
-import { ROUTES } from './data/routes';
+import { ROUTES, type Route } from './data/routes';
 
 function renderAt(path: string) {
   return renderWithRouter(<App />, { initialEntries: [path] });
@@ -61,12 +61,32 @@ describe('App on a first visit to a lazy route', () => {
   });
 });
 
+/**
+ * An id that only each route's own page carries. The 404 has an h1 of its own,
+ * so counting h1s cannot tell a route from the catch-all that a misspelled path
+ * would fall through to. Keyed by `Route`, so adding a route without saying what
+ * it renders is a compile error.
+ */
+const OWN_CONTENT: Record<Route, string> = {
+  '/': 'hero',
+  '/safety-score': 'safety-score',
+  '/features': 'features',
+  '/about': 'mission',
+  '/faq': 'faq',
+  '/privacy': 'principles',
+  '/terms': 'what-it-is',
+};
+
 describe('App routing', () => {
-  it.each(ROUTES)('renders %s with exactly one h1', async (route) => {
+  it.each(ROUTES)('renders %s as its own page, with exactly one h1', async (route) => {
     const { container } = renderAt(route);
     await waitFor(() => {
-      expect(container.querySelectorAll('h1').length).toBe(1);
+      expect(
+        container.querySelector(`#${OWN_CONTENT[route]}`),
+        `${route} did not render its own page`,
+      ).not.toBeNull();
     });
+    expect(container.querySelectorAll('h1')).toHaveLength(1);
   });
 
   it('renders a 404 for an unknown path', async () => {
