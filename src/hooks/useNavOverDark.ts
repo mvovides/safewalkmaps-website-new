@@ -1,21 +1,9 @@
 import { useEffect, useState } from 'react';
 
+import { observeContent } from '@/lib/observeContent';
+
 /** The contract: a section opts in to the inverted header by rendering this. */
 const DARK_SURFACE = '[data-nav-theme="dark"]';
-
-const hasElement = (nodes: NodeList) => {
-  for (const node of nodes) if (node.nodeType === Node.ELEMENT_NODE) return true;
-  return false;
-};
-
-/**
- * Whether a mutation could have added or removed a dark surface, or changed
- * whether one is dark. A surface is an element, so text and comment churn cannot
- * matter — and the page does produce it: a number counting up swaps a text node
- * each time it ticks.
- */
-const affectsSurfaces = (record: MutationRecord) =>
-  record.type === 'attributes' || hasElement(record.addedNodes) || hasElement(record.removedNodes);
 
 /**
  * Reports whether a dark surface is currently sitting under the fixed header.
@@ -106,24 +94,12 @@ export function useNavOverDark(navHeightPx = 72): boolean {
     // header was left navy on navy and the navigation was invisible. Watching the
     // content for added and removed nodes covers route changes, lazy chunks
     // resolving, and anything else that renders late, without knowing about the
-    // router.
+    // router. The footer is the only dark surface outside <main>, and it mounts
+    // with the header, so the scan in `sync` still finds it.
     //
-    // It is scoped to <main> on purpose (the body is only a fallback for a page
-    // without one). The header's own markup changes as it inverts and as its
-    // menu opens; reacting to that would have it feed on its own output. The
-    // footer is the only dark surface outside <main>, and it mounts with the
-    // header, so the scan in `sync` still finds it. Mutations arrive batched and
-    // are filtered first, so this costs at most one scan of the document per
-    // batch of element changes.
-    const mutations = new MutationObserver((records) => {
-      if (records.some(affectsSurfaces)) sync();
-    });
-    mutations.observe(document.querySelector('main') ?? document.body, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['data-nav-theme'],
-    });
+    // A section that switches its theme in place is not an added or removed
+    // node, so the attribute is watched too.
+    const stopWatching = observeContent(sync, { attributeFilter: ['data-nav-theme'] });
 
     // The band depends on viewport height, so rebuild it when that changes.
     let frame = 0;
@@ -134,7 +110,7 @@ export function useNavOverDark(navHeightPx = 72): boolean {
     window.addEventListener('resize', onResize);
 
     return () => {
-      mutations.disconnect();
+      stopWatching();
       cancelAnimationFrame(frame);
       window.removeEventListener('resize', onResize);
       observer?.disconnect();
