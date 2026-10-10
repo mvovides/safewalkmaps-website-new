@@ -15,6 +15,9 @@ const FeaturesPage = lazy(() =>
 const AboutPage = lazy(() =>
   import('@/pages/AboutPage').then((module) => ({ default: module.AboutPage })),
 );
+const FaqPage = lazy(() =>
+  import('@/pages/FaqPage').then((module) => ({ default: module.FaqPage })),
+);
 const PrivacyPage = lazy(() =>
   import('@/pages/PrivacyPage').then((module) => ({ default: module.PrivacyPage })),
 );
@@ -39,6 +42,7 @@ export function App() {
           <Route path="/safety-score" element={<SafetyScorePage />} />
           <Route path="/features" element={<FeaturesPage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/faq" element={<FaqPage />} />
           <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/terms" element={<TermsPage />} />
           <Route path="*" element={<NotFoundPage />} />
