@@ -3,7 +3,7 @@ import { cleanup } from '@testing-library/react';
 import { afterEach, vi } from 'vitest';
 
 // jsdom implements neither of these, and both are used on every route:
-// useScrollReveal and useActiveSection construct an IntersectionObserver, and
+// useScrollReveal and useNavOverDark construct an IntersectionObserver, and
 // the motion system reads matchMedia. Without them every render throws.
 class NoopObserver {
   observe() {}

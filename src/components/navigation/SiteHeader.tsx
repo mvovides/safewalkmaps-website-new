@@ -3,8 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 
 import { Logo } from '@/components/brand/Logo';
 import { ButtonLink } from '@/components/ui/Button';
-import { navLinks, navSectionIds } from '@/data/navigation';
-import { useActiveSection } from '@/hooks/useActiveSection';
+import { navLinks } from '@/data/navigation';
 import { useNavOverDark } from '@/hooks/useNavOverDark';
 import { cn } from '@/lib/cn';
 
@@ -28,10 +27,11 @@ const INDICATOR_BASE_WIDTH = 100;
 
 export function SiteHeader() {
   const { pathname } = useLocation();
-  const isHome = pathname === '/';
   const [condensed, setCondensed] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const activeSection = useActiveSection(isHome ? navSectionIds : []);
+  // The indicator tracks the route now, not scroll position. One rule for
+  // every item, and nothing to measure while scrolling.
+  const activePath = navLinks.some((link) => link.path === pathname) ? pathname : null;
   // Invert over the navy surfaces so the glass never reads as a grey band.
   const overDark = useNavOverDark();
   const inverted = overDark && !menuOpen;
@@ -65,17 +65,17 @@ export function SiteHeader() {
 
   const measureIndicator = useCallback(() => {
     const list = listRef.current;
-    if (!list || !activeSection) {
+    if (!list || !activePath) {
       setIndicator(null);
       return;
     }
-    const item = list.querySelector<HTMLElement>(`[data-section="${activeSection}"]`);
+    const item = list.querySelector<HTMLElement>(`[data-path="${activePath}"]`);
     if (!item) {
       setIndicator(null);
       return;
     }
     setIndicator({ left: item.offsetLeft, width: item.offsetWidth });
-  }, [activeSection]);
+  }, [activePath]);
 
   useLayoutEffect(() => {
     measureIndicator();
@@ -142,10 +142,10 @@ export function SiteHeader() {
               }}
             />
             {navLinks.map((link) => (
-              <li key={link.sectionId} data-section={link.sectionId}>
-                <a
-                  href={isHome ? link.hash : `/${link.hash}`}
-                  aria-current={activeSection === link.sectionId ? 'true' : undefined}
+              <li key={link.path} data-path={link.path}>
+                <Link
+                  to={link.path}
+                  aria-current={activePath === link.path ? 'page' : undefined}
                   className={cn(
                     'inline-flex h-10 items-center rounded-lg px-3.5 text-body-sm font-medium transition-colors duration-base',
                     // Vibrancy: over a translucent surface the label is brand
@@ -156,7 +156,7 @@ export function SiteHeader() {
                     // small positive adjustment small text wants when it is
                     // read through a blur.
                     'tracking-[0.005em]',
-                    activeSection === link.sectionId
+                    activePath === link.path
                       ? inverted
                         ? 'text-white'
                         : 'text-navy-900'
@@ -166,7 +166,7 @@ export function SiteHeader() {
                   )}
                 >
                   {link.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
@@ -174,7 +174,7 @@ export function SiteHeader() {
 
         <div className="flex items-center gap-2">
           <ButtonLink
-            href={isHome ? '#waitlist' : '/#waitlist'}
+            href="/#waitlist"
             variant={inverted ? 'accent' : 'primary'}
             size="sm"
             routeHover
@@ -183,12 +183,7 @@ export function SiteHeader() {
             Join waitlist
           </ButtonLink>
 
-          <MobileMenu
-            open={menuOpen}
-            onOpenChange={setMenuOpen}
-            isHome={isHome}
-            inverted={inverted}
-          />
+          <MobileMenu open={menuOpen} onOpenChange={setMenuOpen} inverted={inverted} />
         </div>
       </div>
     </header>

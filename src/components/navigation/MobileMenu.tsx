@@ -1,5 +1,6 @@
 import { ArrowUpRight } from 'lucide-react';
 import { useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 
 import { ButtonLink } from '@/components/ui/Button';
 import { StatusPill } from '@/components/ui/Chip';
@@ -10,7 +11,6 @@ import { cn } from '@/lib/cn';
 export type MobileMenuProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  isHome: boolean;
   /** The header is currently over a dark surface. */
   inverted?: boolean;
 };
@@ -44,7 +44,7 @@ function MenuGlyph({ open }: { open: boolean }) {
  * the page stays visible behind it, which keeps the sense of place. Items
  * stagger in on open, and the whole sheet is `inert` to the keyboard when shut.
  */
-export function MobileMenu({ open, onOpenChange, isHome, inverted = false }: MobileMenuProps) {
+export function MobileMenu({ open, onOpenChange, inverted = false }: MobileMenuProps) {
   const sheetRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -120,9 +120,9 @@ export function MobileMenu({ open, onOpenChange, isHome, inverted = false }: Mob
           <nav aria-label="Mobile">
             <ul>
               {navLinks.map((link, index) => (
-                <li key={link.sectionId} className="border-b border-line last:border-b-0">
-                  <a
-                    href={isHome ? link.hash : `/${link.hash}`}
+                <li key={link.path} className="border-b border-line last:border-b-0">
+                  <Link
+                    to={link.path}
                     onClick={() => onOpenChange(false)}
                     style={{ transitionDelay: open ? `${90 + index * 55}ms` : '0ms' }}
                     className={cn(
@@ -136,7 +136,7 @@ export function MobileMenu({ open, onOpenChange, isHome, inverted = false }: Mob
                       className="h-5 w-5 text-ink-tertiary"
                       strokeWidth={2}
                     />
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -150,7 +150,7 @@ export function MobileMenu({ open, onOpenChange, isHome, inverted = false }: Mob
             )}
           >
             <ButtonLink
-              href={isHome ? '#waitlist' : '/#waitlist'}
+              href="/#waitlist"
               size="lg"
               routeHover
               onClick={() => onOpenChange(false)}
