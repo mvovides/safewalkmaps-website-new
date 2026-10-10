@@ -1,6 +1,6 @@
 import { ArrowUpRight } from 'lucide-react';
 import { useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import { ButtonLink } from '@/components/ui/Button';
 import { StatusPill } from '@/components/ui/Chip';
@@ -45,6 +45,7 @@ function MenuGlyph({ open }: { open: boolean }) {
  * stagger in on open, and the whole sheet is `inert` to the keyboard when shut.
  */
 export function MobileMenu({ open, onOpenChange, inverted = false }: MobileMenuProps) {
+  const { pathname } = useLocation();
   const sheetRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -123,6 +124,7 @@ export function MobileMenu({ open, onOpenChange, inverted = false }: MobileMenuP
                 <li key={link.path} className="border-b border-line last:border-b-0">
                   <Link
                     to={link.path}
+                    aria-current={pathname === link.path ? 'page' : undefined}
                     onClick={() => onOpenChange(false)}
                     style={{ transitionDelay: open ? `${90 + index * 55}ms` : '0ms' }}
                     className={cn(
