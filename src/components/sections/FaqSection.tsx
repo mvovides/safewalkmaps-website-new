@@ -3,13 +3,22 @@ import { Accordion } from '@/components/ui/Accordion';
 import { faqItems } from '@/data/faq';
 import { siteConfig } from '@/lib/config';
 
-export function FaqSection() {
+export type FaqSectionProps = {
+  /** `h1` when this section leads its own route. */
+  headingAs?: 'h1' | 'h2';
+  className?: string;
+};
+
+export function FaqSection({ headingAs = 'h2', className }: FaqSectionProps = {}) {
+  // One level below the section heading, so a lead `h1` is followed by `h2`s.
+  const questionLevel = headingAs === 'h1' ? 'h2' : 'h3';
+
   return (
-    <Section id="faq" tone="secondary">
+    <Section id="faq" tone="secondary" className={className}>
       <div className="grid gap-12 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.4fr)] lg:gap-16">
         <div className="lg:sticky lg:top-28 lg:self-start">
           <SectionHeading
-            index="10"
+            as={headingAs}
             eyebrow="Questions"
             title="The questions worth asking."
             size="md"
@@ -28,7 +37,11 @@ export function FaqSection() {
         </div>
 
         <div data-reveal>
-          <Accordion items={faqItems} defaultOpenId={faqItems[0]?.id} />
+          <Accordion
+            items={faqItems}
+            defaultOpenId={faqItems[0]?.id}
+            headingLevel={questionLevel}
+          />
         </div>
       </div>
     </Section>

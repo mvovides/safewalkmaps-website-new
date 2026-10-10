@@ -1,13 +1,23 @@
 import { NetworkField } from '@/components/illustrations/NetworkField';
 import { Eyebrow } from '@/components/layout/Section';
+import { cn } from '@/lib/cn';
 import { siteConfig } from '@/lib/config';
 
-export function MissionSection() {
+export type MissionSectionProps = {
+  /** `h1` when this section leads its own route. */
+  headingAs?: 'h1' | 'h2';
+  className?: string;
+};
+
+export function MissionSection({ headingAs: Heading = 'h2', className }: MissionSectionProps = {}) {
   return (
     <section
       id="mission"
       data-nav-theme="dark"
-      className="on-navy relative overflow-hidden bg-surface-navy py-section-lg text-white"
+      className={cn(
+        'on-navy relative overflow-hidden bg-surface-navy py-section-lg text-white',
+        className,
+      )}
     >
       {/* The network, behind the statement. */}
       <div
@@ -19,15 +29,15 @@ export function MissionSection() {
 
       <div className="shell relative">
         <div className="max-w-4xl" data-reveal-stagger>
-          <Eyebrow index="08" tone="inverse" className="mb-7">
+          <Eyebrow tone="inverse" className="mb-7">
             The mission
           </Eyebrow>
 
-          <h2 className="text-display-lg font-semibold text-white">
+          <Heading className="text-display-lg font-semibold text-white">
             Walking should not mean choosing between
             <span className="text-green-500"> convenience</span> and
             <span className="text-green-500"> confidence</span>.
-          </h2>
+          </Heading>
 
           <div className="mt-9 grid gap-7 text-body-lg text-white/65 sm:grid-cols-2 sm:gap-10">
             <p>

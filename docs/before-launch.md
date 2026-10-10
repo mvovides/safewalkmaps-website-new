@@ -1,6 +1,6 @@
 # Before launch — open items
 
-Four things need a decision from you before this site replaces safewalkmaps.com. None of them
+Five things need a decision from you before this site replaces safewalkmaps.com. None of them
 block deploying to a staging URL; all of them block going live.
 
 Each one exists because the rebuild refused to invent an answer. Where a fact was not
@@ -54,7 +54,12 @@ which from outside.
 honest options are a "Planned" chip on the card or a short qualifier in the body copy —
 either is better than a visitor downloading the app and finding a feature missing.
 
-**Where:** `src/data/features.ts` and `src/components/sections/FeatureSection.tsx`.
+**Where:** `src/data/features.ts` and `src/components/sections/FeatureSection.tsx`. The meta
+descriptions of the pages that moved off the home page repeat the same claims, so they need
+the same pass: the `description` passed to `useDocumentMeta` in `src/pages/SafetyScorePage.tsx`,
+`src/pages/FeaturesPage.tsx`, `src/pages/AboutPage.tsx` and `src/pages/FaqPage.tsx`. The
+features page names live navigation, re-routing and shared journeys; the FAQ page says where the
+app is available.
 
 ---
 
@@ -99,9 +104,59 @@ over — no new account needed.
 
 1. Set the three variables in the host's project settings.
 2. Deploy and confirm a real waitlist submission lands in the inbox.
-3. Confirm `/privacy` and `/terms` resolve on a hard refresh (SPA rewrites are configured for
-   Vercel, Netlify and Cloudflare Pages — whichever you use is already covered).
-4. Check the social preview renders: paste the URL into a Slack or iMessage thread.
+3. Confirm all seven routes resolve on a hard refresh: `/`, `/safety-score`, `/features`,
+   `/about`, `/faq`, `/privacy` and `/terms` (SPA rewrites are configured for Vercel, Netlify
+   and Cloudflare Pages — whichever you use is already covered).
+4. Check the social preview: paste the home page URL into a Slack or iMessage thread, and it
+   should show the right title, description and image. **Expect the same check to fail on
+   every other page.** Pasting `/features` (or `/safety-score`, `/about`, `/faq`, `/privacy`,
+   `/terms`) will preview the home page's title and description, because link unfurlers do not
+   run the JavaScript that rewrites them. That is the open question in item 5, not a
+   misconfigured host.
+
+---
+
+## 5. Social previews — what a pasted link to the new pages shows
+
+**Status:** the pages are correct for anyone who opens them, and wrong for anything that only
+reads the HTML. Not built, and not decided.
+
+The site is client-rendered, so every URL is served the same `index.html`, which carries the
+home page's title, description, canonical link and `og:url`. `src/hooks/useDocumentMeta.ts`
+rewrites those once JavaScript runs. A browser sees the right values for `/features`, and so
+does Google, which renders JavaScript.
+
+Slack, iMessage and most other link unfurlers do not run JavaScript. Pasting
+`safewalkmaps.com/features` into one previews the home page's title and description. Both
+`og:url` and the canonical link still say `/`, which invites a platform to treat the share as a
+share of the home page. Meanwhile `public/sitemap.xml` advertises `/safety-score`, `/features`,
+`/about` and `/faq` at priority 0.8, so crawlers are told these are pages in their own right.
+The `FAQPage` structured data that moved to `/faq` has the same limit: it is injected by
+JavaScript, so a consumer that does not run it will not see it.
+
+This was harmless while the only sub-pages were `/privacy` and `/terms`. It is not harmless now
+that the safety score, the features, the mission and the FAQ each have an address of their own
+and the sitemap points search engines at them.
+
+**The options**, none of them chosen:
+
+- **Prerender the routes at build time.** A build step renders each of the seven routes to its
+  own HTML file with its own head, and the site still behaves as a single-page app after load.
+  It keeps the current stack, and adds a build step that has to keep working.
+- **Static generation.** Move the site onto a framework that renders every page ahead of time.
+  It solves this at the root, at the price of changing the stack, which is not a decision to
+  make quietly.
+- **A prerendering service in front of the host.** It serves rendered HTML to crawlers and
+  unfurlers and leaves the code alone. It is usually a paid service, and puts a third party in
+  the request path.
+- **Leave it.** Ship knowing that links to the new pages preview as the home page. That is a
+  legitimate choice; it just needs to be a choice.
+
+**What I need from you:** which of these to pursue, or confirmation that you accept the current
+behaviour for launch. Until then step 4 of the go-live checklist in item 4 will fail on every
+page but the home page.
+
+**Where:** `index.html`, `src/hooks/useDocumentMeta.ts` and `public/sitemap.xml`.
 
 ---
 

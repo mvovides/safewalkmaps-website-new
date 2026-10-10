@@ -118,7 +118,7 @@ export function FinalCtaSection() {
         </p>
 
         <div className="mt-10 flex flex-col items-center gap-5" data-reveal>
-          <ButtonLink href="#waitlist" size="lg" routeHover>
+          <ButtonLink href="/#waitlist" size="lg" routeHover>
             Join the iOS waitlist
           </ButtonLink>
           <StatusPill>Coming soon on iOS</StatusPill>

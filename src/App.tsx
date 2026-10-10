@@ -6,6 +6,18 @@ import { HomePage } from '@/pages/HomePage';
 
 // The homepage carries the scroll experience, so it ships in the main bundle.
 // The supporting pages are split out — most visitors never open them.
+const SafetyScorePage = lazy(() =>
+  import('@/pages/SafetyScorePage').then((module) => ({ default: module.SafetyScorePage })),
+);
+const FeaturesPage = lazy(() =>
+  import('@/pages/FeaturesPage').then((module) => ({ default: module.FeaturesPage })),
+);
+const AboutPage = lazy(() =>
+  import('@/pages/AboutPage').then((module) => ({ default: module.AboutPage })),
+);
+const FaqPage = lazy(() =>
+  import('@/pages/FaqPage').then((module) => ({ default: module.FaqPage })),
+);
 const PrivacyPage = lazy(() =>
   import('@/pages/PrivacyPage').then((module) => ({ default: module.PrivacyPage })),
 );
@@ -27,6 +39,10 @@ export function App() {
       <Suspense fallback={<RouteFallback />}>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/safety-score" element={<SafetyScorePage />} />
+          <Route path="/features" element={<FeaturesPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/faq" element={<FaqPage />} />
           <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/terms" element={<TermsPage />} />
           <Route path="*" element={<NotFoundPage />} />

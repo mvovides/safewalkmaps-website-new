@@ -3,8 +3,22 @@ import { useLocation } from 'react-router-dom';
 
 import { SiteHeader } from '@/components/navigation/SiteHeader';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
+import { prefersReducedMotion } from '@/lib/motion';
 
 import { SiteFooter } from './SiteFooter';
+
+/**
+ * How many animation frames to keep looking for a `#hash` target: about one
+ * second at 60Hz.
+ *
+ * On a direct load of a lazy route the location already carries the hash while
+ * Suspense is still showing its fallback, so the target does not exist yet. A
+ * chunk on a good connection lands within a few frames; a second covers a slow
+ * one without leaving the search running for the life of the page. Past that the
+ * visitor has probably started reading or scrolling, and a late jump would
+ * yank the page out from under them, so we give up and leave them where they are.
+ */
+const HASH_TARGET_MAX_FRAMES = 60;
 
 /**
  * Restores scroll position on route change, and honours a `#hash` target once
@@ -15,11 +29,30 @@ function useRouteScroll(): void {
 
   useEffect(() => {
     if (hash) {
+      const id = hash.slice(1);
+      let framesLeft = HASH_TARGET_MAX_FRAMES;
+      let frame = 0;
+
+      // Look once per frame until the target exists, then scroll and stop.
+      const seek = () => {
+        const target = document.getElementById(id);
+        if (target) {
+          // An explicit `behavior` overrides the computed `scroll-behavior`, so the
+          // stylesheet's `auto` under prefers-reduced-motion cannot reach this call.
+          // Read at the moment of scrolling: the search can outlive the render that
+          // began it, and the setting can change while a chunk loads.
+          target.scrollIntoView({
+            behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+            block: 'start',
+          });
+          return;
+        }
+        framesLeft -= 1;
+        if (framesLeft > 0) frame = requestAnimationFrame(seek);
+      };
+
       // Wait a frame so the target exists before scrolling to it.
-      const frame = requestAnimationFrame(() => {
-        const target = document.getElementById(hash.slice(1));
-        target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
+      frame = requestAnimationFrame(seek);
       return () => cancelAnimationFrame(frame);
     }
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
@@ -28,10 +61,8 @@ function useRouteScroll(): void {
 }
 
 export function SiteLayout({ children }: { children: ReactNode }) {
-  const { pathname } = useLocation();
-
   useRouteScroll();
-  useScrollReveal(pathname);
+  useScrollReveal();
 
   return (
     <>

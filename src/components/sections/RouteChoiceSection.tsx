@@ -29,7 +29,7 @@ export function RouteChoiceSection() {
   return (
     <Section id="routes" tone="secondary">
       <SectionHeading
-        index="04"
+        index="03"
         eyebrow="Three routes"
         title={
           <>

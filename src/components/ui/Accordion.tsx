@@ -13,9 +13,10 @@ type RowProps = {
   item: AccordionItem;
   open: boolean;
   onToggle: () => void;
+  headingLevel: NonNullable<AccordionProps['headingLevel']>;
 };
 
-function AccordionRow({ item, open, onToggle }: RowProps) {
+function AccordionRow({ item, open, onToggle, headingLevel: Heading }: RowProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
   const baseId = useId().replace(/:/g, '');
@@ -41,7 +42,7 @@ function AccordionRow({ item, open, onToggle }: RowProps) {
 
   return (
     <div className="border-b border-line last:border-b-0">
-      <h3>
+      <Heading>
         <button
           id={buttonId}
           type="button"
@@ -65,7 +66,7 @@ function AccordionRow({ item, open, onToggle }: RowProps) {
             <Plus className="h-4 w-4" strokeWidth={2.25} />
           </span>
         </button>
-      </h3>
+      </Heading>
       <div
         id={panelId}
         role="region"
@@ -92,6 +93,12 @@ export type AccordionProps = {
   className?: string;
   /** Id of the item open on first render. */
   defaultOpenId?: string;
+  /**
+   * Heading level wrapping each question. The default suits an accordion
+   * inside a section that has its own `h2`; when the page's `h1` sits directly
+   * above the accordion, pass `h2` so the outline does not skip a level.
+   */
+  headingLevel?: 'h2' | 'h3';
 };
 
 /**
@@ -103,7 +110,12 @@ export type AccordionProps = {
  * Answers are non-interactive prose, so nothing focusable is left in the
  * collapsed panel.
  */
-export function Accordion({ items, className, defaultOpenId }: AccordionProps) {
+export function Accordion({
+  items,
+  className,
+  defaultOpenId,
+  headingLevel = 'h3',
+}: AccordionProps) {
   const [openId, setOpenId] = useState<string | null>(defaultOpenId ?? null);
 
   return (
@@ -113,6 +125,7 @@ export function Accordion({ items, className, defaultOpenId }: AccordionProps) {
           key={item.id}
           item={item}
           open={openId === item.id}
+          headingLevel={headingLevel}
           onToggle={() => setOpenId((current) => (current === item.id ? null : item.id))}
         />
       ))}

@@ -87,6 +87,12 @@ export type SectionHeadingProps = {
   tone?: 'default' | 'inverse';
   size?: 'md' | 'lg';
   id?: string;
+  /**
+   * Heading level. A section inside a page is an `h2`; the section that leads
+   * a route renders its heading as that route's `h1`, so the page needs no
+   * separate title block repeating it.
+   */
+  as?: 'h1' | 'h2';
 };
 
 /**
@@ -103,6 +109,7 @@ export function SectionHeading({
   tone = 'default',
   size = 'lg',
   id,
+  as: Heading = 'h2',
 }: SectionHeadingProps) {
   const inverse = tone === 'inverse';
   return (
@@ -119,7 +126,7 @@ export function SectionHeading({
           {eyebrow}
         </Eyebrow>
       )}
-      <h2
+      <Heading
         id={id}
         className={cn(
           size === 'lg' ? 'text-display-lg' : 'text-display-md',
@@ -129,7 +136,7 @@ export function SectionHeading({
         )}
       >
         {title}
-      </h2>
+      </Heading>
       {lede && (
         <div
           className={cn(
