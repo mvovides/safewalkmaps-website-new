@@ -15,20 +15,24 @@ export type MobileMenuProps = {
   inverted?: boolean;
 };
 
-/** Three lines that become a cross, animated as transforms rather than a swap. */
+/**
+ * Three lines that become a cross.
+ *
+ * All three bars share one `top` and are moved apart with `translateY`, so
+ * opening the menu is a pure compositor transform. Driving `top` — which this
+ * used to do — relayouts the glyph every frame, and because `top` and `rotate`
+ * are separate interpolations the bars took a subtly different path in than
+ * out. One transform per bar makes the gesture reversible along its own path.
+ */
 function MenuGlyph({ open }: { open: boolean }) {
-  const bar = 'absolute left-0 h-[1.6px] w-full rounded-full bg-current transition-all duration-slow ease-out-expo';
+  const bar =
+    'absolute left-0 top-[4.7px] h-[1.6px] w-full rounded-full bg-current ' +
+    'transition-[transform,opacity] duration-spring-snappy ease-spring';
   return (
     <span aria-hidden="true" className="relative block h-[11px] w-[19px]">
-      <span className={cn(bar, open ? 'top-[4.7px] rotate-45' : 'top-0')} />
-      <span
-        className={cn(
-          bar,
-          'top-[4.7px]',
-          open ? 'scale-x-0 opacity-0' : 'scale-x-100 opacity-100',
-        )}
-      />
-      <span className={cn(bar, open ? 'top-[4.7px] -rotate-45' : 'top-[9.4px]')} />
+      <span className={cn(bar, open ? 'rotate-45' : '-translate-y-[4.7px]')} />
+      <span className={cn(bar, open ? 'scale-x-0 opacity-0' : 'scale-x-100 opacity-100')} />
+      <span className={cn(bar, open ? '-rotate-45' : 'translate-y-[4.7px]')} />
     </span>
   );
 }
@@ -78,7 +82,7 @@ export function MobileMenu({ open, onOpenChange, isHome, inverted = false }: Mob
         aria-controls="mobile-menu"
         aria-label={open ? 'Close menu' : 'Open menu'}
         className={cn(
-          '-mr-1.5 grid h-11 w-11 place-items-center rounded-full transition-colors duration-base lg:hidden',
+          'tappable -mr-1.5 grid h-11 w-11 place-items-center rounded-full active:scale-[0.94] motion-reduce:active:scale-100 lg:hidden',
           inverted ? 'text-white hover:bg-white/10' : 'text-navy-800 hover:bg-navy-50',
         )}
       >
@@ -90,7 +94,7 @@ export function MobileMenu({ open, onOpenChange, isHome, inverted = false }: Mob
         aria-hidden="true"
         onClick={() => onOpenChange(false)}
         className={cn(
-          'fixed inset-0 top-[var(--nav-height)] z-40 bg-navy-950/18 backdrop-blur-[2px] transition-opacity duration-slow ease-out-expo lg:hidden',
+          'fixed inset-0 top-[var(--nav-height)] z-40 bg-navy-950/18 backdrop-blur-[2px] transition-opacity duration-spring-sheet ease-spring-sheet lg:hidden',
           open ? 'opacity-100' : 'pointer-events-none opacity-0',
         )}
       />
@@ -100,8 +104,16 @@ export function MobileMenu({ open, onOpenChange, isHome, inverted = false }: Mob
         id="mobile-menu"
         ref={sheetRef}
         className={cn(
-          'fixed inset-x-0 top-[var(--nav-height)] z-40 origin-top overflow-hidden border-b border-line bg-white/96 backdrop-blur-xl transition-[transform,opacity] duration-slow ease-out-expo lg:hidden',
-          open ? 'translate-y-0 opacity-100' : 'pointer-events-none -translate-y-3 opacity-0',
+          'fixed inset-x-0 top-[var(--nav-height)] z-40 origin-top overflow-hidden border-b border-line lg:hidden',
+          // Materialises rather than fades: the blur ramps up with the scale
+          // and the slide, so the surface reads as glass arriving instead of a
+          // flat panel being turned up. A bigger surface than the bar above it,
+          // so a heavier blur — weight is how the two read as different
+          // thicknesses of the same material.
+          'bg-white/96 transition-[transform,opacity,backdrop-filter] duration-spring-sheet ease-spring-sheet',
+          open
+            ? 'translate-y-0 scale-100 opacity-100 backdrop-blur-2xl backdrop-saturate-150'
+            : 'pointer-events-none -translate-y-3 scale-[0.985] opacity-0 backdrop-blur-none',
         )}
       >
         <div className="shell safe-bottom pb-7 pt-3">
@@ -114,7 +126,7 @@ export function MobileMenu({ open, onOpenChange, isHome, inverted = false }: Mob
                     onClick={() => onOpenChange(false)}
                     style={{ transitionDelay: open ? `${90 + index * 55}ms` : '0ms' }}
                     className={cn(
-                      'flex items-center justify-between py-4 text-display-sm font-semibold tracking-[-0.025em] text-ink-primary transition-all duration-slower ease-out-expo',
+                      'flex items-center justify-between py-4 text-display-sm font-semibold tracking-[-0.025em] text-ink-primary transition-[transform,opacity] duration-spring ease-spring',
                       open ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0',
                     )}
                   >
@@ -133,7 +145,7 @@ export function MobileMenu({ open, onOpenChange, isHome, inverted = false }: Mob
           <div
             style={{ transitionDelay: open ? `${90 + navLinks.length * 55}ms` : '0ms' }}
             className={cn(
-              'mt-6 flex flex-col gap-4 transition-all duration-slower ease-out-expo',
+              'mt-6 flex flex-col gap-4 transition-[transform,opacity] duration-spring ease-spring',
               open ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0',
             )}
           >

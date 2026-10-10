@@ -50,8 +50,49 @@
     --duration-slow: 420ms;
     --duration-slower: 700ms;
 
+    /**
+     * Press response.
+     *
+     * A press has to register as contact, so it engages almost immediately and
+     * releases more slowly — the asymmetry is what makes a control feel
+     * physical rather than animated. 240ms in (the old `base`) reads as lag on
+     * the way down, which is the one place latency is least forgivable.
+     */
+    --duration-press-in: 90ms;
+    --duration-press-out: 320ms;
+
+    /**
+     * Springs.
+     *
+     * Generated from spring physics by `scripts/generate-spring-easings.mjs` —
+     * run it to change them. A cubic-bezier cannot express a spring: it has no
+     * overshoot and the wrong tail. `linear()` can, by sampling the real curve.
+     *
+     * Each easing is only correct at the duration it was sampled for, so the
+     * pairs below must be used together: `--ease-spring` with
+     * `--duration-spring`, and so on.
+     *
+     * The values here are the pre-`linear()` fallback; the @supports block
+     * below swaps in the real curves where the browser can parse them.
+     */
+    --ease-spring: var(--ease-out-quint);
+    --ease-spring-sheet: var(--ease-out-expo);
+    --duration-spring: 588ms;
+    --duration-spring-snappy: 441ms;
+    --duration-spring-sheet: 405ms;
+
     /* Layout */
     --nav-height: 4.5rem;
+
+    /**
+     * How far the navigation's material fades past the bottom of the bar.
+     *
+     * Apple does not rule a line under floating chrome — the material fades
+     * out, so content dissolves into it instead of being cut off by it. Roughly
+     * 40% of the bar height is enough to read as a soft edge without the blur
+     * visibly smearing text that is still well clear of the bar.
+     */
+    --nav-edge-fade: 1.75rem;
 
     /**
      * Scroll distance per beat of a pinned scroll story.
@@ -72,6 +113,84 @@
 
     color-scheme: light;
     -webkit-tap-highlight-color: transparent;
+  }
+
+  /**
+   * Real spring curves, where `linear()` parses (Safari 17.2+, Chrome 113+,
+   * Firefox 112+). Older browsers keep the decelerating béziers above, which
+   * land in the same place with a less physical tail — a graceful degradation
+   * rather than a broken transition.
+   *
+   * Sampled values come from `scripts/generate-spring-easings.mjs`.
+   * `--ease-spring-snappy` is deliberately absent: a critically damped spring's
+   * normalised curve is invariant under time scaling, so it is the same curve
+   * as `--ease-spring` at a shorter duration.
+   */
+  @supports (transition-timing-function: linear(0, 1)) {
+    :root {
+      /* damping 1.0, response 0.4s */
+      --ease-spring: linear(
+        0,
+        0.0467,
+        0.1503,
+        0.2739,
+        0.3972,
+        0.51,
+        0.608,
+        0.6904,
+        0.7579,
+        0.8123,
+        0.8555,
+        0.8894,
+        0.9158,
+        0.9362,
+        0.9518,
+        0.9638,
+        0.9728,
+        0.9797,
+        0.9848,
+        0.9887,
+        0.9916,
+        0.9938,
+        0.9954,
+        0.9966,
+        0.9975,
+        0.9982,
+        0.9986,
+        1
+      );
+      /* damping 0.8, response 0.3s — peaks at 1.015, a 1.5% overshoot */
+      --ease-spring-sheet: linear(
+        0,
+        0.0417,
+        0.1406,
+        0.2666,
+        0.3993,
+        0.5257,
+        0.6387,
+        0.7348,
+        0.8134,
+        0.8753,
+        0.9223,
+        0.9567,
+        0.9809,
+        0.997,
+        1.0069,
+        1.0124,
+        1.0148,
+        1.0151,
+        1.0141,
+        1.0124,
+        1.0105,
+        1.0085,
+        1.0066,
+        1.005,
+        1.0036,
+        1.0025,
+        1.0016,
+        1
+      );
+    }
   }
 
   @media (min-width: 1024px) {
@@ -177,6 +296,105 @@
     @apply text-caption text-ink-tertiary;
   }
 
+  /**
+   * Press feedback for anything tappable.
+   *
+   * Deliberately asymmetric. The press engages in 90ms, because the moment a
+   * control lags on the way down the sense of directness "falls off a cliff" —
+   * and releases over 320ms on a critically damped spring, so it settles
+   * instead of snapping back.
+   *
+   * Colour and shadow keep the calmer `base` timing on release; only the
+   * geometry has to feel immediate. On the way down everything shares the fast
+   * duration, so the whole control commits to the press in one beat.
+   *
+   * The reduced-motion block at the end of this file collapses all of it, and
+   * each caller pairs this with `motion-reduce:active:scale-100` so no
+   * geometry moves when motion is not wanted.
+   */
+  /**
+   * `translate` is listed separately from `transform` on purpose: a
+   * pointer-follow lean written to `translate` composes with the press scale
+   * instead of replacing it (see useMagnetic). Its duration is short because
+   * the travel is a few pixels, and anything longer trails the pointer rather
+   * than following it.
+   */
+  .tappable {
+    transition:
+      transform var(--duration-press-out) var(--ease-spring),
+      translate var(--duration-fast) var(--ease-out-quint),
+      box-shadow var(--duration-base) var(--ease-out-expo),
+      background-color var(--duration-base) var(--ease-out-expo),
+      border-color var(--duration-base) var(--ease-out-expo),
+      opacity var(--duration-base) var(--ease-out-expo),
+      color var(--duration-base) var(--ease-out-expo);
+  }
+
+  .tappable:active {
+    transition-duration: var(--duration-press-in);
+    transition-timing-function: var(--ease-out-quint);
+  }
+
+  /**
+   * The navigation's glass material.
+   *
+   * A separate layer rather than a background on the <header>, because it has
+   * to extend past the bar and fade out: the mask takes the tint and the blur
+   * to nothing together, so the material has a soft lower edge instead of the
+   * 1px rule this replaces. Content passing underneath dissolves into the
+   * chrome, which is the "scroll edge effect" rather than a divider.
+   *
+   * `--nav-glass-tint` is set by the variant classes below so the bar can
+   * invert over the navy sections.
+   */
+  .nav-glass {
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: calc(var(--nav-height) + var(--nav-edge-fade));
+    pointer-events: none;
+    background: var(--nav-glass-tint);
+    /* A bar is a small surface, so it reads as thin glass — the sheet below
+       uses a stronger blur because a bigger surface should look thicker. */
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      #000 calc(100% - var(--nav-edge-fade)),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      #000 calc(100% - var(--nav-edge-fade)),
+      transparent 100%
+    );
+    transition:
+      opacity var(--duration-slow) var(--ease-out-expo),
+      background-color var(--duration-slow) var(--ease-out-expo);
+  }
+
+  .nav-glass-light {
+    --nav-glass-tint: rgb(255 255 255 / 0.82);
+  }
+
+  .nav-glass-dark {
+    --nav-glass-tint: rgb(2 15 36 / 0.55);
+  }
+
+  /**
+   * Squared-off variant, used while the mobile sheet is open.
+   *
+   * The fade exists to soften the boundary where content scrolls under the
+   * bar. With the sheet attached directly beneath it there is no such
+   * boundary — the two surfaces are one continuous material — so fading here
+   * would just put a bright seam across the top of the sheet.
+   */
+  .nav-glass-flush {
+    height: var(--nav-height);
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
   .hairline {
     @apply h-px w-full border-0 bg-line;
   }
@@ -221,11 +439,20 @@
    readable if JS fails, and search engines always see real content.
    =========================================================================== */
 @layer utilities {
+  /**
+   * Reveals settle rather than coast.
+   *
+   * `ease-out-expo` over 700ms leaves most of its duration in a very slow
+   * tail — the element is nearly in place for the last third and then creeps,
+   * which is what made reveals read as floaty. A critically damped spring
+   * covers the same distance and comes to rest, so the page uses the same
+   * motion language as the controls on it.
+   */
   [data-reveal] {
     transition:
-      opacity var(--duration-slower) var(--ease-out-expo),
-      transform var(--duration-slower) var(--ease-out-expo),
-      clip-path var(--duration-slower) var(--ease-out-expo);
+      opacity var(--duration-spring) var(--ease-spring),
+      transform var(--duration-spring) var(--ease-spring),
+      clip-path var(--duration-spring) var(--ease-spring);
   }
 
   .motion-ready [data-reveal][data-visible='false'] {
@@ -260,8 +487,8 @@
   /* Staggered children. */
   [data-reveal-stagger] > * {
     transition:
-      opacity var(--duration-slower) var(--ease-out-expo),
-      transform var(--duration-slower) var(--ease-out-expo);
+      opacity var(--duration-spring) var(--ease-spring),
+      transform var(--duration-spring) var(--ease-spring);
   }
 
   .motion-ready [data-reveal-stagger][data-visible='false'] > * {
@@ -300,9 +527,13 @@
    * Reveals are quicker and travel less on a phone.
    *
    * A thumb covers far more of the page per gesture than a wheel does, so a
-   * 700ms reveal with a 20px rise is still animating as the element leaves the
+   * long reveal with a 20px rise is still animating as the element leaves the
    * screen — which reads as lag rather than as motion. Shorter and closer keeps
    * the same gesture but lands it in time.
+   *
+   * Overriding only the duration still leaves a real spring: a critically
+   * damped curve is invariant under time scaling, so 460ms is the same spring
+   * at a 0.31s response rather than the desktop 0.4s.
    */
   @media (max-width: 1023px) {
     [data-reveal],
@@ -377,6 +608,127 @@
       #000 calc(100% - 1.25rem),
       transparent 100%
     );
+  }
+}
+
+/* ===========================================================================
+   Reduced transparency
+
+   Translucency is how this site conveys layering, but it is also the thing
+   that makes text hardest to read for anyone who has asked for less of it.
+   The setting does not mean "remove the layer" — it means make the material
+   frosty and solid, so hierarchy survives and legibility stops depending on
+   whatever happens to be scrolling underneath.
+
+   The phone mockups are deliberately exempt. They are pictures of the iOS app
+   inside a drawn device, not chrome the visitor operates, and flattening them
+   would misrepresent the product rather than help anyone use this page.
+   =========================================================================== */
+@media (prefers-reduced-transparency: reduce) {
+  /* Split from the rule below rather than comma-joined: if a browser cannot
+     parse the `:not()` descendant form it drops the whole rule it appears in,
+     and the navigation must not be collateral. */
+  .nav-glass {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  /* Every Tailwind `backdrop-blur-*` outside a mockup, without enumerating
+     them — a blur that is added later cannot be forgotten here. */
+  [class*='backdrop-blur']:not(.phone-ui *) {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  /* With no blur behind it the bar needs to carry its own opacity, and the
+     soft lower edge has nothing left to soften — so it gets a real edge. */
+  .nav-glass-light {
+    --nav-glass-tint: var(--surface);
+  }
+
+  .nav-glass-dark {
+    --nav-glass-tint: var(--brand-navy-darkest);
+  }
+
+  .nav-glass {
+    height: var(--nav-height);
+    -webkit-mask-image: none;
+    mask-image: none;
+    border-bottom: 1px solid var(--border-strong);
+  }
+
+  .on-navy .nav-glass {
+    border-bottom-color: rgb(255 255 255 / 0.22);
+  }
+}
+
+/* ===========================================================================
+   Increased contrast
+
+   Near-solid surfaces with a defined, contrasting border — so every edge is
+   read from the border rather than inferred from a tint.
+   =========================================================================== */
+@media (prefers-contrast: more) {
+  :root {
+    --border: rgb(6 42 94 / 0.38);
+    --border-strong: rgb(6 42 94 / 0.62);
+    --text-secondary: #354964;
+    --text-tertiary: #4f6485;
+  }
+
+  .nav-glass-light {
+    --nav-glass-tint: var(--surface);
+  }
+
+  .nav-glass-dark {
+    --nav-glass-tint: var(--brand-navy-darkest);
+  }
+
+  .nav-glass {
+    border-bottom: 1px solid var(--border-strong);
+  }
+
+  /**
+   * The Tailwind palette is defined as literal hex in tailwind.config.ts, not
+   * as `var()` references — deliberately, because the `/alpha` modifiers used
+   * across the site need a colour Tailwind can decompose. So raising the
+   * custom properties above does not reach the utilities, and the utilities
+   * have to be restated here.
+   *
+   * These rules sit outside `@layer`, which beats Tailwind's layered utilities
+   * in the cascade without needing `!important`.
+   *
+   * Measured against #FFFFFF:
+   *   ink.secondary  #4A5F7D  6.51:1  ->  #354964  9.18:1
+   *   ink.tertiary   #788CA6  3.44:1  ->  #4F6485  6.01:1  (AA at any size)
+   */
+  .text-ink-secondary {
+    color: var(--text-secondary);
+  }
+
+  .text-ink-tertiary,
+  .demo-note,
+  .eyebrow {
+    color: var(--text-tertiary);
+  }
+
+  /* Edges should be read from a border, not inferred from a tint. */
+  .border-line {
+    border-color: var(--border);
+  }
+
+  .border-line-strong {
+    border-color: var(--border-strong);
+  }
+
+  .hairline,
+  .eyebrow-rule {
+    background-color: var(--border-strong);
+  }
+
+  /* The focus ring is the one thing that must never be subtle. */
+  :focus-visible {
+    outline-width: 3px;
   }
 }
 

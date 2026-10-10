@@ -48,7 +48,7 @@ function AccordionRow({ item, open, onToggle }: RowProps) {
           aria-expanded={open}
           aria-controls={panelId}
           onClick={onToggle}
-          className="group flex w-full touch-manipulation items-start justify-between gap-6 py-6 text-left transition-colors duration-base hover:text-navy-700 active:opacity-70 sm:py-7"
+          className="tappable group flex w-full touch-manipulation items-start justify-between gap-6 py-6 text-left hover:text-navy-700 active:opacity-70 sm:py-7"
         >
           <span className="text-body-lg font-semibold text-ink-primary group-hover:text-navy-700">
             {item.question}
@@ -56,7 +56,7 @@ function AccordionRow({ item, open, onToggle }: RowProps) {
           <span
             aria-hidden="true"
             className={cn(
-              'mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full border border-line-strong text-navy-700 transition-all duration-slow ease-out-expo',
+              'mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full border border-line-strong text-navy-700 transition-all duration-spring-snappy ease-spring',
               open
                 ? 'rotate-[135deg] border-green-500 bg-green-500 text-navy-900'
                 : 'group-hover:border-navy-300 group-hover:bg-navy-50',
@@ -71,7 +71,7 @@ function AccordionRow({ item, open, onToggle }: RowProps) {
         role="region"
         aria-labelledby={buttonId}
         style={{ height: open ? height : 0 }}
-        className="overflow-hidden transition-[height] duration-slow ease-out-expo"
+        className="overflow-hidden transition-[height] duration-spring-snappy ease-spring"
       >
         <div
           ref={panelRef}

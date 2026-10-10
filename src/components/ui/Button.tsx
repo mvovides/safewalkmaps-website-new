@@ -7,7 +7,7 @@ type Variant = 'primary' | 'accent' | 'secondary' | 'ghost' | 'inverse';
 type Size = 'sm' | 'md' | 'lg';
 
 const base =
-  'group/button relative inline-flex select-none items-center justify-center gap-2 overflow-hidden whitespace-nowrap rounded-pill font-semibold transition-[transform,box-shadow,background-color,color,border-color] duration-base ease-out-expo ' +
+  'group/button tappable relative inline-flex select-none items-center justify-center gap-2 overflow-hidden whitespace-nowrap rounded-pill font-semibold ' +
   'touch-manipulation active:scale-[0.97] motion-reduce:active:scale-100 ' +
   'disabled:pointer-events-none disabled:opacity-55';
 
@@ -61,11 +61,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   ref,
 ) {
   return (
-    <button
-      ref={ref}
-      className={cn(base, variants[variant], sizes[size], className)}
-      {...rest}
-    >
+    <button ref={ref} className={cn(base, variants[variant], sizes[size], className)} {...rest}>
       {routeHover && <RouteSheen variant={variant} />}
       <span className="relative inline-flex items-center gap-2">{children}</span>
     </button>

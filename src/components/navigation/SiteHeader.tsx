@@ -13,6 +13,19 @@ import { MobileMenu } from './MobileMenu';
 /** Pixels scrolled before the header takes on its glass surface. */
 const CONDENSE_AT = 24;
 
+/**
+ * Base width of the active-section indicator, in pixels.
+ *
+ * The indicator is drawn at this width once and then transformed, so moving it
+ * between nav items costs a compositor transform rather than a layout pass per
+ * frame. Animating `left`/`width` — which this used to do — reflows the header
+ * on every one of the ~26 frames the transition runs for.
+ *
+ * Keeping the base close to a real nav item's width keeps the X scale factor
+ * near 1, so the 1px radius on a 2px-tall bar stays visually round.
+ */
+const INDICATOR_BASE_WIDTH = 100;
+
 export function SiteHeader() {
   const { pathname } = useLocation();
   const isHome = pathname === '/';
@@ -25,6 +38,11 @@ export function SiteHeader() {
 
   const listRef = useRef<HTMLUListElement>(null);
   const [indicator, setIndicator] = useState<{ left: number; width: number } | null>(null);
+  // Held so the indicator can fade out where it last sat, rather than sliding
+  // to the left edge on its way out — things should leave from where they are.
+  const lastIndicator = useRef<{ left: number; width: number } | null>(null);
+  if (indicator) lastIndicator.current = indicator;
+  const indicatorBox = indicator ?? lastIndicator.current;
 
   // One passive scroll listener, coalesced into a single rAF, flipping one
   // boolean — cheap enough to leave running for the whole session.
@@ -74,17 +92,22 @@ export function SiteHeader() {
   }, [pathname]);
 
   return (
-    <header
-      className={cn(
-        'fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow,backdrop-filter] duration-slow ease-out-expo',
-        condensed || menuOpen
-          ? inverted
-            ? 'bg-navy-950/55 shadow-[0_1px_0_0_rgb(255_255_255_/_0.1)] backdrop-blur-xl'
-            : 'bg-white/82 shadow-[0_1px_0_0_rgb(6_42_94_/_0.08)] backdrop-blur-xl backdrop-saturate-150'
-          : 'bg-transparent',
-      )}
-    >
-      <div className="shell flex h-[var(--nav-height)] items-center justify-between gap-6">
+    <header className="fixed inset-x-0 top-0 z-50">
+      {/* The glass material, as its own layer so it can extend past the bar
+          and fade out rather than ending on a hard line. */}
+      <div
+        aria-hidden="true"
+        className={cn(
+          'nav-glass',
+          inverted ? 'nav-glass-dark' : 'nav-glass-light',
+          // No fade when the sheet is attached underneath: there is no
+          // content/chrome boundary to soften, only a seam to avoid drawing.
+          menuOpen && 'nav-glass-flush',
+          condensed || menuOpen ? 'opacity-100' : 'opacity-0',
+        )}
+      />
+
+      <div className="shell relative flex h-[var(--nav-height)] items-center justify-between gap-6">
         <Link
           to="/"
           className="-my-1 shrink-0 rounded-lg py-1"
@@ -101,16 +124,21 @@ export function SiteHeader() {
         {/* Desktop navigation */}
         <nav aria-label="Primary" className="hidden lg:block">
           <ul ref={listRef} className="relative flex items-center gap-1">
-            {/* Sliding active indicator */}
+            {/* Sliding active indicator — transform only, never layout. */}
             <span
               aria-hidden="true"
               className={cn(
-                'pointer-events-none absolute -bottom-0.5 h-[2px] rounded-full bg-green-500 transition-all duration-slow ease-out-expo',
+                'pointer-events-none absolute -bottom-0.5 left-0 h-[2px] origin-left rounded-full bg-green-500',
+                'transition-[transform,opacity] duration-spring-snappy ease-spring',
                 indicator ? 'opacity-100' : 'opacity-0',
               )}
               style={{
-                left: indicator?.left ?? 0,
-                width: indicator?.width ?? 0,
+                width: INDICATOR_BASE_WIDTH,
+                transform: indicatorBox
+                  ? `translate3d(${indicatorBox.left}px, 0, 0) scaleX(${
+                      indicatorBox.width / INDICATOR_BASE_WIDTH
+                    })`
+                  : 'translate3d(0, 0, 0) scaleX(0)',
               }}
             />
             {navLinks.map((link) => (
@@ -120,13 +148,21 @@ export function SiteHeader() {
                   aria-current={activeSection === link.sectionId ? 'true' : undefined}
                   className={cn(
                     'inline-flex h-10 items-center rounded-lg px-3.5 text-body-sm font-medium transition-colors duration-base',
+                    // Vibrancy: over a translucent surface the label is brand
+                    // navy at reduced alpha, so it picks up what is behind it,
+                    // rather than a flat grey that sits dead on the glass. At
+                    // 75% it still clears the old #4A5F7D on contrast (7.7:1
+                    // against white, up from 7.2:1). The tracking bump is the
+                    // small positive adjustment small text wants when it is
+                    // read through a blur.
+                    'tracking-[0.005em]',
                     activeSection === link.sectionId
                       ? inverted
                         ? 'text-white'
-                        : 'text-navy-800'
+                        : 'text-navy-900'
                       : inverted
-                        ? 'text-white/65 hover:text-white'
-                        : 'text-ink-secondary hover:text-navy-800',
+                        ? 'text-white/70 hover:text-white'
+                        : 'text-navy-900/75 hover:text-navy-900',
                   )}
                 >
                   {link.label}
