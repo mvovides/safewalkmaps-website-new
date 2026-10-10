@@ -37,13 +37,16 @@ describe('SiteHeader', () => {
     }
   });
 
-  it('points the waitlist button at the home page anchor from a sub-page', () => {
-    renderWithRouter(<SiteHeader />, { initialEntries: ['/features'] });
-    expect(screen.getAllByRole('link', { name: /join waitlist/i })[0]).toHaveAttribute(
-      'href',
-      '/#waitlist',
-    );
-  });
+  it.each(['/', '/features'])(
+    'points the waitlist button at the home page anchor from %s',
+    (path) => {
+      renderWithRouter(<SiteHeader />, { initialEntries: [path] });
+      expect(screen.getAllByRole('link', { name: /join waitlist/i })[0]).toHaveAttribute(
+        'href',
+        '/#waitlist',
+      );
+    },
+  );
 });
 
 /**

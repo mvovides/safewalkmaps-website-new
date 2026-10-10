@@ -25,6 +25,17 @@ describe('MobileMenu', () => {
     }
   });
 
+  it.each(['/', '/features'])(
+    'points the waitlist button at the home page anchor from %s',
+    (path) => {
+      renderMenu(path);
+      expect(screen.getByRole('link', { name: /join the ios waitlist/i })).toHaveAttribute(
+        'href',
+        '/#waitlist',
+      );
+    },
+  );
+
   it('marks the current route as current, as the desktop navigation does', () => {
     // On a phone this menu is the only navigation, so it is the only place a
     // screen reader can learn which page it is on.
