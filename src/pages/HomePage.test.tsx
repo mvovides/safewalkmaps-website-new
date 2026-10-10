@@ -40,7 +40,10 @@ describe('HomePage', () => {
     expect(container.querySelectorAll('h1')).toHaveLength(1);
   });
 
-  it('numbers the remaining sections in an unbroken run', () => {
+  it('numbers the remaining sections 01 to 04 in the document', () => {
+    // This reads the DOM, which includes the 02 eyebrow that SafetyLayerSection
+    // hides below `lg` with CSS. jsdom does not apply that, so the test says the
+    // markup is contiguous and nothing about what a phone shows.
     const { container } = renderWithRouter(<HomePage />);
     const indices = Array.from(container.querySelectorAll('.eyebrow .tabular'))
       .map((el) => el.textContent?.trim())

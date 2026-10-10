@@ -9,12 +9,12 @@ Status as of the initial build of the redesigned site. Branch: `feature/website-
 | Toolchain | Vite + React 18 + TypeScript + Tailwind 3, ESLint, Prettier. `lint`, `typecheck` and `build` all pass clean. |
 | Design system | Tokens in `tailwind.config.ts` and `src/styles/index.css`, sampled from the supplied logo. Contrast checked and documented. |
 | Brand marks | Icon traced from `safewalkmaps_logo.svg`; wordmark set as live text matching the horizontal lockup. |
-| Homepage | Hero plus eleven sections, all built, all with real copy. |
+| Homepage | Hero plus five sections (problem, safety layer, route choice, waitlist, final call to action), all with real copy. The other sections moved to their own routes; see Site architecture below. |
 | Motion | Scroll-reveal system plus four GSAP ScrollTrigger stories. Reduced-motion alternatives implemented, not just disabled. |
 | Product mockups | Route picker and night navigation screens, built from DOM elements at iPhone proportions. |
 | Forms | Waitlist and contact, with validation, loading, success and error states, behind a transport-agnostic service. |
-| Supporting pages | `/privacy`, `/terms`, `/404`. |
-| SEO | Metadata, canonical URLs, OpenGraph and Twitter cards, JSON-LD (Organization, WebSite, MobileApplication, FAQPage), robots, sitemap, manifest. |
+| Supporting pages | `/safety-score`, `/features`, `/about`, `/faq`, `/privacy` and `/terms`, which with `/` make the seven public routes, plus the 404. |
+| SEO | Metadata, canonical URLs, OpenGraph and Twitter cards, JSON-LD (Organization, WebSite and MobileApplication in `index.html`; `FAQPage` is injected on `/faq`), robots, sitemap, manifest. |
 | Assets | Favicon set, PWA icons, 1200×630 social preview, all generated from the logo. |
 | Deployment | Vercel, Netlify and Cloudflare Pages configuration committed. |
 
@@ -193,8 +193,12 @@ navigation, the footer and the sitemap are all tested against it.
   the current one with `aria-current`; the indicator sits under the active item on a
   sub-page and is hidden on `/`. `useActiveSection`, which tracked the section in view, is
   deleted.
-- **Eyebrow indices run 01 to 04 without a gap.** Moving sections away left the home page
-  numbered 01, 02, 04, 09; it is renumbered.
+- **Eyebrow indices renumber to a contiguous 01 to 04 in the DOM.** Moving sections away left
+  the home page numbered 01, 02, 04, 09; it is renumbered. **That is not what a phone shows.**
+  In the animated layout, `SafetyLayerSection` hides its `02` eyebrow below `lg` with its
+  responsive layout, so the visible run there reads 01, 03, 04. The gap predates this work and
+  was left alone on purpose: that CSS was tuned in an earlier motion pass. Under
+  `prefers-reduced-motion` the static layout shows all four.
 - **Stale hashes are forwarded.** `/#features`, `/#faq`, `/#contact` and the rest forward to
   the page that now holds the section, with `replace` so Back returns to where the visitor
   came from. Hashes for sections still on the home page are left alone.
@@ -220,28 +224,44 @@ page. The schema is now generated from `src/data/faq.ts`, the same data the page
 so the two cannot drift. That fixes a pre-existing SEO defect rather than only relocating
 one.
 
+### Link previews for the new pages
+
+The same limit reaches further than the structured data. `index.html` carries the home page's
+title, description, canonical link and `og:url`, and `useDocumentMeta` rewrites them only after
+JavaScript runs. Link unfurlers such as Slack and iMessage do not run it, so a pasted link to
+`/safety-score`, `/features`, `/about` or `/faq` previews the home page, and the canonical and
+`og:url` say `/`. The sitemap now advertises those four pages at priority 0.8. Prerendering is
+out of scope for this branch, so it is recorded as item 5 in [`before-launch.md`](before-launch.md)
+with the options, for you to decide.
+
 ### Testing
 
 Vitest and Testing Library were added at the start of this work. The project had no test
 runner at all, and `npm run test` was a script CLAUDE.md referred to that did not exist; it
-is now a real script and runs the suite once. At the time of writing that is 69 tests across
-13 files, in jsdom with `IntersectionObserver`, `ResizeObserver`, `matchMedia`, `scrollTo`
+is now a real script and runs the suite once. At the time of writing that is 125 tests across
+17 files, in jsdom with `IntersectionObserver`, `ResizeObserver`, `matchMedia`, `scrollTo`
 and `scrollIntoView` stubbed in `src/test/setup.ts`. Tests render through
 `renderWithRouter`, which mirrors the router flags the app ships with.
 
 The suite covers:
 
-- **Routing at app level:** every route in `ROUTES` renders exactly one `h1`, an unknown
-  path reaches the 404, and under `prefers-reduced-motion` every reveal element is marked
-  visible rather than left hidden.
+- **Routing at app level:** every route in `ROUTES` renders its own page with exactly one `h1`
+  (an id only that page carries, so a mis-registered route falling through to the 404 fails),
+  an unknown path reaches the 404, and every stale hash forwards to a page that holds the
+  section it names.
+- **First visit to a lazy route:** the scroll reveals arm for content that arrives after the
+  layout has mounted, and under `prefers-reduced-motion` every reveal element is marked visible
+  rather than left hidden.
 - **Data integrity:** the nav and footer point only at real routes or external URLs, nothing
   still links to a moved section, and the sitemap and `ROUTES` agree.
-- **Each page:** one `h1`, no skipped heading levels, a document title and canonical path,
-  and the `FAQPage` schema being injected on mount and removed on unmount.
-- **Navigation behaviour:** the header marks the current route and nothing on `/`, and
-  stale hashes forward, replace rather than push, and scroll on the page they land on.
-- **Cross-links:** the waitlist calls to action point at `/#waitlist`, and the hero's
-  secondary link correctly stays local.
+- **Each page:** one `h1`, no skipped heading levels, a document title, and the `FAQPage`
+  schema being injected on mount, once, with one entry per question the page shows, and removed
+  on unmount.
+- **Navigation behaviour:** the header and the mobile menu mark the current route and nothing
+  on `/`, and stale hashes forward, replace rather than push, and scroll on the page they land
+  on. Hash scrolls jump rather than animate under `prefers-reduced-motion`.
+- **Cross-links:** the four waitlist calls to action point at `/#waitlist` from both `/` and a
+  sub-page, and the hero's secondary link correctly stays local.
 
 It does not cover rendered layout, the GSAP motion, or form submission. Those are checked in
 a real browser.
@@ -293,7 +313,7 @@ From the original build, checked in a real browser at 375, 390, 430, 768, 1440 a
 
 ## Needs your input before production
 
-Four open items, written up in full in [`before-launch.md`](before-launch.md):
+Five open items, written up in full in [`before-launch.md`](before-launch.md):
 
 1. **Legal details** — the only hard blocker. Visible placeholder panels on `/privacy` and
    `/terms` until real text replaces them.
@@ -301,6 +321,9 @@ Four open items, written up in full in [`before-launch.md`](before-launch.md):
 3. **The encryption claim** — the current site states end-to-end encryption; this rebuild
    deliberately does not, because it could not be verified.
 4. **Deployment config** — three environment variables, then a go-live checklist.
+5. **Social previews** — links to the four new pages unfurl as the home page, because the
+   metadata is rewritten by JavaScript that unfurlers do not run. Prerendering, static
+   generation or a service would fix it; which one, if any, is your call.
 
 Merging is no longer pending: `feature/website-build` was merged to `main` once the above were
 documented.
