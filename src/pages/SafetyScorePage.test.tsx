@@ -26,7 +26,7 @@ describe('SafetyScorePage', () => {
     expect(container.querySelector('#safety-score')).toBeInTheDocument();
   });
 
-  it('sets the document title and canonical path', () => {
+  it('sets the document title', () => {
     renderPage();
     expect(document.title).toMatch(/Safety score/i);
   });
