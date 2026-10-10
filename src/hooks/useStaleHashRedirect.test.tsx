@@ -3,6 +3,7 @@ import { Route, Routes, useLocation, useNavigate, useNavigationType } from 'reac
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { SiteLayout } from '@/components/layout/SiteLayout';
+import { ROUTES } from '@/data/routes';
 import { renderWithRouter } from '@/test/renderWithRouter';
 
 import { STALE_HASH_ROUTES, useStaleHashRedirect } from './useStaleHashRedirect';
@@ -57,6 +58,15 @@ describe('useStaleHashRedirect', () => {
       '#contact': '/about#contact',
       '#faq': '/faq',
     });
+  });
+
+  it('forwards only to routes the site has', () => {
+    // The type already refuses a path that is not in ROUTES. This holds the same
+    // line for anyone running the tests without the compiler.
+    for (const [hash, target] of Object.entries(STALE_HASH_ROUTES)) {
+      const [path] = target.split('#');
+      expect(ROUTES, `${hash} forwards to ${target}, which is not a route`).toContain(path);
+    }
   });
 
   it('never lists a hash whose section is still on the home page', () => {

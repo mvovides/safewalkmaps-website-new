@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import type { RouteTarget } from '@/data/routes';
+
 /**
  * Anchors that used to resolve on the home page, and where their content went.
  *
@@ -14,8 +16,12 @@ import { useLocation, useNavigate } from 'react-router-dom';
  *
  * Hashes for sections still on the home page are deliberately absent —
  * `#routes`, `#waitlist`, `#how-it-works`, `#problem` must not be redirected.
+ *
+ * Every target is a `RouteTarget`, so a path that `data/routes.ts` does not list
+ * does not compile. A renamed route cannot leave a real-world deep link
+ * forwarding to the 404.
  */
-export const STALE_HASH_ROUTES: Record<string, string> = {
+export const STALE_HASH_ROUTES: Record<string, RouteTarget> = {
   '#safety-score': '/safety-score',
   '#features': '/features',
   '#scenarios': '/features#scenarios',

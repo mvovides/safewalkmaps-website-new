@@ -6,6 +6,7 @@ import { renderWithRouter } from '@/test/renderWithRouter';
 
 import { App } from './App';
 import { ROUTES, type Route } from './data/routes';
+import { STALE_HASH_ROUTES } from './hooks/useStaleHashRedirect';
 
 function renderAt(path: string) {
   return renderWithRouter(<App />, { initialEntries: [path] });
@@ -97,4 +98,22 @@ describe('App routing', () => {
       );
     });
   });
+});
+
+describe('App forwarding of links to sections that moved', () => {
+  // The hook's own tests render stand-in routes, so they cannot say whether a
+  // target is a page the router actually has. Here the real router decides: a
+  // target that is not registered lands on the 404, which has none of the ids.
+  it.each(Object.keys(STALE_HASH_ROUTES))(
+    'lands %s on a page that holds that section',
+    async (hash) => {
+      const { container } = renderAt(`/${hash}`);
+      await waitFor(() => {
+        expect(
+          container.querySelector(hash),
+          `${hash} forwards to ${STALE_HASH_ROUTES[hash]}, which has no ${hash} section`,
+        ).not.toBeNull();
+      });
+    },
+  );
 });
