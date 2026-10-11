@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 
+import { Panel } from './panel/Panel';
 import type { ApplyPayload } from './protocol';
 import { PreviewFrame } from './shell/PreviewFrame';
 import { TopBar } from './shell/TopBar';
@@ -24,7 +25,7 @@ function ShellBody() {
     <div className="pg-shell">
       <TopBar />
       <aside className="pg-panel" aria-label="Theme controls">
-        {/* The control panel mounts here. */}
+        <Panel />
       </aside>
       <section className="pg-previews" aria-label="Preview">
         <PreviewFrame frameId="a" payload={payload} width={state.ui.width} />

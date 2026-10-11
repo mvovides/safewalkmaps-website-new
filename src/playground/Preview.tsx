@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { applyTheme } from '@/theme/apply';
 
+import { loadThemeFonts } from './fonts';
 import { Lab } from './lab/Lab';
 import { LiveSite } from './preview/LiveSite';
 import {
@@ -33,6 +34,7 @@ export function Preview({ frameId }: { frameId: FrameId }) {
     if (!payload) return undefined;
     const root = document.documentElement;
     const cleanup = applyTheme(root, payload.config);
+    loadThemeFonts(document, payload.config.tokens.typography);
     root.dataset.swmReduced = String(payload.reducedMotion);
     return () => {
       cleanup();
