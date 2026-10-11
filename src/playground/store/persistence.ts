@@ -10,7 +10,7 @@ export const STORAGE_KEYS = {
   customs: 'swm-playground.v1.customs',
   favourites: 'swm-playground.v1.favourites',
   active: 'swm-playground.v1.active',
-  draft: 'swm-playground.v1.draft',
+  drafts: 'swm-playground.v1.drafts',
   ui: 'swm-playground.v1.ui',
 } as const;
 
@@ -39,6 +39,21 @@ const parseAll = (value: unknown): ThemeConfig[] =>
         return result.ok ? [result.config] : [];
       })
     : [];
+
+/** Drafts are kept only for built-ins that still exist, under the id they were made for. */
+function parseDrafts(
+  value: unknown,
+  builtIns: readonly ThemeConfig[],
+): Record<string, ThemeConfig> {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) return {};
+  const drafts: Record<string, ThemeConfig> = {};
+  for (const [id, raw] of Object.entries(value as Record<string, unknown>)) {
+    if (!builtIns.some((p) => p.meta.id === id)) continue;
+    const result = parseThemeConfig(raw);
+    if (result.ok && result.config.meta.id === id) drafts[id] = result.config;
+  }
+  return drafts;
+}
 
 function sanitiseUi(value: unknown): PlaygroundUi {
   const ui = { ...initialUi };
@@ -69,10 +84,7 @@ export function loadState(
     const favourites = Array.isArray(favouritesRaw)
       ? favouritesRaw.filter((x): x is string => typeof x === 'string')
       : [];
-    const draftRaw = read<unknown>(storage, STORAGE_KEYS.draft);
-    const draftParsed =
-      draftRaw === undefined || draftRaw === null ? null : parseThemeConfig(draftRaw);
-    const draft = draftParsed && draftParsed.ok ? draftParsed.config : null;
+    const drafts = parseDrafts(read(storage, STORAGE_KEYS.drafts), builtIns);
     const activeRaw = read<unknown>(storage, STORAGE_KEYS.active);
     const known = (id: unknown) =>
       typeof id === 'string' &&
@@ -80,7 +92,7 @@ export function loadState(
     const activeId = known(activeRaw) ? (activeRaw as string) : initialState.activeId;
     const ui = sanitiseUi(read(storage, STORAGE_KEYS.ui));
     if (ui.compareId && !known(ui.compareId)) ui.compareId = null;
-    return { customs, favourites, activeId, draft, ui };
+    return { customs, favourites, activeId, drafts, ui };
   } catch {
     return initialState;
   }
@@ -92,7 +104,7 @@ export function saveState(storage: StorageLike | null, state: PlaygroundState): 
     storage.setItem(STORAGE_KEYS.customs, JSON.stringify(state.customs));
     storage.setItem(STORAGE_KEYS.favourites, JSON.stringify(state.favourites));
     storage.setItem(STORAGE_KEYS.active, JSON.stringify(state.activeId));
-    storage.setItem(STORAGE_KEYS.draft, JSON.stringify(state.draft));
+    storage.setItem(STORAGE_KEYS.drafts, JSON.stringify(state.drafts));
     storage.setItem(STORAGE_KEYS.ui, JSON.stringify(state.ui));
   } catch {
     // Storage is full or blocked; the session carries on in memory.

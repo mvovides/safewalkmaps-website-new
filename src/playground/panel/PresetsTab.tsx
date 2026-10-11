@@ -4,6 +4,8 @@ import type { ThemeConfig } from '@/theme/config';
 
 import { useBuiltIns, usePlaygroundActions, usePlaygroundState } from '../store/hooks';
 
+type Pending = 'rename' | 'delete' | 'reset' | null;
+
 function PresetRow({
   preset,
   active,
@@ -16,10 +18,10 @@ function PresetRow({
   draft: boolean;
 }) {
   const actions = usePlaygroundActions();
-  const [renaming, setRenaming] = useState(false);
-  const [confirming, setConfirming] = useState(false);
+  const [pending, setPending] = useState<Pending>(null);
   const [name, setName] = useState(preset.meta.name);
   const label = preset.meta.name;
+  const custom = !preset.meta.builtIn;
 
   return (
     <li className="pg-preset" data-active={active}>
@@ -58,17 +60,18 @@ function PresetRow({
           type="button"
           className="pg-icon-button"
           aria-label={`Reset ${label} to its base`}
-          onClick={() => actions.resetToBase(preset.meta.id)}
+          // A built-in only drops its draft; a custom loses saved edits, so it asks first.
+          onClick={() => (custom ? setPending('reset') : actions.resetToBase(preset.meta.id))}
         >
           ↺
         </button>
-        {!preset.meta.builtIn && (
+        {custom && (
           <>
             <button
               type="button"
               className="pg-icon-button"
               aria-label={`Rename ${label}`}
-              onClick={() => setRenaming((v) => !v)}
+              onClick={() => setPending((p) => (p === 'rename' ? null : 'rename'))}
             >
               ✎
             </button>
@@ -76,20 +79,20 @@ function PresetRow({
               type="button"
               className="pg-icon-button"
               aria-label={`Delete ${label}`}
-              onClick={() => setConfirming(true)}
+              onClick={() => setPending('delete')}
             >
               🗑
             </button>
           </>
         )}
       </div>
-      {renaming && (
+      {pending === 'rename' && (
         <form
           className="pg-inline-form"
           onSubmit={(e) => {
             e.preventDefault();
             actions.rename(preset.meta.id, name);
-            setRenaming(false);
+            setPending(null);
           }}
         >
           <input
@@ -103,7 +106,7 @@ function PresetRow({
           </button>
         </form>
       )}
-      {confirming && (
+      {pending === 'delete' && (
         <div className="pg-inline-form" role="group" aria-label={`Delete ${label}?`}>
           <span className="pg-hint">Delete “{label}”? This cannot be undone.</span>
           <button
@@ -114,7 +117,28 @@ function PresetRow({
           >
             Delete
           </button>
-          <button type="button" className="pg-button" onClick={() => setConfirming(false)}>
+          <button type="button" className="pg-button" onClick={() => setPending(null)}>
+            Cancel
+          </button>
+        </div>
+      )}
+      {pending === 'reset' && (
+        <div className="pg-inline-form" role="group" aria-label={`Reset ${label}?`}>
+          <span className="pg-hint">
+            Reset “{label}” to its base? Every edit saved on it is lost.
+          </span>
+          <button
+            type="button"
+            className="pg-button pg-button-danger"
+            aria-label={`Confirm reset ${label}`}
+            onClick={() => {
+              actions.resetToBase(preset.meta.id);
+              setPending(null);
+            }}
+          >
+            Reset
+          </button>
+          <button type="button" className="pg-button" onClick={() => setPending(null)}>
             Cancel
           </button>
         </div>
@@ -138,7 +162,7 @@ export function PresetsTab() {
       preset={p}
       active={p.meta.id === state.activeId}
       favourite={state.favourites.includes(p.meta.id)}
-      draft={state.draft?.meta.id === p.meta.id}
+      draft={p.meta.id in state.drafts}
     />
   );
   const customs = state.customs.filter(matches);

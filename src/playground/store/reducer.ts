@@ -15,13 +15,16 @@ export function findPreset(
   return state.customs.find((p) => p.meta.id === id) ?? builtIns.find((p) => p.meta.id === id);
 }
 
-export const hasDraft = (state: PlaygroundState) =>
-  state.draft !== null && state.draft.meta.id === state.activeId;
+/** Whether the active built-in carries unsaved edits. */
+export const hasDraft = (state: PlaygroundState) => state.activeId in state.drafts;
 
-/** What the preview should show: the draft when one is in force, else the stored preset, else `today`. */
+/** What the preview should show: the draft when one exists, else the stored preset, else `today`. */
 export function activeConfig(state: PlaygroundState, builtIns: BuiltIns): ThemeConfig {
-  if (hasDraft(state) && state.draft) return state.draft;
-  return findPreset(state, builtIns, state.activeId) ?? (builtIns[0] as ThemeConfig);
+  return (
+    state.drafts[state.activeId] ??
+    findPreset(state, builtIns, state.activeId) ??
+    (builtIns[0] as ThemeConfig)
+  );
 }
 
 const touch = (config: ThemeConfig, now: string): ThemeConfig => ({
@@ -38,6 +41,13 @@ const body = (c: ThemeConfig) => ({
   content: c.content,
 });
 
+const withoutDraft = (drafts: Record<string, ThemeConfig>, id: string) => {
+  if (!(id in drafts)) return drafts;
+  const next = { ...drafts };
+  delete next[id];
+  return next;
+};
+
 /**
  * The reducer is pure: ids and timestamps arrive on the action, supplied by the
  * provider's action creators, so every transition can be tested exactly.
@@ -52,9 +62,7 @@ export function createReducer(builtIns: BuiltIns) {
 
       case 'update': {
         const current = activeConfig(state, builtIns);
-        const isCustom =
-          !isBuiltInId(builtIns, state.activeId) &&
-          state.customs.some((c) => c.meta.id === state.activeId);
+        const isCustom = state.customs.some((c) => c.meta.id === state.activeId);
         if (isCustom) {
           return {
             ...state,
@@ -64,7 +72,13 @@ export function createReducer(builtIns: BuiltIns) {
           };
         }
         const next = action.updater(current);
-        return { ...state, draft: { ...next, meta: { ...current.meta, updatedAt: action.now } } };
+        return {
+          ...state,
+          drafts: {
+            ...state.drafts,
+            [state.activeId]: { ...next, meta: { ...current.meta, updatedAt: action.now } },
+          },
+        };
       }
 
       case 'saveAs': {
@@ -88,7 +102,7 @@ export function createReducer(builtIns: BuiltIns) {
         return {
           ...state,
           customs: [...state.customs, custom],
-          draft: hasDraft(state) ? null : state.draft,
+          drafts: withoutDraft(state.drafts, state.activeId),
           activeId: action.id,
         };
       }
@@ -157,7 +171,7 @@ export function createReducer(builtIns: BuiltIns) {
 
       case 'resetToBase': {
         if (isBuiltInId(builtIns, action.id)) {
-          return state.draft?.meta.id === action.id ? { ...state, draft: null } : state;
+          return { ...state, drafts: withoutDraft(state.drafts, action.id) };
         }
         const custom = state.customs.find((c) => c.meta.id === action.id);
         if (!custom) return state;

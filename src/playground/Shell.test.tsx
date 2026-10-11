@@ -51,6 +51,25 @@ describe('Shell', () => {
     expect((screen.getByLabelText('Compare with') as HTMLSelectElement).value).toBe('wayfinder');
   });
 
+  it('asks before resetting a custom preset, from the top bar and from the list', () => {
+    render(<Shell />);
+    fireEvent.click(screen.getByRole('button', { name: /save as/i }));
+    fireEvent.change(screen.getByLabelText('New preset name'), { target: { value: 'Mine' } });
+    fireEvent.click(screen.getByRole('button', { name: /^save$/i }));
+
+    fireEvent.click(screen.getByRole('button', { name: /^reset$/i }));
+    const confirm = screen.getByRole('button', { name: /confirm reset/i });
+    expect(confirm).toBeInTheDocument();
+    fireEvent.click(confirm);
+    expect(screen.queryByRole('button', { name: /confirm reset/i })).toBeNull();
+
+    const mine = screen.getByRole('list', { name: 'My presets' });
+    fireEvent.click(within(mine).getByRole('button', { name: /reset mine to its base/i }));
+    fireEvent.click(within(mine).getByRole('button', { name: /cancel/i }));
+    expect(within(mine).queryByRole('button', { name: /confirm reset mine/i })).toBeNull();
+    expect(screen.getByTestId('active-name')).toHaveTextContent('Mine');
+  });
+
   it('save as creates a custom preset, which can be renamed, favourited and deleted', () => {
     render(<Shell />);
     fireEvent.click(screen.getByRole('button', { name: /save as/i }));

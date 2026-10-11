@@ -19,8 +19,8 @@ export type PlaygroundState = {
   customs: ThemeConfig[];
   favourites: string[];
   activeId: string;
-  /** Unsaved edits to a built-in; only in force while `draft.meta.id === activeId`. */
-  draft: ThemeConfig | null;
+  /** Unsaved edits to built-ins, keyed by preset id, so switching presets loses nothing. */
+  drafts: Record<string, ThemeConfig>;
   ui: PlaygroundUi;
 };
 
@@ -50,6 +50,6 @@ export const initialState: PlaygroundState = {
   customs: [],
   favourites: [],
   activeId: 'today',
-  draft: null,
+  drafts: {},
   ui: initialUi,
 };

@@ -36,7 +36,19 @@ describe('reducer', () => {
     expect(hasDraft(state)).toBe(true);
     expect(activeConfig(state, builtIns).components.nav.style).toBe('dark');
     expect(todayPreset.components.nav.style).toBe('glass');
-    expect(state.draft?.meta.updatedAt).toBe(NOW);
+    expect(state.drafts.today?.meta.updatedAt).toBe(NOW);
+  });
+
+  it('keeps a separate draft per built-in, so switching presets loses nothing', () => {
+    let state = reduce(initialState, { type: 'update', updater: setNav('dark'), now: NOW });
+    state = reduce(state, { type: 'select', id: 'alt' });
+    expect(hasDraft(state)).toBe(false);
+    state = reduce(state, { type: 'update', updater: setNav('minimal'), now: NOW });
+    expect(activeConfig(state, builtIns).components.nav.style).toBe('minimal');
+    state = reduce(state, { type: 'select', id: 'today' });
+    expect(hasDraft(state)).toBe(true);
+    expect(activeConfig(state, builtIns).components.nav.style).toBe('dark');
+    expect(Object.keys(state.drafts).sort()).toEqual(['alt', 'today']);
   });
 
   it('saveAs turns the draft into a custom based on the built-in and selects it', () => {
@@ -63,7 +75,7 @@ describe('reducer', () => {
     });
     expect(state.customs[0]?.components.nav.style).toBe('minimal');
     expect(state.customs[0]?.meta.updatedAt).toBe('2026-10-11T11:00:00.000Z');
-    expect(state.draft).toBeNull();
+    expect(state.drafts).toEqual({});
   });
 
   it('duplicate copies a preset under a new id and name', () => {

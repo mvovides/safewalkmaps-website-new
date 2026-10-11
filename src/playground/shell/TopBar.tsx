@@ -28,8 +28,10 @@ export function TopBar({ onExport, onImport }: TopBarProps) {
   const active = useActiveConfig();
   const actions = usePlaygroundActions();
   const [saving, setSaving] = useState(false);
+  const [confirmingReset, setConfirmingReset] = useState(false);
   const [newName, setNewName] = useState('');
   const widths: PreviewWidth[] = [...PREVIEW_WIDTHS, 'fluid'];
+  const activeIsCustom = state.customs.some((c) => c.meta.id === state.activeId);
 
   return (
     <header className="pg-topbar">
@@ -104,13 +106,38 @@ export function TopBar({ onExport, onImport }: TopBarProps) {
             Save as
           </button>
         )}
-        <button
-          type="button"
-          className="pg-button"
-          onClick={() => actions.resetToBase(state.activeId)}
-        >
-          Reset
-        </button>
+        {confirmingReset ? (
+          <div className="pg-inline-form" role="group" aria-label="Reset this preset?">
+            <span className="pg-hint">
+              Reset “{active.meta.name}” to its base? Saved edits are lost.
+            </span>
+            <button
+              type="button"
+              className="pg-button pg-button-danger"
+              aria-label="Confirm reset"
+              onClick={() => {
+                actions.resetToBase(state.activeId);
+                setConfirmingReset(false);
+              }}
+            >
+              Reset
+            </button>
+            <button type="button" className="pg-button" onClick={() => setConfirmingReset(false)}>
+              Cancel
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            className="pg-button"
+            // A built-in only drops its draft; a custom loses saved edits, so it asks first.
+            onClick={() =>
+              activeIsCustom ? setConfirmingReset(true) : actions.resetToBase(state.activeId)
+            }
+          >
+            Reset
+          </button>
+        )}
         <button type="button" className="pg-button" onClick={onExport}>
           Export
         </button>
