@@ -381,7 +381,10 @@ under test: comment terminators are split, and the validator refuses values cont
 
 ### Testing
 
-33 files, 224 tests, up from 17 files and 125 on `main`. New coverage: the token converter
+33 files, 226 tests, up from 17 files and 125 on `main`. A fresh-context review of the whole
+branch found no critical issues; its two important findings (a single draft slot that could
+discard another built-in's unsaved edits, and a one-click Reset on a saved custom preset) were
+fixed under test: drafts are keyed per built-in and Reset asks first. New coverage: the token converter
 and the baseline pin, the validator, exporters and runtime application, colour maths and
 derived token sets, the preset builder, the nine presets (including a guard that no two share
 every component choice), the store, the preview protocol, the panel, the lab, the shell, and
