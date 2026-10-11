@@ -18,6 +18,8 @@ export type ApplyPayload = {
   mode: PreviewMode;
   route: LiveRoute;
   labSection: string | null;
+  /** Emulate `prefers-reduced-motion` for the lab's CSS. */
+  reducedMotion: boolean;
 };
 
 export type ShellToPreview =

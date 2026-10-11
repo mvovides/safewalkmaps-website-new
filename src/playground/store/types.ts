@@ -12,6 +12,7 @@ export type PlaygroundUi = {
   compareId: string | null;
   panelTab: PanelTab;
   labSection: string | null;
+  reducedMotion: boolean;
 };
 
 export type PlaygroundState = {
@@ -42,6 +43,7 @@ export const initialUi: PlaygroundUi = {
   compareId: null,
   panelTab: 'presets',
   labSection: null,
+  reducedMotion: false,
 };
 
 export const initialState: PlaygroundState = {

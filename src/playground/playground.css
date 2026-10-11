@@ -1,0 +1,125 @@
+/*
+ * Playground chrome. Deliberately plain and literal (greys), so the shell reads
+ * the same under every preset shown in the frames. Nothing here is imported by
+ * the production site.
+ */
+
+/* Shell layout */
+.pg-shell {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: 340px 1fr;
+  height: 100svh;
+  background: #f4f5f7;
+  color: #111827;
+  font:
+    14px/1.4 ui-sans-serif,
+    system-ui,
+    sans-serif;
+}
+.pg-topbar {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.25rem;
+  align-items: center;
+  padding: 0.6rem 1rem;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+}
+.pg-topbar-group {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.pg-label {
+  font-size: 12px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.pg-select {
+  height: 32px;
+  padding: 0 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  font: inherit;
+}
+.pg-chip {
+  height: 32px;
+  padding: 0 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 999px;
+  background: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+.pg-chip[aria-pressed='true'] {
+  background: #111827;
+  color: #fff;
+  border-color: #111827;
+}
+.pg-active-name {
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+.pg-panel {
+  overflow: auto;
+  background: #fff;
+  border-right: 1px solid #e5e7eb;
+}
+.pg-previews {
+  position: relative;
+  display: flex;
+  gap: 2px;
+  overflow: hidden;
+}
+.pg-stage {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  background: #e5e7eb;
+}
+.pg-stage-inner {
+  position: absolute;
+  top: 0;
+  transform-origin: top left;
+}
+.pg-frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #fff;
+}
+@media (max-width: 1023px) {
+  .pg-shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 1fr;
+  }
+  .pg-panel {
+    max-height: 40svh;
+    border-right: 0;
+    border-bottom: 1px solid #e5e7eb;
+  }
+}
+
+/* Lab chrome: captions above each composition, never themed */
+.lab-chrome {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: baseline;
+  margin: 0 0 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  background: #f3f4f6;
+  color: #6b7280;
+  font:
+    11px/1.4 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    monospace;
+  letter-spacing: 0.02em;
+}

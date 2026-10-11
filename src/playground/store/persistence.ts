@@ -54,6 +54,7 @@ function sanitiseUi(value: unknown): PlaygroundUi {
   if (typeof v.compareId === 'string') ui.compareId = v.compareId;
   if (typeof v.panelTab === 'string') ui.panelTab = v.panelTab as PlaygroundUi['panelTab'];
   if (typeof v.labSection === 'string') ui.labSection = v.labSection;
+  if (typeof v.reducedMotion === 'boolean') ui.reducedMotion = v.reducedMotion;
   return ui;
 }
 
