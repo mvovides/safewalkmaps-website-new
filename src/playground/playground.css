@@ -300,6 +300,50 @@
   font-weight: 600;
 }
 
+/* Section dividers */
+[data-swm-dividers='hairline'] .lab-section + .lab-section {
+  border-top: 1px solid var(--color-line);
+}
+[data-swm-dividers='tonal'] .lab-section[data-tone='default']:nth-of-type(even) {
+  background: rgb(var(--color-surface-secondary));
+}
+
+/* Reveal style: the site's CSS keys on the attribute value, the lab keys on the preset. */
+.motion-ready[data-swm-reveal='fade'] [data-reveal][data-visible='false'] {
+  transform: none !important;
+}
+.motion-ready[data-swm-reveal='scale'] [data-reveal][data-visible='false'] {
+  transform: translate3d(0, calc(1.75rem * var(--reveal-scale)), 0) scale(0.975) !important;
+}
+.motion-ready[data-swm-reveal='mask'] [data-reveal][data-visible='false'] {
+  clip-path: inset(0 0 100% 0) !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+.motion-ready[data-swm-reveal='mask'] [data-reveal][data-visible='true'] {
+  clip-path: inset(0 0 -10% 0);
+}
+
+/* Hover lift on cards */
+[data-swm-hover-lift='true'] .lab-card {
+  transition:
+    transform var(--duration-base) var(--ease-out-expo),
+    box-shadow var(--duration-base) var(--ease-out-expo);
+}
+[data-swm-hover-lift='true'] .lab-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Route stroke: RouteLine marks its layers with data-route-layer */
+[data-route-stroke='solid'] [data-route-layer='casing'],
+[data-route-stroke='dashed'] [data-route-layer='casing'] {
+  display: none;
+}
+[data-route-stroke='dashed'] [data-route-layer='line'] {
+  stroke-dasharray: 0.03 0.018 !important;
+}
+
 /* Reduced-motion emulation in the preview (mirrors the site's media-query block). */
 [data-swm-reduced='true'] *,
 [data-swm-reduced='true'] *::before,
