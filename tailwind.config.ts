@@ -1,19 +1,25 @@
 import type { Config } from 'tailwindcss';
+import plugin from 'tailwindcss/plugin';
+
+import { tokensToCssVariables } from './src/theme/cssVariables';
+import { defaultTokens, GREEN_STEPS, NAVY_STEPS, TYPE_STEPS } from './src/theme/tokens';
 
 /**
  * SafeWalkMaps design system.
  *
- * Every navy and green value below is sampled from the supplied logo
- * (`safewalkmaps_logo.svg`): the shield gradient runs #062E6F → #05295F → #031B3D
- * and the route gradient runs #6AF5A4 → #43E68D → #17F58B. The remaining steps are
- * tonal extensions of those two hues so the palette stays recognisably brand-true.
+ * The values live in `src/theme/tokens.ts`. This file maps them onto Tailwind:
+ * every colour, radius, shadow, font, size and duration utility reads a CSS custom
+ * property, and the plugin at the bottom emits the defaults on `:root`, so the
+ * production CSS still carries the real numbers and needs no JavaScript.
  *
- * Contrast notes, recomputed against #FFFFFF with the WCAG 2.1 relative
- * luminance formula. Two figures in an earlier revision of this comment
- * overstated the ratio and are corrected below.
+ * Colours use `rgb(var(--…) / <alpha-value>)` with the variables holding bare
+ * channel triplets, which is what keeps `bg-navy-800/35` and friends working.
+ * The line colours carry their alpha inside the value and have no modifiers.
+ *
+ * Contrast notes for the default palette (against #FFFFFF, WCAG 2.1):
  *   ink.primary    #06152E  18.2:1  AAA body text
- *   ink.secondary  #4A5F7D   6.5:1  AA  body text            (said 7.2)
- *   ink.tertiary   #788CA6   3.4:1  large text / labels only (said 3.9)
+ *   ink.secondary  #4A5F7D   6.5:1  AA  body text
+ *   ink.tertiary   #788CA6   3.4:1  large text / labels only
  *   green.800      #07704A   6.1:1  AA  green text on white
  *   green.500      #17F58B   1.5:1  graphics only on white — 11.8:1 on navy.900
  *
@@ -22,6 +28,7 @@ import type { Config } from 'tailwindcss';
  * secondary and tertiary are darkened to 9.2:1 and 6.0:1 — see the
  * increased-contrast block in src/styles/index.css.
  */
+
 /**
  * Tailwind's stock opacity scale only contains multiples of five, and any
  * `/N` modifier outside it is silently dropped — `bg-white/96` produces no
@@ -32,136 +39,112 @@ const fineOpacity = Object.fromEntries(
   Array.from({ length: 101 }, (_, value) => [String(value), String(value / 100)]),
 );
 
+const channel = (name: string) => `rgb(var(--${name}) / <alpha-value>)`;
+const steps = (family: string, list: readonly string[]) =>
+  Object.fromEntries(list.map((step) => [step, channel(`color-${family}-${step}`)]));
+
+/**
+ * The playground is scanned only when vite.config.ts says it is being served
+ * or built, so production CSS never carries playground-only utilities.
+ */
+const playgroundContent =
+  process.env.PLAYGROUND === '1' ? ['./playground.html', './src/playground/**/*.{ts,tsx}'] : [];
+
 const config: Config = {
-  content: ['./index.html', './src/**/*.{ts,tsx}'],
+  content: [
+    './index.html',
+    './src/*.{ts,tsx}',
+    './src/{components,pages,hooks,lib,data,styles,theme,services}/**/*.{ts,tsx}',
+    ...playgroundContent,
+  ],
   theme: {
     extend: {
       opacity: fineOpacity,
       colors: {
-        navy: {
-          50: '#F2F6FC',
-          100: '#E2EBF7',
-          200: '#C3D5EC',
-          300: '#93AFD7',
-          400: '#5B7FB5',
-          500: '#2F5B96',
-          600: '#0A3C85',
-          700: '#062E6F', // logo shield gradient — start
-          800: '#062A5E', // brand navy — wordmark
-          900: '#031B3D', // logo shield gradient — end
-          950: '#020F24',
-        },
-        green: {
-          50: '#EBFEF4',
-          100: '#D2FCE5',
-          200: '#A6F8CA',
-          300: '#6AF5A4', // logo route gradient — start
-          400: '#43E68D', // logo route gradient — mid
-          500: '#17F58B', // logo route gradient — end · signature accent
-          600: '#0FBF6D',
-          700: '#0A9159',
-          800: '#07704A', // AA-safe green text on white
-          900: '#054F36',
-        },
+        navy: steps('navy', NAVY_STEPS),
+        green: steps('green', GREEN_STEPS),
         ink: {
-          primary: '#06152E',
-          secondary: '#4A5F7D',
-          tertiary: '#788CA6',
-          inverse: '#FFFFFF',
+          primary: channel('color-ink-primary'),
+          secondary: channel('color-ink-secondary'),
+          tertiary: channel('color-ink-tertiary'),
+          inverse: channel('color-ink-inverse'),
         },
         surface: {
-          DEFAULT: '#FFFFFF',
-          secondary: '#F6F8FB',
-          tertiary: '#EDF2F8',
-          navy: '#031B3D',
-          'navy-soft': '#06234C',
+          DEFAULT: channel('color-surface'),
+          secondary: channel('color-surface-secondary'),
+          tertiary: channel('color-surface-tertiary'),
+          navy: channel('color-surface-navy'),
+          'navy-soft': channel('color-surface-navy-soft'),
         },
         line: {
-          DEFAULT: 'rgb(6 42 94 / 0.09)',
-          strong: 'rgb(6 42 94 / 0.16)',
-          inverse: 'rgb(255 255 255 / 0.12)',
-          'inverse-strong': 'rgb(255 255 255 / 0.22)',
+          DEFAULT: 'var(--color-line)',
+          strong: 'var(--color-line-strong)',
+          inverse: 'var(--color-line-inverse)',
+          'inverse-strong': 'var(--color-line-inverse-strong)',
         },
-        danger: {
-          DEFAULT: '#D92D20',
-          soft: '#FEF3F2',
-        },
+        danger: { DEFAULT: channel('color-danger'), soft: channel('color-danger-soft') },
         warning: {
-          DEFAULT: '#F79009',
-          ink: '#B54708',
-          soft: '#FFFAEB',
+          DEFAULT: channel('color-warning'),
+          ink: channel('color-warning-ink'),
+          soft: channel('color-warning-soft'),
         },
       },
       fontFamily: {
-        sans: [
-          // `@fontsource-variable/inter` registers the family as
-          // "Inter Variable" — with the space. Without it the whole stack
-          // silently falls through to the system font.
-          'Inter Variable',
-          'Inter',
-          '-apple-system',
-          'BlinkMacSystemFont',
-          'SF Pro Text',
-          'Segoe UI',
-          'system-ui',
-          'sans-serif',
-        ],
-        mono: ['ui-monospace', 'SFMono-Regular', 'SF Mono', 'Menlo', 'monospace'],
+        sans: 'var(--font-sans)',
+        display: 'var(--font-display)',
+        mono: 'var(--font-mono)',
       },
-      fontSize: {
-        // Fluid editorial display scale.
-        'display-2xl': ['clamp(2.875rem, 9.4vw, 8rem)', { lineHeight: '0.94', letterSpacing: '-0.045em' }],
-        'display-xl': ['clamp(2.5rem, 6.6vw, 5.25rem)', { lineHeight: '0.98', letterSpacing: '-0.04em' }],
-        'display-lg': ['clamp(2.125rem, 5.4vw, 4.25rem)', { lineHeight: '1.02', letterSpacing: '-0.035em' }],
-        'display-md': ['clamp(1.75rem, 3.9vw, 3rem)', { lineHeight: '1.06', letterSpacing: '-0.03em' }],
-        'display-sm': ['clamp(1.4375rem, 2.6vw, 2.125rem)', { lineHeight: '1.14', letterSpacing: '-0.022em' }],
-        'body-xl': ['clamp(1.125rem, 1.5vw, 1.4375rem)', { lineHeight: '1.5', letterSpacing: '-0.012em' }],
-        'body-lg': ['clamp(1.0625rem, 1.1vw, 1.1875rem)', { lineHeight: '1.6', letterSpacing: '-0.008em' }],
-        body: ['1.0625rem', { lineHeight: '1.62', letterSpacing: '-0.006em' }],
-        'body-sm': ['0.9375rem', { lineHeight: '1.6', letterSpacing: '-0.004em' }],
-        caption: ['0.8125rem', { lineHeight: '1.5', letterSpacing: '0' }],
-        label: ['0.6875rem', { lineHeight: '1.4', letterSpacing: '0.12em' }],
-      },
+      fontSize: Object.fromEntries(
+        TYPE_STEPS.map((step) => [
+          step,
+          [
+            `var(--text-${step})`,
+            { lineHeight: `var(--leading-${step})`, letterSpacing: `var(--tracking-${step})` },
+          ],
+        ]),
+      ),
       spacing: {
         13: '3.25rem', // iOS-sized form control height
-        section: 'clamp(5rem, 11vh, 9.5rem)',
-        'section-lg': 'clamp(6.5rem, 15vh, 13rem)',
-        gutter: 'clamp(1.25rem, 4vw, 2.5rem)',
+        section: 'var(--space-section)',
+        'section-lg': 'var(--space-section-lg)',
+        gutter: 'var(--space-gutter)',
       },
       maxWidth: {
-        shell: '80rem', // 1280px content column
-        'shell-wide': '90rem', // 1440px for full-bleed visuals
-        prose: '38rem',
-        'prose-lg': '44rem',
+        shell: 'var(--width-shell)',
+        'shell-wide': 'var(--width-shell-wide)',
+        prose: 'var(--width-prose)',
+        'prose-lg': 'var(--width-prose-lg)',
       },
       borderRadius: {
-        xs: '0.375rem',
-        sm: '0.5rem',
-        md: '0.75rem',
-        lg: '1rem',
-        xl: '1.25rem',
-        '2xl': '1.75rem',
-        '3xl': '2.25rem',
-        phone: '2.875rem',
-        pill: '999px',
+        xs: 'var(--radius-xs)',
+        sm: 'var(--radius-sm)',
+        md: 'var(--radius-md)',
+        lg: 'var(--radius-lg)',
+        xl: 'var(--radius-xl)',
+        '2xl': 'var(--radius-2xl)',
+        '3xl': 'var(--radius-3xl)',
+        phone: 'var(--radius-phone)',
+        pill: 'var(--radius-pill)',
+        control: 'var(--radius-control)',
+        card: 'var(--radius-card)',
       },
       boxShadow: {
-        xs: '0 1px 2px rgb(6 42 94 / 0.06)',
-        sm: '0 2px 8px -2px rgb(6 42 94 / 0.08), 0 1px 2px rgb(6 42 94 / 0.04)',
-        md: '0 10px 28px -8px rgb(6 42 94 / 0.12), 0 2px 6px -2px rgb(6 42 94 / 0.06)',
-        lg: '0 26px 60px -18px rgb(6 42 94 / 0.16), 0 6px 16px -8px rgb(6 42 94 / 0.08)',
-        xl: '0 44px 96px -28px rgb(6 42 94 / 0.22), 0 10px 24px -12px rgb(6 42 94 / 0.10)',
-        phone: '0 56px 120px -32px rgb(3 27 61 / 0.34), 0 12px 32px -12px rgb(3 27 61 / 0.18)',
-        'phone-sm': '0 28px 64px -22px rgb(3 27 61 / 0.30), 0 6px 18px -8px rgb(3 27 61 / 0.14)',
-        green: '0 12px 32px -10px rgb(10 145 89 / 0.42)',
-        'green-lg': '0 18px 48px -12px rgb(10 145 89 / 0.46)',
-        inset: 'inset 0 1px 0 rgb(255 255 255 / 0.08)',
+        xs: 'var(--shadow-xs)',
+        sm: 'var(--shadow-sm)',
+        md: 'var(--shadow-md)',
+        lg: 'var(--shadow-lg)',
+        xl: 'var(--shadow-xl)',
+        phone: 'var(--shadow-phone)',
+        'phone-sm': 'var(--shadow-phone-sm)',
+        green: 'var(--shadow-green)',
+        'green-lg': 'var(--shadow-green-lg)',
+        inset: 'var(--shadow-inset)',
       },
       transitionTimingFunction: {
-        'out-expo': 'cubic-bezier(0.16, 1, 0.3, 1)',
-        'out-quint': 'cubic-bezier(0.22, 1, 0.36, 1)',
-        'in-out-soft': 'cubic-bezier(0.65, 0, 0.35, 1)',
-        'out-back': 'cubic-bezier(0.34, 1.4, 0.64, 1)',
+        'out-expo': 'var(--ease-out-expo)',
+        'out-quint': 'var(--ease-out-quint)',
+        'in-out-soft': 'var(--ease-in-out-soft)',
+        'out-back': 'var(--ease-out-back)',
         // Spring curves. Defined in index.css so a @supports block can swap the
         // real `linear()` sampling in over a bezier fallback. Each one is only
         // correct at its paired duration below.
@@ -169,10 +152,10 @@ const config: Config = {
         'spring-sheet': 'var(--ease-spring-sheet)',
       },
       transitionDuration: {
-        fast: '150ms',
-        base: '240ms',
-        slow: '420ms',
-        slower: '700ms',
+        fast: 'var(--duration-fast)',
+        base: 'var(--duration-base)',
+        slow: 'var(--duration-slow)',
+        slower: 'var(--duration-slower)',
         // Press feedback is asymmetric: near-instant in, unhurried out.
         'press-in': 'var(--duration-press-in)',
         'press-out': 'var(--duration-press-out)',
@@ -217,7 +200,13 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    // The token defaults, emitted into the base layer exactly where the
+    // hand-written `:root` block used to sit, so cascade order is unchanged.
+    plugin(({ addBase }) => {
+      addBase({ ':root': tokensToCssVariables(defaultTokens) });
+    }),
+  ],
 };
 
 export default config;

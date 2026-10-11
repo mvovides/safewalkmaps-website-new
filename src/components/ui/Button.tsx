@@ -7,7 +7,7 @@ type Variant = 'primary' | 'accent' | 'secondary' | 'ghost' | 'inverse';
 type Size = 'sm' | 'md' | 'lg';
 
 const base =
-  'group/button tappable relative inline-flex select-none items-center justify-center gap-2 overflow-hidden whitespace-nowrap rounded-pill font-semibold ' +
+  'group/button tappable relative inline-flex select-none items-center justify-center gap-2 overflow-hidden whitespace-nowrap rounded-control font-semibold ' +
   'touch-manipulation active:scale-[0.97] motion-reduce:active:scale-100 ' +
   'disabled:pointer-events-none disabled:opacity-55';
 

@@ -114,11 +114,7 @@ export function SectionHeading({
   const inverse = tone === 'inverse';
   return (
     <header
-      className={cn(
-        'flex flex-col',
-        align === 'center' && 'items-center text-center',
-        className,
-      )}
+      className={cn('flex flex-col', align === 'center' && 'items-center text-center', className)}
       data-reveal-stagger
     >
       {eyebrow && (
@@ -130,7 +126,9 @@ export function SectionHeading({
         id={id}
         className={cn(
           size === 'lg' ? 'text-display-lg' : 'text-display-md',
-          'max-w-[20ch] font-semibold',
+          // Weight comes from the heading token via the base rule, so the
+          // playground's heading-weight control reaches every section opener.
+          'max-w-[20ch]',
           align === 'center' && 'max-w-[26ch]',
           inverse && 'text-white',
         )}

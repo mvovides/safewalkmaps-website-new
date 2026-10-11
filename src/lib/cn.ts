@@ -11,6 +11,11 @@ import { extendTailwindMerge } from 'tailwind-merge';
  */
 const twMerge = extendTailwindMerge({
   extend: {
+    theme: {
+      // Custom radius names, so `cn('rounded-control', 'rounded-xl')` resolves
+      // to one class instead of leaving both in place.
+      borderRadius: ['xs', 'phone', 'pill', 'control', 'card'],
+    },
     classGroups: {
       'font-size': [
         {

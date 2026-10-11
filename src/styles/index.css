@@ -7,49 +7,16 @@
 /* ===========================================================================
    Design tokens
 
-   Sampled from `safewalkmaps_logo.svg`. These custom properties exist so that
-   inline SVG illustrations and GSAP timelines can reach the same values the
-   Tailwind utilities use (see tailwind.config.ts for the full scale).
+   The colour, type, radius, shadow, spacing and motion custom properties are
+   emitted onto `:root` by the Tailwind plugin in tailwind.config.ts, from the
+   values in src/theme/tokens.ts. Inline SVG illustrations and GSAP timelines
+   read the same variables the utilities do (`--brand-green`, `--surface`, …),
+   so changing a token moves everything at once. Only the properties that are
+   not design tokens live here: the generated springs, the press timings and
+   the layout measurements below.
    =========================================================================== */
 @layer base {
   :root {
-    /* Brand — straight from the logo gradients */
-    --brand-navy: #062a5e;
-    --brand-navy-bright: #062e6f;
-    --brand-navy-deep: #031b3d;
-    --brand-navy-darkest: #020f24;
-    --brand-green: #17f58b;
-    --brand-green-light: #6af5a4;
-    --brand-green-mid: #43e68d;
-    --brand-green-muted: #0a9159;
-    --brand-green-ink: #07704a;
-
-    /* Surfaces */
-    --surface: #ffffff;
-    --surface-secondary: #f6f8fb;
-    --surface-tertiary: #edf2f8;
-    --surface-navy: #031b3d;
-
-    /* Text */
-    --text-primary: #06152e;
-    --text-secondary: #4a5f7d;
-    --text-tertiary: #788ca6;
-
-    /* Lines & status */
-    --border: rgb(6 42 94 / 0.09);
-    --border-strong: rgb(6 42 94 / 0.16);
-    --danger: #d92d20;
-    --warning: #f79009;
-
-    /* Motion */
-    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-    --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
-    --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
-    --duration-fast: 150ms;
-    --duration-base: 240ms;
-    --duration-slow: 420ms;
-    --duration-slower: 700ms;
-
     /**
      * Press response.
      *
@@ -111,7 +78,7 @@
     --signal-step: 58svh;
     --hero-intro: 165svh;
 
-    color-scheme: light;
+    color-scheme: var(--color-scheme);
     -webkit-tap-highlight-color: transparent;
   }
 
@@ -219,11 +186,15 @@
     overflow-x: clip;
   }
 
+  /* Headings carry the heading tokens; a heading that also sets a weight
+     utility keeps that weight, which is the port's job to remove. */
   h1,
   h2,
   h3,
   h4 {
-    @apply font-semibold text-ink-primary;
+    @apply text-ink-primary;
+    font-family: var(--font-display);
+    font-weight: var(--heading-weight);
     text-wrap: balance;
   }
 
@@ -374,11 +345,11 @@
   }
 
   .nav-glass-light {
-    --nav-glass-tint: rgb(255 255 255 / 0.82);
+    --nav-glass-tint: rgb(var(--color-surface) / 0.82);
   }
 
   .nav-glass-dark {
-    --nav-glass-tint: rgb(2 15 36 / 0.55);
+    --nav-glass-tint: rgb(var(--color-navy-950) / 0.55);
   }
 
   /**
@@ -457,7 +428,7 @@
 
   .motion-ready [data-reveal][data-visible='false'] {
     opacity: 0;
-    transform: translate3d(0, 1.25rem, 0);
+    transform: translate3d(0, calc(1.25rem * var(--reveal-scale)), 0);
   }
 
   .motion-ready [data-reveal][data-visible='true'] {
@@ -471,7 +442,7 @@
   }
 
   .motion-ready [data-reveal='scale'][data-visible='false'] {
-    transform: translate3d(0, 1.75rem, 0) scale(0.975);
+    transform: translate3d(0, calc(1.75rem * var(--reveal-scale)), 0) scale(0.975);
   }
 
   .motion-ready [data-reveal='mask'][data-visible='false'] {
@@ -493,7 +464,7 @@
 
   .motion-ready [data-reveal-stagger][data-visible='false'] > * {
     opacity: 0;
-    transform: translate3d(0, 1.25rem, 0);
+    transform: translate3d(0, calc(1.25rem * var(--reveal-scale)), 0);
   }
 
   .motion-ready [data-reveal-stagger][data-visible='true'] > * {
@@ -543,11 +514,11 @@
 
     .motion-ready [data-reveal][data-visible='false'],
     .motion-ready [data-reveal-stagger][data-visible='false'] > * {
-      transform: translate3d(0, 0.75rem, 0);
+      transform: translate3d(0, calc(0.75rem * var(--reveal-scale)), 0);
     }
 
     .motion-ready [data-reveal='scale'][data-visible='false'] {
-      transform: translate3d(0, 1rem, 0) scale(0.985);
+      transform: translate3d(0, calc(1rem * var(--reveal-scale)), 0) scale(0.985);
     }
 
     [data-reveal-stagger] > *:nth-child(2) {
@@ -669,11 +640,22 @@
    read from the border rather than inferred from a tint.
    =========================================================================== */
 @media (prefers-contrast: more) {
+  /**
+   * The utilities read the channel variables, so raising them here reaches
+   * every `text-ink-*`, `border-line*` and `bg-line*` on the page, plus the
+   * legacy hex names the illustrations use. Measured against #FFFFFF:
+   *   ink.secondary  #4A5F7D  6.51:1  ->  #354964  9.18:1
+   *   ink.tertiary   #788CA6  3.44:1  ->  #4F6485  6.01:1  (AA at any size)
+   */
   :root {
-    --border: rgb(6 42 94 / 0.38);
-    --border-strong: rgb(6 42 94 / 0.62);
+    --color-ink-secondary: 53 73 100;
+    --color-ink-tertiary: 79 100 133;
+    --color-line: rgb(6 42 94 / 0.38);
+    --color-line-strong: rgb(6 42 94 / 0.62);
     --text-secondary: #354964;
     --text-tertiary: #4f6485;
+    --border: rgb(6 42 94 / 0.38);
+    --border-strong: rgb(6 42 94 / 0.62);
   }
 
   .nav-glass-light {
@@ -686,44 +668,6 @@
 
   .nav-glass {
     border-bottom: 1px solid var(--border-strong);
-  }
-
-  /**
-   * The Tailwind palette is defined as literal hex in tailwind.config.ts, not
-   * as `var()` references — deliberately, because the `/alpha` modifiers used
-   * across the site need a colour Tailwind can decompose. So raising the
-   * custom properties above does not reach the utilities, and the utilities
-   * have to be restated here.
-   *
-   * These rules sit outside `@layer`, which beats Tailwind's layered utilities
-   * in the cascade without needing `!important`.
-   *
-   * Measured against #FFFFFF:
-   *   ink.secondary  #4A5F7D  6.51:1  ->  #354964  9.18:1
-   *   ink.tertiary   #788CA6  3.44:1  ->  #4F6485  6.01:1  (AA at any size)
-   */
-  .text-ink-secondary {
-    color: var(--text-secondary);
-  }
-
-  .text-ink-tertiary,
-  .demo-note,
-  .eyebrow {
-    color: var(--text-tertiary);
-  }
-
-  /* Edges should be read from a border, not inferred from a tint. */
-  .border-line {
-    border-color: var(--border);
-  }
-
-  .border-line-strong {
-    border-color: var(--border-strong);
-  }
-
-  .hairline,
-  .eyebrow-rule {
-    background-color: var(--border-strong);
   }
 
   /* The focus ring is the one thing that must never be subtle. */
