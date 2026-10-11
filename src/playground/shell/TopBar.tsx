@@ -1,3 +1,6 @@
+import { useState } from 'react';
+
+import { LAB_SECTIONS } from '../lab/labStyles';
 import { LIVE_ROUTES, PREVIEW_WIDTHS, type LiveRoute, type PreviewWidth } from '../protocol';
 import {
   useActiveConfig,
@@ -5,6 +8,7 @@ import {
   usePlaygroundActions,
   usePlaygroundState,
 } from '../store/hooks';
+import { hasDraft } from '../store/reducer';
 
 const WIDTH_LABELS: Record<string, string> = {
   '390': 'Phone',
@@ -13,11 +17,18 @@ const WIDTH_LABELS: Record<string, string> = {
   fluid: 'Fluid',
 };
 
-export function TopBar() {
+export type TopBarProps = {
+  onExport: () => void;
+  onImport: () => void;
+};
+
+export function TopBar({ onExport, onImport }: TopBarProps) {
   const state = usePlaygroundState();
   const builtIns = useBuiltIns();
   const active = useActiveConfig();
   const actions = usePlaygroundActions();
+  const [saving, setSaving] = useState(false);
+  const [newName, setNewName] = useState('');
   const widths: PreviewWidth[] = [...PREVIEW_WIDTHS, 'fluid'];
 
   return (
@@ -52,6 +63,60 @@ export function TopBar() {
         <span className="pg-active-name" data-testid="active-name">
           {active.meta.name}
         </span>
+        {hasDraft(state) && (
+          <span className="pg-dot" title="Unsaved changes" aria-label="Unsaved changes" />
+        )}
+      </div>
+
+      <div className="pg-topbar-group">
+        {saving ? (
+          <form
+            className="pg-inline-form"
+            onSubmit={(e) => {
+              e.preventDefault();
+              actions.saveAs(newName);
+              setSaving(false);
+            }}
+          >
+            <input
+              className="pg-input"
+              aria-label="New preset name"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              autoFocus
+            />
+            <button type="submit" className="pg-button">
+              Save
+            </button>
+            <button type="button" className="pg-button" onClick={() => setSaving(false)}>
+              Cancel
+            </button>
+          </form>
+        ) : (
+          <button
+            type="button"
+            className="pg-button"
+            onClick={() => {
+              setNewName(`${active.meta.name} (custom)`);
+              setSaving(true);
+            }}
+          >
+            Save as
+          </button>
+        )}
+        <button
+          type="button"
+          className="pg-button"
+          onClick={() => actions.resetToBase(state.activeId)}
+        >
+          Reset
+        </button>
+        <button type="button" className="pg-button" onClick={onExport}>
+          Export
+        </button>
+        <button type="button" className="pg-button" onClick={onImport}>
+          Import
+        </button>
       </div>
 
       <div className="pg-topbar-group" role="group" aria-label="Preview width">
@@ -95,6 +160,21 @@ export function TopBar() {
             {LIVE_ROUTES.map((route) => (
               <option key={route} value={route}>
                 {route}
+              </option>
+            ))}
+          </select>
+        )}
+        {state.ui.mode === 'lab' && (
+          <select
+            aria-label="Jump to section"
+            className="pg-select"
+            value={state.ui.labSection ?? ''}
+            onChange={(e) => actions.setUi({ labSection: e.target.value || null })}
+          >
+            <option value="">Jump to…</option>
+            {LAB_SECTIONS.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.title}
               </option>
             ))}
           </select>

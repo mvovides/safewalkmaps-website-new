@@ -344,6 +344,128 @@
   stroke-dasharray: 0.03 0.018 !important;
 }
 
+/* Preset list and dialogs */
+.pg-preset-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+.pg-preset {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.6rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+.pg-preset[data-active='true'] {
+  border-color: #111827;
+  box-shadow: 0 0 0 1px #111827;
+}
+.pg-preset-select {
+  display: grid;
+  gap: 0.15rem;
+  text-align: left;
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+}
+.pg-preset-name {
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.pg-preset-desc {
+  font-size: 12px;
+  color: #6b7280;
+}
+.pg-preset-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+.pg-icon-button {
+  width: 28px;
+  height: 28px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+.pg-icon-button[aria-pressed='true'] {
+  background: #fef3c7;
+  border-color: #f59e0b;
+}
+.pg-inline-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+.pg-inline-form .pg-input {
+  width: auto;
+  min-width: 12rem;
+}
+.pg-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #f59e0b;
+}
+.pg-button-danger {
+  border-color: #b91c1c;
+  color: #b91c1c;
+}
+.pg-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  background: rgb(17 24 39 / 0.45);
+}
+.pg-dialog {
+  display: grid;
+  gap: 0.75rem;
+  width: min(720px, 92vw);
+  max-height: 88svh;
+  padding: 1rem;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 30px 80px -20px rgb(0 0 0 / 0.4);
+}
+.pg-code {
+  width: 100%;
+  min-height: 320px;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font:
+    12px/1.5 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    monospace;
+  resize: vertical;
+}
+.pg-dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.pg-errors {
+  margin: 0;
+  padding: 0.6rem 0.9rem 0.6rem 1.6rem;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  background: #fef2f2;
+  color: #991b1b;
+  font-size: 12px;
+}
+
 /* Reduced-motion emulation in the preview (mirrors the site's media-query block). */
 [data-swm-reduced='true'] *,
 [data-swm-reduced='true'] *::before,
