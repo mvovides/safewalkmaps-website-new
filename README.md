@@ -19,15 +19,20 @@ npm run dev             # http://localhost:5173
 
 ### Scripts
 
-| Script | What it does |
-| --- | --- |
-| `npm run dev` | Vite dev server with hot reload |
-| `npm run build` | Type-check, then build to `dist/` |
-| `npm run preview` | Serve the production build locally |
-| `npm run lint` | ESLint over the whole project |
-| `npm run typecheck` | TypeScript, no emit |
-| `npm run format` | Prettier over source |
-| `npm run og` | Regenerate the favicon set and social preview (see below) |
+| Script                       | What it does                                                             |
+| ---------------------------- | ------------------------------------------------------------------------ |
+| `npm run dev`                | Vite dev server with hot reload                                          |
+| `npm run build`              | Type-check, then build to `dist/`                                        |
+| `npm run preview`            | Serve the production build locally                                       |
+| `npm run lint`               | ESLint over the whole project                                            |
+| `npm run typecheck`          | TypeScript, no emit                                                      |
+| `npm run format`             | Prettier over source                                                     |
+| `npm run og`                 | Regenerate the favicon set and social preview (see below)                |
+| `npm run build:playground`   | Build the theme playground to `dist-playground/` (never part of `build`) |
+| `npm run preview:playground` | Serve that playground build locally                                      |
+
+The theme playground is served in dev at `/playground.html`; see
+[`docs/theme-playground.md`](docs/theme-playground.md).
 
 ---
 
@@ -36,11 +41,11 @@ npm run dev             # http://localhost:5173
 Every variable is optional — the site builds and renders without any of them. Copy
 `.env.example` to `.env` and fill in what you need.
 
-| Variable | Purpose | Without it |
-| --- | --- | --- |
+| Variable                    | Purpose                                                                                         | Without it                                                                                                               |
+| --------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | `VITE_WEB3FORMS_ACCESS_KEY` | Delivers waitlist and contact submissions to your inbox via [Web3Forms](https://web3forms.com). | Forms run in **development mode**: submissions are simulated and the success screen says so explicitly. Nothing is sent. |
-| `VITE_SITE_URL` | Canonical origin for canonical links and OpenGraph URLs. No trailing slash. | Falls back to `https://safewalkmaps.com`. |
-| `VITE_CONTACT_EMAIL` | Public contact address and `mailto:` fallback if a submission fails. | Falls back to `safewalkmaps@gmail.com`. |
+| `VITE_SITE_URL`             | Canonical origin for canonical links and OpenGraph URLs. No trailing slash.                     | Falls back to `https://safewalkmaps.com`.                                                                                |
+| `VITE_CONTACT_EMAIL`        | Public contact address and `mailto:` fallback if a submission fails.                            | Falls back to `safewalkmaps@gmail.com`.                                                                                  |
 
 The Web3Forms access key is a public, submission-only credential — it is safe in a client
 bundle and cannot read anything back. It is read from the environment so it can be rotated per
@@ -56,12 +61,12 @@ deployment rather than committed.
 The build output is a static `dist/` directory. Because `/privacy` and `/terms` are
 client-side routes, the host must serve `index.html` for unknown paths.
 
-| Host | Configuration | Notes |
-| --- | --- | --- |
-| **Vercel** | `vercel.json` (committed) | Build `npm run build`, output `dist`. Rewrites and cache headers are already configured. |
-| **Netlify** | `netlify.toml` (committed) | Build command and publish directory are set. |
-| **Cloudflare Pages** | `public/_redirects` (committed) | Build `npm run build`, output `dist`. |
-| **Any static host** | — | Serve `dist/`, and rewrite unmatched paths to `/index.html`. |
+| Host                 | Configuration                   | Notes                                                                                    |
+| -------------------- | ------------------------------- | ---------------------------------------------------------------------------------------- |
+| **Vercel**           | `vercel.json` (committed)       | Build `npm run build`, output `dist`. Rewrites and cache headers are already configured. |
+| **Netlify**          | `netlify.toml` (committed)      | Build command and publish directory are set.                                             |
+| **Cloudflare Pages** | `public/_redirects` (committed) | Build `npm run build`, output `dist`.                                                    |
+| **Any static host**  | —                               | Serve `dist/`, and rewrite unmatched paths to `/index.html`.                             |
 
 After deploying, set the environment variables above and redeploy once so the forms go live.
 
@@ -141,12 +146,12 @@ five layers at once.
 
 Mobile is not the desktop timeline scaled down. Four things differ, each for a reason:
 
-| | Phone | Desktop |
-| --- | --- | --- |
-| Scroll per pinned beat | ~41svh (`--signal-step`) | ~55svh |
-| Scrub lag (`scrubFor`) | 0.35 | 0.6 – 0.8 |
-| Reveal duration / travel | 460ms / 12px | 700ms / 20px |
-| Decorative map pulses | static halo | animating |
+|                          | Phone                    | Desktop      |
+| ------------------------ | ------------------------ | ------------ |
+| Scroll per pinned beat   | ~41svh (`--signal-step`) | ~55svh       |
+| Scrub lag (`scrubFor`)   | 0.35                     | 0.6 – 0.8    |
+| Reveal duration / travel | 460ms / 12px             | 700ms / 20px |
+| Decorative map pulses    | static halo              | animating    |
 
 A thumb covers far more of the page per gesture than a wheel does, so a long scrub reads as
 the animation being detached from your hand, and a 700ms reveal is still running as the

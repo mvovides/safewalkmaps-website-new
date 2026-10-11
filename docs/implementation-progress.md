@@ -4,31 +4,31 @@ Status as of the initial build of the redesigned site. Branch: `feature/website-
 
 ## Complete
 
-| Area | State |
-| --- | --- |
-| Toolchain | Vite + React 18 + TypeScript + Tailwind 3, ESLint, Prettier. `lint`, `typecheck` and `build` all pass clean. |
-| Design system | Tokens in `tailwind.config.ts` and `src/styles/index.css`, sampled from the supplied logo. Contrast checked and documented. |
-| Brand marks | Icon traced from `safewalkmaps_logo.svg`; wordmark set as live text matching the horizontal lockup. |
-| Homepage | Hero plus five sections (problem, safety layer, route choice, waitlist, final call to action), all with real copy. The other sections moved to their own routes; see Site architecture below. |
-| Motion | Scroll-reveal system plus four GSAP ScrollTrigger stories. Reduced-motion alternatives implemented, not just disabled. |
-| Product mockups | Route picker and night navigation screens, built from DOM elements at iPhone proportions. |
-| Forms | Waitlist and contact, with validation, loading, success and error states, behind a transport-agnostic service. |
-| Supporting pages | `/safety-score`, `/features`, `/about`, `/faq`, `/privacy` and `/terms`, which with `/` make the seven public routes, plus the 404. |
-| SEO | Metadata, canonical URLs, OpenGraph and Twitter cards, JSON-LD (Organization, WebSite and MobileApplication in `index.html`; `FAQPage` is injected on `/faq`), robots, sitemap, manifest. |
-| Assets | Favicon set, PWA icons, 1200×630 social preview, all generated from the logo. |
-| Deployment | Vercel, Netlify and Cloudflare Pages configuration committed. |
+| Area             | State                                                                                                                                                                                         |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Toolchain        | Vite + React 18 + TypeScript + Tailwind 3, ESLint, Prettier. `lint`, `typecheck` and `build` all pass clean.                                                                                  |
+| Design system    | Tokens in `tailwind.config.ts` and `src/styles/index.css`, sampled from the supplied logo. Contrast checked and documented.                                                                   |
+| Brand marks      | Icon traced from `safewalkmaps_logo.svg`; wordmark set as live text matching the horizontal lockup.                                                                                           |
+| Homepage         | Hero plus five sections (problem, safety layer, route choice, waitlist, final call to action), all with real copy. The other sections moved to their own routes; see Site architecture below. |
+| Motion           | Scroll-reveal system plus four GSAP ScrollTrigger stories. Reduced-motion alternatives implemented, not just disabled.                                                                        |
+| Product mockups  | Route picker and night navigation screens, built from DOM elements at iPhone proportions.                                                                                                     |
+| Forms            | Waitlist and contact, with validation, loading, success and error states, behind a transport-agnostic service.                                                                                |
+| Supporting pages | `/safety-score`, `/features`, `/about`, `/faq`, `/privacy` and `/terms`, which with `/` make the seven public routes, plus the 404.                                                           |
+| SEO              | Metadata, canonical URLs, OpenGraph and Twitter cards, JSON-LD (Organization, WebSite and MobileApplication in `index.html`; `FAQPage` is injected on `/faq`), robots, sitemap, manifest.     |
+| Assets           | Favicon set, PWA icons, 1200×630 social preview, all generated from the logo.                                                                                                                 |
+| Deployment       | Vercel, Netlify and Cloudflare Pages configuration committed.                                                                                                                                 |
 
 ## Mobile pass
 
 Measured on a 4x-throttled phone profile (390 x 844), production build:
 
-| | Before | After |
-| --- | --- | --- |
-| Frames over 32ms, full-page scroll | 81 | 5 |
-| Worst frame | 83ms | 33ms |
-| Long tasks | 1 | 0 |
-| p99 frame time | 33ms | 17ms |
-| Total scroll length | 28.2 screens | 26.8 screens |
+|                                    | Before       | After        |
+| ---------------------------------- | ------------ | ------------ |
+| Frames over 32ms, full-page scroll | 81           | 5            |
+| Worst frame                        | 83ms         | 33ms         |
+| Long tasks                         | 1            | 0            |
+| p99 frame time                     | 33ms         | 17ms         |
+| Total scroll length                | 28.2 screens | 26.8 screens |
 
 What changed, and why:
 
@@ -49,14 +49,14 @@ What changed, and why:
 - **A blank viewport between the hero intro and the hero.** The composition now scrolls away
   intact rather than fading into an empty stage.
 
-Two things were measured and then *not* changed: removing the header's backdrop blur made
+Two things were measured and then _not_ changed: removing the header's backdrop blur made
 frame timing slightly worse (run-to-run noise dominates — it is not a bottleneck), and the
 static heat-blob filter on the safety map is rasterised once, so it stays.
 
 ## Apple-design pass
 
 Branch: `refactor/apple-motion-materials`. A refinement pass against Apple's interface
-guidance (chiefly *Designing Fluid Interfaces*, WWDC 2018), not a rebuild — the type scale,
+guidance (chiefly _Designing Fluid Interfaces_, WWDC 2018), not a rebuild — the type scale,
 reduced-motion coverage and compositor-friendly reveals from the earlier work were already
 sound and were left alone.
 
@@ -66,11 +66,11 @@ The motion system was entirely decelerating cubic-beziers. A bezier cannot expre
 no overshoot, and the wrong tail shape. Three springs are now generated from spring physics
 by `scripts/generate-spring-easings.mjs` and sampled into CSS `linear()`:
 
-| Token | Damping | Response | Settles | Used for |
-| --- | --- | --- | --- | --- |
-| `--ease-spring` | 1.0 | 0.4s | 588ms | Reveals, repositioning, press release |
-| `--duration-spring-snappy` | 1.0 | 0.3s | 441ms | Tab pill, chevron, nav indicator, menu glyph |
-| `--ease-spring-sheet` | 0.8 | 0.3s | 405ms | The mobile sheet — the one place overshoot belongs |
+| Token                      | Damping | Response | Settles | Used for                                           |
+| -------------------------- | ------- | -------- | ------- | -------------------------------------------------- |
+| `--ease-spring`            | 1.0     | 0.4s     | 588ms   | Reveals, repositioning, press release              |
+| `--duration-spring-snappy` | 1.0     | 0.3s     | 441ms   | Tab pill, chevron, nav indicator, menu glyph       |
+| `--ease-spring-sheet`      | 0.8     | 0.3s     | 405ms   | The mobile sheet — the one place overshoot belongs |
 
 A critically damped spring's normalised curve is invariant under time scaling, so the first
 two share one easing and differ only in duration. That is also why the phone's 460ms reveal
@@ -152,37 +152,37 @@ Per-section scroll cost before the change, in screens of viewport height, and wh
 section lives now. The after figure is the page total in the last row: a section that moved
 costs the home page nothing.
 
-| Section | Desktop | Phone | Now |
-| --- | --- | --- | --- |
-| hero | 3.18 | 3.50 | stays on `/` |
-| problem | 1.31 | 1.62 | stays on `/` |
-| how-it-works | 4.32 | 3.48 | stays on `/` |
-| safety-score | 1.61 | 2.54 | moved to `/safety-score` |
-| routes | 1.39 | 2.18 | stays on `/` |
-| features | 1.66 | 3.39 | moved to `/features` |
-| privacy | 1.06 | 1.67 | moved to `/about` |
-| scenarios | 1.22 | 0.96 | moved to `/features` |
-| mission | 1.07 | 1.35 | moved to `/about` |
-| waitlist | 0.93 | 1.61 | stays on `/` |
-| faq | 1.45 | 2.29 | moved to `/faq` |
-| contact | 0.71 | 1.15 | moved to `/about` |
-| final CTA | 1.13 | 1.05 | stays on `/`, and closes each detail page |
-| **Home page total** | **21.6 → 12.8** | **27.9 → 14.6** | |
+| Section             | Desktop         | Phone           | Now                                       |
+| ------------------- | --------------- | --------------- | ----------------------------------------- |
+| hero                | 3.18            | 3.50            | stays on `/`                              |
+| problem             | 1.31            | 1.62            | stays on `/`                              |
+| how-it-works        | 4.32            | 3.48            | stays on `/`                              |
+| safety-score        | 1.61            | 2.54            | moved to `/safety-score`                  |
+| routes              | 1.39            | 2.18            | stays on `/`                              |
+| features            | 1.66            | 3.39            | moved to `/features`                      |
+| privacy             | 1.06            | 1.67            | moved to `/about`                         |
+| scenarios           | 1.22            | 0.96            | moved to `/features`                      |
+| mission             | 1.07            | 1.35            | moved to `/about`                         |
+| waitlist            | 0.93            | 1.61            | stays on `/`                              |
+| faq                 | 1.45            | 2.29            | moved to `/faq`                           |
+| contact             | 0.71            | 1.15            | moved to `/about`                         |
+| final CTA           | 1.13            | 1.05            | stays on `/`, and closes each detail page |
+| **Home page total** | **21.6 → 12.8** | **27.9 → 14.6** |                                           |
 
 The section rows are measured per section and do not add up to the page totals; the
 difference is height that belongs to no listed section.
 
 ### Page map
 
-| Route | Carries | Lazy |
-| --- | --- | --- |
-| `/` | Hero, problem, how it works, route choice, waitlist, final CTA | No, in the main bundle |
-| `/safety-score` | The safety score (leads as the `h1`), final CTA | Yes |
-| `/features` | Features (leads as the `h1`), scenarios, final CTA | Yes |
-| `/about` | Mission (leads as the `h1`), privacy, contact. No closing CTA: the contact form is already an ask | Yes |
-| `/faq` | The FAQ (leads as the `h1`), final CTA, `FAQPage` structured data | Yes |
-| `/privacy`, `/terms` | Legal pages | Yes |
-| `*` | The 404 | Yes |
+| Route                | Carries                                                                                           | Lazy                   |
+| -------------------- | ------------------------------------------------------------------------------------------------- | ---------------------- |
+| `/`                  | Hero, problem, how it works, route choice, waitlist, final CTA                                    | No, in the main bundle |
+| `/safety-score`      | The safety score (leads as the `h1`), final CTA                                                   | Yes                    |
+| `/features`          | Features (leads as the `h1`), scenarios, final CTA                                                | Yes                    |
+| `/about`             | Mission (leads as the `h1`), privacy, contact. No closing CTA: the contact form is already an ask | Yes                    |
+| `/faq`               | The FAQ (leads as the `h1`), final CTA, `FAQPage` structured data                                 | Yes                    |
+| `/privacy`, `/terms` | Legal pages                                                                                       | Yes                    |
+| `*`                  | The 404                                                                                           | Yes                    |
 
 `ROUTES` in `src/data/routes.ts` is the single list of public paths. The router, the
 navigation, the footer and the sitemap are all tested against it.
@@ -327,3 +327,70 @@ Five open items, written up in full in [`before-launch.md`](before-launch.md):
 
 Merging is no longer pending: `feature/website-build` was merged to `main` once the above were
 documented.
+
+## Theme playground
+
+Branch: `theme-playground`, cut from `main` at `1e9a2c8`. Spec in
+[`superpowers/specs/2026-10-11-theme-playground-design.md`](superpowers/specs/2026-10-11-theme-playground-design.md),
+user guide in [`theme-playground.md`](theme-playground.md).
+
+### The token bridge
+
+The Tailwind theme no longer holds literal values. `src/theme/tokens.ts` holds them as data,
+`tailwind.config.ts` maps every colour, radius, shadow, font, type size, spacing and duration
+utility onto a CSS custom property, and a Tailwind plugin emits the defaults on `:root`. Colours
+use `rgb(var(--…) / <alpha-value>)` with bare channel triplets, which is what keeps every
+`/alpha` modifier working — the reason the palette had been literal hex.
+
+Three production files changed beyond the config: `Button` reads `rounded-control`,
+`SectionHeading` leaves its weight to the heading token, and the class-merge helper learns
+the new radius names. The increased-contrast block now overrides variables instead of
+restating utilities.
+
+**Verification.** The production CSS was built before and after, every variable in the bridged
+build resolved against its own `:root`, and the two compared rule by rule. Fifty-nine lines
+differ, all equivalences: the minifier writes literal alpha colours as 8-digit hex where the
+bridged build keeps `rgb()`, `calc(1.25rem * 1)` against `1.25rem`, whitespace, the deliberately
+removed contrast restatements, and the heading rule gaining the body font-family. One
+behavioural difference is recorded: Tailwind cannot template `--tw-shadow-colored` from a
+variable shadow, so `shadow-<colour>` utilities would not recolour token shadows. None are used;
+the site's arbitrary `shadow-[…]` values are unaffected.
+
+**Not verified in a browser.** Playwright is not installed on this machine, so no screenshot
+comparison was made. The CSS diff is the evidence that the rendered values are unchanged.
+
+### The playground
+
+`playground.html` is a second Vite entry at `src/playground/`. The dev server serves it at
+`/playground.html`; `npm run build` ignores it, and Tailwind scans the playground sources
+only when `vite.config.ts` says it is being served or built, so the production bundle and CSS
+carry none of it (checked: no playground asset in `dist/`, no playground class in its CSS).
+`npm run build:playground` writes a hostable copy to `dist-playground/`.
+
+The shell drives one or two preview iframes over `postMessage`. Each frame applies the
+`ThemeConfig` to `<html>` and renders either the component lab — fifteen compositions built
+from the site's own primitives, every layout and style variant included — or the real `App`
+on a memory router. Nine presets, a seven-tab control panel, drafts, favourites, duplicate,
+rename, delete, reset, import, export (JSON, CSS, TypeScript) and compare mode with mirrored
+scrolling.
+
+A background security review during the work flagged that an imported preset's name could
+close a generated comment and that imported token strings reach CSS verbatim. Both were fixed
+under test: comment terminators are split, and the validator refuses values containing
+`; { } < >` or comment markers.
+
+### Testing
+
+33 files, 224 tests, up from 17 files and 125 on `main`. New coverage: the token converter
+and the baseline pin, the validator, exporters and runtime application, colour maths and
+derived token sets, the preset builder, the nine presets (including a guard that no two share
+every component choice), the store, the preview protocol, the panel, the lab, the shell, and
+compare mode. `lint`, `typecheck`, `build` and `build:playground` pass.
+
+### Limits, stated plainly
+
+Live site mode is faithful to tokens but not to layout variants. Dark presets show literal
+white utilities in Live site mode until those are replaced with semantic tokens during a port.
+The brand mark and the score ring gradient never re-theme. Heading weight reaches production
+headings only once their explicit weight utilities are removed. The reduced-motion toggle
+emulates the preference for the lab's CSS; the GSAP stories read the OS setting.
