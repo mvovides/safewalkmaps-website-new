@@ -48,6 +48,27 @@ describe('toCss', () => {
   });
 });
 
+describe('comment safety', () => {
+  const hostile = {
+    ...todayPreset,
+    meta: { ...todayPreset.meta, name: 'Evil */ body { display: none } /*', description: 'x */ y' },
+  };
+
+  it('never lets a preset name close the CSS comment early', () => {
+    const css = toCss(hostile);
+    const header = css.split('\n')[0] ?? '';
+    expect(header.indexOf('*/')).toBe(header.length - 2);
+    expect(css).not.toMatch(/\*\/ body/);
+  });
+
+  it('never lets a preset name close the TypeScript doc comment early', () => {
+    const ts = toTypeScript(hostile);
+    const doc = ts.split('\n')[2] ?? '';
+    expect(doc.startsWith('/**')).toBe(true);
+    expect(doc.indexOf('*/')).toBe(doc.length - 2);
+  });
+});
+
 describe('toTypeScript', () => {
   it('is a module exporting a ThemeConfig', () => {
     const ts = toTypeScript(todayPreset);

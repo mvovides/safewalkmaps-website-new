@@ -33,8 +33,16 @@ export type ParseResult =
   { ok: true; config: ThemeConfig; warnings: string[] } | { ok: false; errors: string[] };
 
 const HEX = /^#[0-9a-f]{6}$/i;
-const RGB = /^rgba?\(/i;
+const RGB = /^rgba?\([^;{}<>]*\)$/i;
 const HEADING_WEIGHTS = [500, 600, 700, 800] as const;
+
+/**
+ * Token strings are written verbatim into a `:root` block by the CSS export and
+ * into `style.setProperty` by the preview. A value that could close a declaration
+ * or open a comment is refused, so an imported preset cannot smuggle CSS through
+ * a font stack or a shadow.
+ */
+const isSafeCssValue = (s: string) => !/[;{}<>]/.test(s) && !s.includes('/*') && !s.includes('*/');
 
 type Rec = Record<string, unknown>;
 const isRec = (v: unknown): v is Rec => typeof v === 'object' && v !== null && !Array.isArray(v);
@@ -67,6 +75,8 @@ export function parseThemeConfig(input: unknown): ParseResult {
     }
     return v;
   };
+  const css = (v: unknown, path: string) =>
+    str(v, path, isSafeCssValue, 'CSS value without ; { } < > or comment markers');
   const hex = (v: unknown, path: string) =>
     str(v, path, (s) => HEX.test(s), 'hex colour like #062A5E');
   const rgb = (v: unknown, path: string) =>
@@ -212,9 +222,9 @@ export function parseThemeConfig(input: unknown): ParseResult {
       return [
         step,
         {
-          size: str(style.size, `${path}.size`),
-          lineHeight: str(style.lineHeight, `${path}.lineHeight`),
-          letterSpacing: str(style.letterSpacing, `${path}.letterSpacing`),
+          size: css(style.size, `${path}.size`),
+          lineHeight: css(style.lineHeight, `${path}.lineHeight`),
+          letterSpacing: css(style.letterSpacing, `${path}.letterSpacing`),
         },
       ];
     }),
@@ -264,10 +274,10 @@ export function parseThemeConfig(input: unknown): ParseResult {
         ),
       },
       typography: {
-        sans: str(typography.sans, 'tokens.typography.sans'),
+        sans: css(typography.sans, 'tokens.typography.sans'),
         display:
-          typography.display === null ? null : str(typography.display, 'tokens.typography.display'),
-        mono: str(typography.mono, 'tokens.typography.mono'),
+          typography.display === null ? null : css(typography.display, 'tokens.typography.display'),
+        mono: css(typography.mono, 'tokens.typography.mono'),
         headingWeight: oneOf(
           typography.headingWeight,
           'tokens.typography.headingWeight',
@@ -275,29 +285,29 @@ export function parseThemeConfig(input: unknown): ParseResult {
         ),
         scale,
       },
-      radius: record(tokens.radius, 'tokens.radius', RADIUS_KEYS, str),
-      shadows: record(tokens.shadows, 'tokens.shadows', SHADOW_KEYS, str),
+      radius: record(tokens.radius, 'tokens.radius', RADIUS_KEYS, css),
+      shadows: record(tokens.shadows, 'tokens.shadows', SHADOW_KEYS, css),
       spacing: {
-        section: str(spacing.section, 'tokens.spacing.section'),
-        sectionLg: str(spacing.sectionLg, 'tokens.spacing.sectionLg'),
-        gutter: str(spacing.gutter, 'tokens.spacing.gutter'),
-        shell: str(spacing.shell, 'tokens.spacing.shell'),
-        shellWide: str(spacing.shellWide, 'tokens.spacing.shellWide'),
-        prose: str(spacing.prose, 'tokens.spacing.prose'),
-        proseLg: str(spacing.proseLg, 'tokens.spacing.proseLg'),
+        section: css(spacing.section, 'tokens.spacing.section'),
+        sectionLg: css(spacing.sectionLg, 'tokens.spacing.sectionLg'),
+        gutter: css(spacing.gutter, 'tokens.spacing.gutter'),
+        shell: css(spacing.shell, 'tokens.spacing.shell'),
+        shellWide: css(spacing.shellWide, 'tokens.spacing.shellWide'),
+        prose: css(spacing.prose, 'tokens.spacing.prose'),
+        proseLg: css(spacing.proseLg, 'tokens.spacing.proseLg'),
       },
       motion: {
         duration: record(
           motionTokens.duration,
           'tokens.motion.duration',
           ['fast', 'base', 'slow', 'slower'] as const,
-          str,
+          css,
         ),
         ease: record(
           motionTokens.ease,
           'tokens.motion.ease',
           ['outExpo', 'outQuint', 'inOutSoft', 'outBack'] as const,
-          str,
+          css,
         ),
         revealScale: num(motionTokens.revealScale, 'tokens.motion.revealScale', 0, 3),
       },

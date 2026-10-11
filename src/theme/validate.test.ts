@@ -72,6 +72,24 @@ describe('parseThemeConfig', () => {
     }
   });
 
+  it('rejects token values that could escape a CSS declaration', () => {
+    for (const payload of [
+      "'Inter'; } body { display: none } :root { --x: 1",
+      'clamp(1rem, 2vw, 3rem) /* comment */',
+      '1rem }',
+      '<script>',
+    ]) {
+      const bad = clone(todayPreset);
+      bad.tokens.typography.sans = payload;
+      const result = parseThemeConfig(bad);
+      expect(result.ok, payload).toBe(false);
+      if (!result.ok) expect(result.errors.join('\n')).toMatch(/tokens\.typography\.sans/);
+    }
+    const shadow = clone(todayPreset);
+    shadow.tokens.shadows.md = '0 1px 2px red; color: red';
+    expect(parseThemeConfig(shadow).ok).toBe(false);
+  });
+
   it('reports every error, not just the first', () => {
     const bad = clone(todayPreset);
     (bad.layout as { density: string }).density = 'huge';
