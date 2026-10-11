@@ -119,6 +119,37 @@ export function TopBar({ onExport, onImport }: TopBarProps) {
         </button>
       </div>
 
+      <div className="pg-topbar-group">
+        <button
+          type="button"
+          className="pg-chip"
+          aria-pressed={state.ui.compareId !== null}
+          onClick={() =>
+            actions.setUi({
+              compareId: state.ui.compareId
+                ? null
+                : (builtIns.find((p) => p.meta.id !== state.activeId)?.meta.id ?? null),
+            })
+          }
+        >
+          Compare
+        </button>
+        {state.ui.compareId !== null && (
+          <select
+            aria-label="Compare with"
+            className="pg-select"
+            value={state.ui.compareId}
+            onChange={(e) => actions.setUi({ compareId: e.target.value })}
+          >
+            {[...builtIns, ...state.customs].map((p) => (
+              <option key={p.meta.id} value={p.meta.id}>
+                {p.meta.name}
+              </option>
+            ))}
+          </select>
+        )}
+      </div>
+
       <div className="pg-topbar-group" role="group" aria-label="Preview width">
         {widths.map((w) => (
           <button

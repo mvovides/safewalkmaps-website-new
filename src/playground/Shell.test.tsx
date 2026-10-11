@@ -43,6 +43,14 @@ describe('Shell', () => {
     expect(within(dialog).getByRole('alert')).toHaveTextContent(/schemaVersion/);
   });
 
+  it('compare mode shows a second frame with the chosen preset', () => {
+    render(<Shell />);
+    fireEvent.click(screen.getByRole('button', { name: 'Compare' }));
+    expect(screen.getByTitle('Preview b')).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText('Compare with'), { target: { value: 'wayfinder' } });
+    expect((screen.getByLabelText('Compare with') as HTMLSelectElement).value).toBe('wayfinder');
+  });
+
   it('save as creates a custom preset, which can be renamed, favourited and deleted', () => {
     render(<Shell />);
     fireEvent.click(screen.getByRole('button', { name: /save as/i }));

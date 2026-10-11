@@ -30,6 +30,42 @@ export function Preview({ frameId }: { frameId: FrameId }) {
     return () => window.removeEventListener('message', onMessage);
   }, [frameId]);
 
+  // Compare mode mirrors scroll between frames. Report our position as a fraction, and
+  // follow the other frame's without echoing the programmatic scroll back.
+  useEffect(() => {
+    let frame = 0;
+    let programmaticUntil = 0;
+    const range = () => document.documentElement.scrollHeight - window.innerHeight;
+    const onScroll = () => {
+      if (performance.now() < programmaticUntil || frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        const total = range();
+        postToParent({
+          type: 'swm-theme/scroll',
+          frameId,
+          fraction: total > 0 ? window.scrollY / total : 0,
+        });
+      });
+    };
+    const onMessage = (event: MessageEvent) => {
+      if (!isSameOrigin(event) || !isPlaygroundMessage(event.data)) return;
+      if (event.data.type !== 'swm-theme/scrollTo') return;
+      programmaticUntil = performance.now() + 150;
+      window.scrollTo({
+        top: Math.round(event.data.fraction * range()),
+        behavior: 'instant' as ScrollBehavior,
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('message', onMessage);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('message', onMessage);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [frameId]);
+
   useEffect(() => {
     if (!payload) return undefined;
     const root = document.documentElement;

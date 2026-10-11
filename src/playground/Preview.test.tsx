@@ -41,6 +41,46 @@ describe('Preview', () => {
     expect(document.documentElement.dataset.swmReduced).toBe('true');
   });
 
+  it('reports scroll position and honours scrollTo without echoing it', () => {
+    vi.stubGlobal('requestAnimationFrame', (cb: FrameRequestCallback) => {
+      cb(0);
+      return 1;
+    });
+    const scrollTo = vi.spyOn(window, 'scrollTo');
+    render(<Preview frameId="a" />);
+    apply({ config: todayPreset, mode: 'lab', route: '/', labSection: null, reducedMotion: false });
+    Object.defineProperty(document.documentElement, 'scrollHeight', {
+      value: 3000,
+      configurable: true,
+    });
+    Object.defineProperty(window, 'innerHeight', { value: 1000, configurable: true });
+    Object.defineProperty(window, 'scrollY', { value: 500, configurable: true });
+    act(() => {
+      window.dispatchEvent(new Event('scroll'));
+    });
+    expect(postToParent).toHaveBeenCalledWith({
+      type: 'swm-theme/scroll',
+      frameId: 'a',
+      fraction: 0.25,
+    });
+    vi.mocked(postToParent).mockClear();
+    act(() => {
+      window.dispatchEvent(
+        new MessageEvent('message', {
+          data: { type: 'swm-theme/scrollTo', fraction: 0.5 },
+          origin: window.location.origin,
+        }),
+      );
+    });
+    expect(scrollTo).toHaveBeenCalledWith({ top: 1000, behavior: 'instant' });
+    act(() => {
+      window.dispatchEvent(new Event('scroll'));
+    });
+    expect(postToParent).not.toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'swm-theme/scroll' }),
+    );
+  });
+
   it('renders the real site in live mode', () => {
     render(<Preview frameId="a" />);
     apply({
