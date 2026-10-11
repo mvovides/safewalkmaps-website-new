@@ -6,9 +6,17 @@ import type { ThemeConfig } from '@/theme/config';
 
 import { LabBadges } from './LabBadges';
 import { LabButtons } from './LabButtons';
+import { LabCta } from './LabCta';
+import { LabFeatures } from './LabFeatures';
+import { LabFooter } from './LabFooter';
 import { LabHero } from './LabHero';
 import { LabIcons } from './LabIcons';
+import { LabMapUi } from './LabMapUi';
 import { LabNav } from './LabNav';
+import { LabRouteOptions } from './LabRouteOptions';
+import { LabRouteViz } from './LabRouteViz';
+import { LabSafetyScore } from './LabSafetyScore';
+import { LabStats } from './LabStats';
 import { LabTestimonial } from './LabTestimonial';
 import { LabTypography } from './LabTypography';
 
@@ -30,12 +38,20 @@ export function Lab({ config, section }: LabProps) {
       <LabNav config={config} />
       <main>
         <LabHero config={config} />
+        <LabRouteViz config={config} />
+        <LabRouteOptions config={config} />
+        <LabSafetyScore config={config} />
+        <LabFeatures config={config} />
+        <LabStats config={config} />
         <LabBadges config={config} />
         <LabButtons config={config} />
         <LabTypography config={config} />
         <LabIcons config={config} />
+        <LabMapUi config={config} />
         <LabTestimonial config={config} />
+        <LabCta config={config} />
       </main>
+      <LabFooter config={config} />
     </MemoryRouter>
   );
 }
