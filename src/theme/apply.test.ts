@@ -7,7 +7,7 @@ describe('applyTheme', () => {
   it('writes every variable and the data hooks, and the cleanup removes them', () => {
     const root = document.createElement('div');
     const cleanup = applyTheme(root, todayPreset);
-    expect(root.style.getPropertyValue('--color-navy-800')).toBe('6 42 94');
+    expect(root.style.getPropertyValue('--color-navy-800')).toBe('36 78 138');
     expect(root.style.getPropertyValue('--font-display')).toBe('var(--font-sans)');
     expect(root.dataset.swmDensity).toBe('comfortable');
     expect(root.dataset.swmDividers).toBe('none');

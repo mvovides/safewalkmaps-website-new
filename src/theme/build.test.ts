@@ -2,18 +2,22 @@ import { describe, expect, it } from 'vitest';
 
 import { buildTokens, deepMerge } from './build';
 import { hexToRgb, rgbToHsl } from './color';
-import { defaultTokens } from './tokens';
+import { intensityMotion } from './derive';
+import { defaultTokens, FONT_STACKS } from './tokens';
 
 describe('buildTokens', () => {
-  it('anchors the ramps on the given brand colours', () => {
+  it('anchors the ramps on the given brand colours, with the builder defaults', () => {
     const tokens = buildTokens({ navy: '#062A5E', green: '#17F58B' });
     expect(tokens.colors.navy['800']).toBe('#062A5E');
     expect(tokens.colors.green['500']).toBe('#17F58B');
-    expect(tokens.shadows.md).toBe(defaultTokens.shadows.md);
+    // The original site's medium shadow, rebuilt from the logo navy.
+    expect(tokens.shadows.md).toBe(
+      '0 10px 28px -8px rgb(6 42 94 / 0.12), 0 2px 6px -2px rgb(6 42 94 / 0.06)',
+    );
     expect(tokens.shadows.green).toMatch(/^0 12px 32px -10px rgb\(/);
     expect(tokens.spacing).toEqual(defaultTokens.spacing);
-    expect(tokens.motion).toEqual(defaultTokens.motion);
-    expect(tokens.typography.sans).toBe(defaultTokens.typography.sans);
+    expect(tokens.motion).toEqual(intensityMotion('standard'));
+    expect(tokens.typography.sans).toBe(FONT_STACKS.inter);
   });
 
   it('builds a dark scheme', () => {

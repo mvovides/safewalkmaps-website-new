@@ -30,7 +30,7 @@ describe('Shell', () => {
     );
     fireEvent.click(within(dialog).getByRole('tab', { name: 'CSS' }));
     expect((within(dialog).getByRole('textbox') as HTMLTextAreaElement).value).toContain(
-      '--color-navy-800: 6 42 94;',
+      '--color-navy-800: 36 78 138;',
     );
   });
 

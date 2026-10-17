@@ -1,3 +1,5 @@
+@import '@fontsource-variable/instrument-sans/wght.css';
+/* Inter stays for the logo's wordmark, which is pinned to the supplied artwork. */
 @import '@fontsource-variable/inter/wght.css';
 
 @tailwind base;
@@ -182,7 +184,6 @@
     min-height: 100svh;
     font-synthesis-weight: none;
     text-rendering: optimizeLegibility;
-    font-feature-settings: 'cv11' 1; /* single-storey 'a' feels closer to SF */
     overflow-x: clip;
   }
 
@@ -645,17 +646,20 @@
    * every `text-ink-*`, `border-line*` and `bg-line*` on the page, plus the
    * legacy hex names the illustrations use. Measured against #FFFFFF:
    *   ink.secondary  #4A5F7D  6.51:1  ->  #354964  9.18:1
-   *   ink.tertiary   #788CA6  3.44:1  ->  #4F6485  6.01:1  (AA at any size)
+   *   ink.tertiary   #768BA7  3.49:1  ->  #4F6485  6.01:1  (AA at any size)
+   *
+   * Hairlines take the ink hue rather than the palette's lighter blue, which
+   * at the same alpha would fall short of 3:1: the strong line is 5.1:1.
    */
   :root {
     --color-ink-secondary: 53 73 100;
     --color-ink-tertiary: 79 100 133;
-    --color-line: rgb(6 42 94 / 0.38);
-    --color-line-strong: rgb(6 42 94 / 0.62);
+    --color-line: rgb(var(--color-ink-primary) / 0.38);
+    --color-line-strong: rgb(var(--color-ink-primary) / 0.62);
     --text-secondary: #354964;
     --text-tertiary: #4f6485;
-    --border: rgb(6 42 94 / 0.38);
-    --border-strong: rgb(6 42 94 / 0.62);
+    --border: rgb(var(--color-ink-primary) / 0.38);
+    --border-strong: rgb(var(--color-ink-primary) / 0.62);
   }
 
   .nav-glass-light {

@@ -1,10 +1,11 @@
 /**
  * The SafeWalkMaps design tokens, as data.
  *
- * `defaultTokens` holds the values that used to be literals in tailwind.config.ts
- * and src/styles/index.css. The Tailwind config imports this file and emits the
- * values as CSS custom properties, so this module must stay free of DOM types
- * and `import.meta` (it is type-checked under tsconfig.node.json too).
+ * `defaultTokens` holds the site's values: the "SafeWalkMaps Today" preset as
+ * chosen in the theme playground on 2026-10-17. The Tailwind config imports
+ * this file and emits the values as CSS custom properties, so this module must
+ * stay free of DOM types and `import.meta` (it is type-checked under
+ * tsconfig.node.json too).
  */
 
 export const NAVY_STEPS = [
@@ -84,6 +85,8 @@ export type ShadowKey = (typeof SHADOW_KEYS)[number];
  * system font.
  */
 export const FONT_STACKS = {
+  instrumentSans:
+    "'Instrument Sans Variable', 'Instrument Sans', 'Inter Variable', Inter, system-ui, sans-serif",
   inter:
     "'Inter Variable', Inter, -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif",
 } as const;
@@ -130,45 +133,51 @@ export type ThemeTokens = {
   };
 };
 
+/*
+ * The palette is the playground's calmer take on the logo: a brighter, bluer
+ * navy and a softer green than the logo's own gradients. The logo itself does
+ * not follow it — ShieldMark and the wordmark in Logo keep the supplied
+ * artwork's colours.
+ */
 export const defaultTokens: ThemeTokens = {
   colors: {
     scheme: 'light',
     navy: {
-      '50': '#F2F6FC',
-      '100': '#E2EBF7',
-      '200': '#C3D5EC',
-      '300': '#93AFD7',
-      '400': '#5B7FB5',
-      '500': '#2F5B96',
-      '600': '#0A3C85',
-      '700': '#062E6F', // logo shield gradient — start
-      '800': '#062A5E', // brand navy — wordmark
-      '900': '#031B3D', // logo shield gradient — end
-      '950': '#020F24',
+      '50': '#F8FAFC',
+      '100': '#F8FAFC',
+      '200': '#E1E9F4',
+      '300': '#A6C1E8',
+      '400': '#5D8FD5',
+      '500': '#3169BA',
+      '600': '#25508E',
+      '700': '#20457A',
+      '800': '#244E8A', // primary buttons, navigation labels, focus ring
+      '900': '#152E51',
+      '950': '#0F2039',
     },
     green: {
-      '50': '#EBFEF4',
-      '100': '#D2FCE5',
-      '200': '#A6F8CA',
-      '300': '#6AF5A4', // logo route gradient — start
-      '400': '#43E68D', // logo route gradient — mid
-      '500': '#17F58B', // logo route gradient — end · signature accent
-      '600': '#0FBF6D',
-      '700': '#0A9159',
-      '800': '#07704A', // AA-safe green text on white
-      '900': '#054F36',
+      '50': '#EAF7F1',
+      '100': '#D7F1E4',
+      '200': '#ACE9CC',
+      '300': '#7CDCAE', // green text on the navy surface
+      '400': '#4FD192',
+      '500': '#34C57F', // signature accent: graphics, routes, accent buttons
+      '600': '#2A9F67',
+      '700': '#1E734A',
+      '800': '#175638', // green text on white
+      '900': '#0F3A25',
     },
-    ink: { primary: '#06152E', secondary: '#4A5F7D', tertiary: '#788CA6', inverse: '#FFFFFF' },
+    ink: { primary: '#06162D', secondary: '#4A5F7D', tertiary: '#768BA7', inverse: '#FFFFFF' },
     surface: {
       base: '#FFFFFF',
       secondary: '#F6F8FB',
-      tertiary: '#EDF2F8',
-      navy: '#031B3D',
-      navySoft: '#06234C',
+      tertiary: '#EDF1F7',
+      navy: '#09479C',
+      navySoft: '#06234B',
     },
     line: {
-      base: 'rgb(6 42 94 / 0.09)',
-      strong: 'rgb(6 42 94 / 0.16)',
+      base: 'rgb(31 92 178 / 0.17)',
+      strong: 'rgb(31 92 178 / 0.31)',
       inverse: 'rgb(255 255 255 / 0.12)',
       inverseStrong: 'rgb(255 255 255 / 0.22)',
     },
@@ -176,10 +185,10 @@ export const defaultTokens: ThemeTokens = {
     warning: { base: '#F79009', ink: '#B54708', soft: '#FFFAEB' },
   },
   typography: {
-    sans: FONT_STACKS.inter,
+    sans: FONT_STACKS.instrumentSans,
     display: null,
     mono: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
-    headingWeight: 600,
+    headingWeight: 700,
     scale: {
       'display-2xl': {
         size: 'clamp(2.875rem, 9.4vw, 8rem)',
@@ -235,17 +244,18 @@ export const defaultTokens: ThemeTokens = {
     control: '999px',
     card: '1.75rem',
   },
+  // Flat: depth comes from hairlines and translucent material, not elevation.
   shadows: {
-    xs: '0 1px 2px rgb(6 42 94 / 0.06)',
-    sm: '0 2px 8px -2px rgb(6 42 94 / 0.08), 0 1px 2px rgb(6 42 94 / 0.04)',
-    md: '0 10px 28px -8px rgb(6 42 94 / 0.12), 0 2px 6px -2px rgb(6 42 94 / 0.06)',
-    lg: '0 26px 60px -18px rgb(6 42 94 / 0.16), 0 6px 16px -8px rgb(6 42 94 / 0.08)',
-    xl: '0 44px 96px -28px rgb(6 42 94 / 0.22), 0 10px 24px -12px rgb(6 42 94 / 0.10)',
-    phone: '0 56px 120px -32px rgb(3 27 61 / 0.34), 0 12px 32px -12px rgb(3 27 61 / 0.18)',
-    phoneSm: '0 28px 64px -22px rgb(3 27 61 / 0.30), 0 6px 18px -8px rgb(3 27 61 / 0.14)',
-    green: '0 12px 32px -10px rgb(10 145 89 / 0.42)',
-    greenLg: '0 18px 48px -12px rgb(10 145 89 / 0.46)',
-    inset: 'inset 0 1px 0 rgb(255 255 255 / 0.08)',
+    xs: 'none',
+    sm: 'none',
+    md: 'none',
+    lg: 'none',
+    xl: 'none',
+    phone: 'none',
+    phoneSm: 'none',
+    green: 'none',
+    greenLg: 'none',
+    inset: 'none',
   },
   spacing: {
     section: 'clamp(5rem, 11vh, 9.5rem)',
@@ -257,13 +267,14 @@ export const defaultTokens: ThemeTokens = {
     proseLg: '44rem',
   },
   motion: {
-    duration: { fast: '150ms', base: '240ms', slow: '420ms', slower: '700ms' },
+    // The "expressive" intensity: longer transitions, reveals that travel further.
+    duration: { fast: '180ms', base: '320ms', slow: '560ms', slower: '900ms' },
     ease: {
       outExpo: 'cubic-bezier(0.16, 1, 0.3, 1)',
       outQuint: 'cubic-bezier(0.22, 1, 0.36, 1)',
       inOutSoft: 'cubic-bezier(0.65, 0, 0.35, 1)',
       outBack: 'cubic-bezier(0.34, 1.4, 0.64, 1)',
     },
-    revealScale: 1,
+    revealScale: 1.4,
   },
 };

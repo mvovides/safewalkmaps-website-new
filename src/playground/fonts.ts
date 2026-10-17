@@ -64,8 +64,10 @@ export const fontOptions: FontOption[] = [
   },
   {
     id: 'instrument-sans',
-    label: 'Instrument Sans',
-    stack: sans('Instrument Sans'),
+    label: 'Instrument Sans (bundled)',
+    stack: FONT_STACKS.instrumentSans,
+    // Only fetched for a stack that names it plainly, as presets saved before
+    // the family was bundled do; the bundled stack never reaches Google.
     googleCss: google('Instrument+Sans', 'wght@400..700'),
     roles: ['sans', 'display'],
   },

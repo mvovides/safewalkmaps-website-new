@@ -23,11 +23,18 @@ import {
  * The line colours carry their alpha inside the value and have no modifiers.
  *
  * Contrast notes for the default palette (against #FFFFFF, WCAG 2.1):
- *   ink.primary    #06152E  18.2:1  AAA body text
+ *   ink.primary    #06162D  18.1:1  AAA body text
  *   ink.secondary  #4A5F7D   6.5:1  AA  body text
- *   ink.tertiary   #788CA6   3.4:1  large text / labels only
- *   green.800      #07704A   6.1:1  AA  green text on white
- *   green.500      #17F58B   1.5:1  graphics only on white — 11.8:1 on navy.900
+ *   ink.tertiary   #768BA7   3.5:1  large text / labels only
+ *   green.800      #175638   8.7:1  AAA green text on white
+ *   green.500      #34C57F   2.2:1  graphics only on white
+ *   navy.800       #244E8A   8.3:1  white on the primary button
+ *
+ * On surface.navy (#09479C) white is 8.8:1, but translucent white has less
+ * headroom than it had on the old near-black navy: body copy needs at least
+ * 70% (5.1:1), and anything under 45% falls below 3:1. green.500 is 3.9:1, so
+ * it carries graphics and display-size words; small green text uses
+ * green.300 (5.3:1).
  *
  * `ink.tertiary` clears AA for large text (3:1) but not for body copy, which
  * is why it stays on labels and captions. Under `prefers-contrast: more` both

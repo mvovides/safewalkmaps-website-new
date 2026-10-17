@@ -26,9 +26,9 @@ describe('toCss', () => {
 
   it('emits a :root block with every variable', () => {
     expect(css).toContain(':root {');
-    expect(css).toContain('  --color-navy-800: 6 42 94;');
+    expect(css).toContain('  --color-navy-800: 36 78 138;');
     expect(css).toContain('  --radius-control: 999px;');
-    expect(css).toContain('  --brand-green: #17f58b;');
+    expect(css).toContain('  --brand-green: #34c57f;');
   });
 
   it('names the preset and lists the component choices', () => {
@@ -37,7 +37,7 @@ describe('toCss', () => {
     expect(css).toContain('layout.density: comfortable');
   });
 
-  it('adds a font note only for a non-Inter family', () => {
+  it('adds a font note only for a family the site does not bundle', () => {
     expect(css).not.toMatch(/fontsource/);
     const manrope = {
       ...todayPreset,

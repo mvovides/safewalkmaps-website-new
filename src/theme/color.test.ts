@@ -64,8 +64,12 @@ describe('generateRamp', () => {
 });
 
 describe('deriveSemantic', () => {
-  it('produces a light scheme close to today', () => {
-    const semantic = deriveSemantic(defaultTokens.colors.navy, defaultTokens.colors.green, 'light');
+  it('produces a light scheme close to the original site from the logo colours', () => {
+    const semantic = deriveSemantic(
+      generateRamp('#062A5E', 'navy'),
+      generateRamp('#17F58B', 'green'),
+      'light',
+    );
     expect(semantic.surface.base).toBe('#FFFFFF');
     expect(contrastRatio(semantic.ink.primary, '#FFFFFF')).toBeGreaterThan(15);
     expect(semantic.line.base).toBe('rgb(6 42 94 / 0.09)');
