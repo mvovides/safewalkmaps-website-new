@@ -37,7 +37,12 @@ describe('labStyles', () => {
   });
 
   it('builds icon tiles and badge overrides', () => {
-    expect(iconTile(todayPreset).className).toContain('bg-navy-50');
+    const withIcons = (style: 'outline' | 'filled-tile') => ({
+      ...todayPreset,
+      components: { ...todayPreset.components, icons: { style, strokeWidth: 2 as const } },
+    });
+    expect(iconTile(withIcons('filled-tile')).className).toContain('bg-navy-50');
+    expect(iconTile(withIcons('outline')).className).not.toMatch(/\bbg-/);
     expect(iconTile(todayPreset).strokeWidth).toBe(2);
     expect(badgeOverride('solid', 'plus')).toContain('bg-green-800');
     expect(badgeOverride('soft', 'plus')).toBe('');
