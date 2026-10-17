@@ -50,7 +50,7 @@ export function SafetyScoreSection({ headingAs = 'h2', className }: SafetyScoreS
         title={
           <>
             Understand the route,
-            <span className="block text-white/45">not just the number.</span>
+            <span className="block text-white/60">not just the number.</span>
           </>
         }
         lede="A score on its own is a verdict you are asked to trust. A score with its reasons attached is information you can actually use — including the parts that count against it."
@@ -76,21 +76,21 @@ export function SafetyScoreSection({ headingAs = 'h2', className }: SafetyScoreS
                 value={route.safetyScore}
                 className="text-[clamp(3.5rem,11vw,5.5rem)] font-semibold leading-none tracking-[-0.045em] text-white"
               />
-              <span className="ml-1 text-body-lg font-medium text-white/40">/100</span>
+              <span className="ml-1 text-body-lg font-medium text-white/70">/100</span>
             </span>
-            <span className="mt-2 text-label font-semibold uppercase tracking-[0.14em] text-green-500">
+            <span className="mt-2 text-label font-semibold uppercase tracking-[0.14em] text-green-300">
               Safety score
             </span>
           </SafetyScoreRing>
 
-          <p className="mt-6 text-center text-caption leading-relaxed text-white/45">
+          <p className="mt-6 text-center text-caption leading-relaxed text-white/70">
             The notch on the ring marks the lowest-scoring stretch of this route.
           </p>
         </div>
 
         {/* Reasons and transparency */}
         <div data-reveal-stagger>
-          <SubHeading className="text-body-sm font-semibold uppercase tracking-[0.12em] text-white/40">
+          <SubHeading className="text-body-sm font-semibold uppercase tracking-[0.12em] text-white/70">
             Why this route scored {route.safetyScore}
           </SubHeading>
 
@@ -109,7 +109,7 @@ export function SafetyScoreSection({ headingAs = 'h2', className }: SafetyScoreS
               <div key={item.label} className="flex gap-6 py-6">
                 <dt className="flex-1 text-body-lg font-semibold text-white">
                   {item.label}
-                  <p className="mt-2 max-w-prose text-body-sm font-normal leading-relaxed text-white/55">
+                  <p className="mt-2 max-w-prose text-body-sm font-normal leading-relaxed text-white/80">
                     {item.body}
                   </p>
                 </dt>
@@ -117,7 +117,7 @@ export function SafetyScoreSection({ headingAs = 'h2', className }: SafetyScoreS
                   <AnimatedCounter
                     value={item.value}
                     suffix={item.suffix}
-                    className="text-display-sm font-semibold text-green-500"
+                    className="text-display-sm font-semibold text-green-300"
                   />
                 </dd>
               </div>
@@ -125,14 +125,14 @@ export function SafetyScoreSection({ headingAs = 'h2', className }: SafetyScoreS
           </dl>
 
           <div className="mt-8 rounded-xl border border-line-inverse bg-white/[0.04] px-5 py-4">
-            <p className="text-body-sm leading-relaxed text-white/65">
+            <p className="text-body-sm leading-relaxed text-white/80">
               A Safety Score compares the routes available to you at a point in time, from the data
               we hold for that area. It is not a guarantee, and a lower-scoring street is not
               inherently dangerous — sometimes it is just a street nobody publishes much about.
             </p>
           </div>
 
-          <p className="mt-4 text-caption text-white/35">{ILLUSTRATIVE_NOTE}</p>
+          <p className="mt-4 text-caption text-white/70">{ILLUSTRATIVE_NOTE}</p>
         </div>
       </div>
     </Section>

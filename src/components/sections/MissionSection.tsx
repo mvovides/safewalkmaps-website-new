@@ -39,7 +39,7 @@ export function MissionSection({ headingAs: Heading = 'h2', className }: Mission
             <span className="text-green-500"> confidence</span>.
           </Heading>
 
-          <div className="mt-9 grid gap-7 text-body-lg text-white/65 sm:grid-cols-2 sm:gap-10">
+          <div className="mt-9 grid gap-7 text-body-lg text-white/80 sm:grid-cols-2 sm:gap-10">
             <p>
               Most people already do this calculation in their heads. They take the long way, or
               cross the road, or stay on the main street, based on whatever they happen to know
@@ -54,7 +54,7 @@ export function MissionSection({ headingAs: Heading = 'h2', className }: Mission
 
           <dl className="mt-14 grid gap-8 border-t border-line-inverse pt-9 sm:grid-cols-3">
             <div>
-              <dt className="text-label font-semibold uppercase tracking-[0.12em] text-white/40">
+              <dt className="text-label font-semibold uppercase tracking-[0.12em] text-white/70">
                 In beta
               </dt>
               <dd className="mt-2.5 text-display-sm font-semibold text-white">
@@ -62,13 +62,13 @@ export function MissionSection({ headingAs: Heading = 'h2', className }: Mission
               </dd>
             </div>
             <div>
-              <dt className="text-label font-semibold uppercase tracking-[0.12em] text-white/40">
+              <dt className="text-label font-semibold uppercase tracking-[0.12em] text-white/70">
                 Next
               </dt>
               <dd className="mt-2.5 text-display-sm font-semibold text-white">iPhone</dd>
             </div>
             <div>
-              <dt className="text-label font-semibold uppercase tracking-[0.12em] text-white/40">
+              <dt className="text-label font-semibold uppercase tracking-[0.12em] text-white/70">
                 Then
               </dt>
               <dd className="mt-2.5 text-display-sm font-semibold text-white">

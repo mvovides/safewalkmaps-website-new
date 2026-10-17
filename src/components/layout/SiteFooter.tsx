@@ -16,7 +16,7 @@ function FooterLink({
   children: React.ReactNode;
 }) {
   const className =
-    'group -my-1 inline-flex items-center gap-1 rounded-md py-2 text-body-sm text-white/55 transition-colors duration-base hover:text-white lg:py-1';
+    'group -my-1 inline-flex items-center gap-1 rounded-md py-2 text-body-sm text-white/75 transition-colors duration-base hover:text-white lg:py-1';
 
   if (external) {
     return (
@@ -75,7 +75,7 @@ export function SiteFooter() {
         <div className="grid gap-12 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,2fr)]">
           <div>
             <Logo variant="mono-light" className="text-[1.05rem]" markClassName="h-8" />
-            <p className="mt-5 max-w-[34ch] text-body-sm leading-relaxed text-white/55">
+            <p className="mt-5 max-w-[34ch] text-body-sm leading-relaxed text-white/75">
               Safety-aware walking navigation. We compare the routes you could take and show you
               why each one scores the way it does.
             </p>
@@ -91,7 +91,7 @@ export function SiteFooter() {
           <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3">
             {footerColumns.map((column) => (
               <nav key={column.title} aria-label={column.title}>
-                <h2 className="text-label font-semibold uppercase tracking-[0.12em] text-white/40">
+                <h2 className="text-label font-semibold uppercase tracking-[0.12em] text-white/70">
                   {column.title}
                 </h2>
                 <ul className="mt-4 space-y-1 lg:space-y-2">
@@ -117,19 +117,19 @@ export function SiteFooter() {
             'sm:flex-row sm:items-center sm:justify-between',
           )}
         >
-          <p className="text-caption leading-relaxed text-white/40">
+          <p className="text-caption leading-relaxed text-white/70">
             © {year} SafeWalkMaps. A{' '}
             <a
               href={siteConfig.parentCompany.url}
               target="_blank"
               rel="noreferrer noopener"
-              className="text-white/60 underline-offset-4 transition-colors duration-base hover:text-white hover:underline"
+              className="text-white underline decoration-white/40 underline-offset-4 transition-colors duration-base hover:decoration-white"
             >
               {siteConfig.parentCompany.name}
             </a>{' '}
             product.
           </p>
-          <p className="max-w-[46ch] text-caption leading-relaxed text-white/40">
+          <p className="max-w-[46ch] text-caption leading-relaxed text-white/70">
             Safety scores are relative guidance from available data, not a guarantee. In an
             emergency, contact your local emergency services.
           </p>

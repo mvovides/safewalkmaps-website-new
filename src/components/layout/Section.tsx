@@ -60,10 +60,10 @@ export type EyebrowProps = {
 /** The small all-caps section label: `02 — The problem`. */
 export function Eyebrow({ index, children, className, tone = 'default' }: EyebrowProps) {
   return (
-    <p className={cn('eyebrow', tone === 'inverse' && 'text-white/55', className)}>
+    <p className={cn('eyebrow', tone === 'inverse' && 'text-white/75', className)}>
       {index && (
         <>
-          <span className={cn('tabular', tone === 'inverse' ? 'text-green-500' : 'text-green-800')}>
+          <span className={cn('tabular', tone === 'inverse' ? 'text-green-300' : 'text-green-800')}>
             {index}
           </span>
           <span

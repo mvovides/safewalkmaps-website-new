@@ -12,11 +12,16 @@ const tones: Record<ChipTone, string> = {
   neutral: 'border-line-strong bg-surface-secondary text-ink-secondary',
 };
 
+/**
+ * Every pair here clears 4.5:1 on its own tint over surface.navy. The flag
+ * text is a lighter amber than any warning token: `warning` itself is 3.4:1
+ * there.
+ */
 const inverseTones: Record<ChipTone, string> = {
-  plus: 'border-green-500/30 bg-green-500/12 text-green-300',
-  minus: 'border-white/15 bg-white/8 text-white/75',
-  flag: 'border-warning/30 bg-warning/12 text-warning',
-  neutral: 'border-white/15 bg-white/8 text-white/70',
+  plus: 'border-green-500/30 bg-green-500/12 text-green-200',
+  minus: 'border-white/15 bg-white/8 text-white/80',
+  flag: 'border-warning/30 bg-warning/12 text-[#FEC84B]',
+  neutral: 'border-white/15 bg-white/8 text-white/80',
 };
 
 const icons: Record<ChipTone, typeof Check | null> = {
