@@ -107,18 +107,22 @@ All copy is in `src/data/`, separate from the components that render it:
 
 ## Design system
 
-Colours are sampled directly from `safewalkmaps_logo.svg`: the shield gradient
+The tokens live as data in `src/theme/tokens.ts`. They are the "SafeWalkMaps Today"
+direction chosen in the theme playground: a bright navy (`#244E8A` at 800, `#09479C` as the
+navy surface), a calm green (`#34C57F` at 500), Instrument Sans with headings at 700, flat
+surfaces with no shadows, glass cards, and expressive motion. `tailwind.config.ts` maps every
+utility onto a CSS custom property and emits the values on `:root`, so utilities, inline SVG
+and GSAP timelines all read the same numbers. To try a different look, use the theme
+playground ([`docs/theme-playground.md`](docs/theme-playground.md)).
+
+The logo does not follow the theme. The shield (`ShieldMark`) and the wordmark (`Logo`, in
+Inter ExtraBold) keep the supplied artwork's own colours: the shield gradient
 (`#062E6F → #05295F → #031B3D`) and the route gradient (`#6AF5A4 → #43E68D → #17F58B`).
 
-Tokens live in two places that must stay in step:
-
-- `tailwind.config.ts` — the source of truth for utilities (colours, fluid type scale, radii,
-  shadows, easing)
-- `src/styles/index.css` — the same brand values as CSS custom properties, so inline SVG and
-  GSAP timelines can reach them
-
 Contrast is checked and noted in the config. In short: `green.500` is a graphics colour on
-white (1.5:1) and a text colour on navy (11.8:1); use `green.800` for green text on white.
+white (2.2:1) and is for large text or graphics only on the navy surface (3.9:1). Use
+`green.800` for green text on white and `green.300` for small green text on navy. Translucent
+white text on navy needs at least 70% for body copy.
 
 ---
 

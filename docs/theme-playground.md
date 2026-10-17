@@ -113,25 +113,38 @@ smuggle CSS or code into an export.
    and point `src/theme/tokens.ts`'s `defaultTokens` at its `tokens`, or copy the token values
    into `defaultTokens` directly. The Tailwind plugin emits the new values on `:root` and every
    utility, inline SVG and GSAP timeline follows. Build, run the suite, check in a browser.
-2. **Fonts.** If the body or heading family is not Inter, add its `@fontsource-variable/*`
-   package and import it at the top of `src/styles/index.css`.
+   The preset builder's baselines (the "standard" motion set, the Inter stack) are fixed in
+   `derive.ts` and `build.ts`, so changing `defaultTokens` changes the site and the Today
+   preset, never the other built-ins.
+2. **Fonts.** If the body or heading family is not one the site bundles (Instrument Sans or
+   Inter), add its `@fontsource-variable/*` package and import it at the top of
+   `src/styles/index.css`. The package registers the family with a " Variable" suffix, while
+   an exported stack names it as Google serves it, so put the registered name first:
+   `'Instrument Sans Variable', 'Instrument Sans', …`. A stack without it falls through to
+   the next family without any warning. `FONT_STACKS` in `src/theme/tokens.ts` holds the
+   bundled stacks.
 3. **Component variants.** Read the `components` block of the export. For each entry that
    differs from Today, port the lab composition into the production component it stands in
    for: navigation → `SiteHeader`; hero → `HeroMain` in `HeroSection`; route options →
-   `RouteChoiceSection`; safety score panel → `SafetyScoreSection`; features and cards →
-   `FeatureSection`; call to action → `FinalCtaSection`; footer → `SiteFooter`; badges →
-   `Chip`; buttons → `Button`. One commit per component.
+   `RouteChoiceSection`; safety score panel → `SafetyScoreSection`; features and their icons
+   → `FeatureSection`; the card material → `cardSurface` in `src/components/ui/`; call to
+   action → `FinalCtaSection`; footer → `SiteFooter`; badges → `Chip`; buttons → `Button`.
+   One commit per component.
 4. **Dark schemes only.** The real sections use literal `white` and `navy-950` utilities in
    places (button labels on navy, glass tints, phone bezels). Live site mode shows where.
    Replace them with semantic tokens (`ink-inverse`, `surface-navy`) as part of the port.
-5. Update `docs/implementation-progress.md`.
+5. **Navy surface.** The safety score, mission and footer sections set translucent white
+   text on `surface.navy`. If the new navy surface is lighter, recheck those opacities
+   against it; the contrast notes in `tailwind.config.ts` give the floors.
+6. Update `docs/implementation-progress.md`.
 
 ## Known limits
 
 - Live site mode is faithful to tokens, not to layout variants.
 - Dark presets expose literal-white utilities in Live site mode until the port in step 4.
-- The brand mark and the score ring's green gradient never re-theme. The mark is the logo;
-  the ring gradient is kept constant so the ring reads the same in every preset.
+- The brand mark, the logo's wordmark and the score ring's green gradient never re-theme. The
+  mark and wordmark are the logo; the ring gradient is kept constant so the ring reads the
+  same in every preset.
 - Heading weight reaches the lab and the base heading rule, but production headings that
   carry an explicit weight utility keep it until the port removes it. Heading family does
   reach them.

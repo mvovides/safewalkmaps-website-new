@@ -397,3 +397,80 @@ white utilities in Live site mode until those are replaced with semantic tokens 
 The brand mark and the score ring gradient never re-theme. Heading weight reaches production
 headings only once their explicit weight utilities are removed. The reduced-motion toggle
 emulates the preference for the lab's CSS; the GSAP stories read the OS setting.
+
+## Adopting the chosen theme
+
+Branch: `feature/apply-chosen-theme`, cut from `theme-playground` at `b2f750e`, because the
+token bridge it builds on exists only there. Merging it brings the playground to `main` as
+well. The playground is a development tool: `npm run build` still ships none of it.
+
+The direction was chosen in the playground as an edited draft of "SafeWalkMaps Today" and
+exported as JSON on 2026-10-17. Every token now matches that export. The one difference is
+the font stack, which names the bundled family as its package registers it (see below).
+
+### What changed
+
+| Area      | Before                                      | Now                                                                   |
+| --------- | ------------------------------------------- | --------------------------------------------------------------------- |
+| Palette   | Logo navy `#062A5E`, neon green `#17F58B`   | Brighter navy `#244E8A`, calm green `#34C57F`, `#09479C` navy surface |
+| Hairlines | `rgb(6 42 94 / 0.09)`                       | `rgb(31 92 178 / 0.17)`, stronger and bluer                           |
+| Type      | Inter, headings 600                         | Instrument Sans, headings 700                                         |
+| Depth     | Layered navy-tinted shadows                 | None; depth comes from hairlines and glass                            |
+| Cards     | White, outlined, shadowed                   | Glass: `bg-surface/70`, blur, hairline (`cardSurface`)                |
+| Features  | Bento grid                                  | Alternating rows, a glass card beside a visual panel                  |
+| Icons     | Filled navy tiles                           | Bare outlines                                                         |
+| Motion    | Standard: 150/240/420/700ms, reveal scale 1 | Expressive: 180/320/560/900ms, reveals travel 1.4x                    |
+
+### Decisions worth knowing
+
+- **The logo is pinned.** With the theme applied, the wordmark would have become Instrument
+  Sans Bold in the new navy beside an unchanged shield. You chose to keep it as the logo: Inter
+  ExtraBold, `#062A5E`, with its single-storey "a". Inter therefore stays bundled, for the
+  wordmark only (one 48 kB file).
+- **The font is named the way its package registers it.** The export said `'Instrument Sans'`.
+  `@fontsource-variable/instrument-sans` registers `'Instrument Sans Variable'`, so the
+  exported stack would have rendered in Inter. This is the same trap that once kept Inter from
+  loading at all.
+- **Contrast was restored on the navy surface.** `#09479C` is far lighter than the near-black
+  it replaces. 40% white fell to 2.7:1, the amber flag chip to 3.4:1, and small green text to
+  3.9:1. Text on that surface now uses 70 to 80% white and `green.300` or `green.200`, and the
+  flag chip uses a lighter amber. The palette itself is untouched.
+- **The other eight presets did not move.** The preset builder read "standard" motion and the
+  Inter stack from `defaultTokens`, so changing the site would have changed every built-in.
+  Those baselines are now fixed, and the eight presets serialise byte for byte as before.
+- **Offline and SOS gained visuals.** The alternating layout needs one per feature. Both draw
+  only what their copy already claims.
+- **Hover lift is off.** The preset sets none, so the scenario cards no longer lift.
+- **A pre-existing bug surfaced and was fixed.** The scenario rail's mobile edge fade also
+  applied on desktop and erased the outer cards' borders.
+
+### Verified
+
+In Chromium (Playwright, installed outside the repo), against the production build:
+
+- No console errors or warnings, and no horizontal overflow, on all eight routes at 375, 390,
+  768, 1440 and 1728px.
+- Instrument Sans renders the body and every heading, and Inter renders only the wordmark.
+  Every content heading computes to 700. The 600s left are the label headings, on purpose.
+- Under `prefers-reduced-motion`, no reveal element is left hidden on any route.
+  `prefers-contrast: more` resolves the hairlines to the ink hue, and
+  `prefers-reduced-transparency` removes the glass blur.
+- The mobile menu opens, marks the current page and closes on Escape.
+- The glass blur's cost was measured on a 390px profile with 4x CPU throttling: with the blur
+  on and with it forced off, both `/` and `/features` showed no frames over 32ms across six
+  runs each.
+- `lint`, `typecheck`, `test` (231 tests in 33 files), `build` and `build:playground` pass,
+  and the playground loads with no console output.
+
+### Not done, or worth a look
+
+- **WebKit was not checked.** The cached Playwright WebKit build does not match an installed
+  Playwright version, so mobile Safari is unverified for this branch.
+- **Illustration tints still use the old navy.** About 30 street and park strokes in the map
+  illustrations are literal `rgb(6 42 94 / …)` at 4 to 22% alpha. The playground showed them
+  the same way, and at those alphas the shift is barely visible. Moving them onto the navy
+  token is a small follow-up.
+- **Display paragraphs keep 600.** The hero's beat captions and a few large figures are not
+  headings, so the 700 heading token does not reach them.
+- **Your playground draft.** The Today draft saved in your browser now matches the built-in,
+  except that it names the font `'Instrument Sans'`. Reset it to pick up the bundled stack.
