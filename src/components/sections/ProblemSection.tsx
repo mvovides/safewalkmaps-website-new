@@ -2,6 +2,7 @@ import { useRef } from 'react';
 
 import { ComparisonMap } from '@/components/illustrations/ComparisonMap';
 import { Section, SectionHeading } from '@/components/layout/Section';
+import { cardSurface } from '@/components/ui/cardSurface';
 import { getRoute, ILLUSTRATIVE_NOTE, saferRouteDelta } from '@/data/city';
 import { useGsapContext } from '@/hooks/useGsapContext';
 import { cn } from '@/lib/cn';
@@ -136,7 +137,7 @@ export function ProblemSection() {
         <div className="mt-14 grid gap-10 lg:mt-16 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] lg:items-center lg:gap-14">
           {/* The map */}
           <div
-            className="relative overflow-hidden rounded-2xl border border-line bg-white p-3 shadow-sm sm:p-5"
+            className={cn(cardSurface, 'relative overflow-hidden p-3 sm:p-5')}
             data-reveal="scale"
           >
             <div className="aspect-[800/440] w-full">
@@ -146,7 +147,7 @@ export function ProblemSection() {
 
           {/* The numbers */}
           <div data-reveal-stagger>
-            <div className="rounded-2xl border border-line bg-white p-6 shadow-sm sm:p-8">
+            <div className={cn(cardSurface, 'p-6 sm:p-8')}>
               <div className="flex items-center gap-2.5">
                 <span
                   aria-hidden="true"

@@ -3,6 +3,7 @@ import { useRef, useState } from 'react';
 
 import { Section } from '@/components/layout/Section';
 import { Button } from '@/components/ui/Button';
+import { cardSurface } from '@/components/ui/cardSurface';
 import { TextField } from '@/components/ui/TextField';
 import { cn } from '@/lib/cn';
 import { siteConfig } from '@/lib/config';
@@ -92,7 +93,7 @@ export function ContactSection() {
               ref={formRef}
               onSubmit={onSubmit}
               noValidate
-              className="rounded-2xl border border-line bg-white p-7 shadow-sm sm:p-8"
+              className={cn(cardSurface, 'p-7 sm:p-8')}
             >
               <div className="grid gap-4 sm:grid-cols-2">
                 <TextField label="Name" name="name" autoComplete="name" placeholder="Alex" />

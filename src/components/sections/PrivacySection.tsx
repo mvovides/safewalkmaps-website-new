@@ -1,7 +1,9 @@
 import { ArrowRight } from 'lucide-react';
 
 import { Section, SectionHeading } from '@/components/layout/Section';
+import { cardSurface } from '@/components/ui/cardSurface';
 import { privacyPoints } from '@/data/features';
+import { cn } from '@/lib/cn';
 
 /**
  * A route that is drawn, walked, and then gone — the privacy model as a
@@ -74,7 +76,7 @@ export function PrivacySection() {
           />
 
           <div
-            className="mt-10 hidden aspect-[420/220] w-full rounded-2xl border border-line bg-white p-4 lg:block"
+            className={cn(cardSurface, 'mt-10 hidden aspect-[420/220] w-full p-4 lg:block')}
             data-reveal="scale"
           >
             <VanishingRoute />

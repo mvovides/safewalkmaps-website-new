@@ -4,6 +4,7 @@ import { useId, useRef, useState } from 'react';
 import { ShieldMark } from '@/components/brand/ShieldMark';
 import { Eyebrow } from '@/components/layout/Section';
 import { Button } from '@/components/ui/Button';
+import { cardSurface } from '@/components/ui/cardSurface';
 import { TextField } from '@/components/ui/TextField';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { cn } from '@/lib/cn';
@@ -124,10 +125,7 @@ export function WaitlistSection() {
 
             <div>
               {status === 'success' ? (
-                <div
-                  className="rounded-2xl border border-green-200 bg-white p-7 shadow-sm sm:p-8"
-                  role="status"
-                >
+                <div className={cn(cardSurface, 'border-green-200 p-7 sm:p-8')} role="status">
                   <SuccessMark animate={!reduced} />
                   <h3 className="mt-6 text-display-sm text-ink-primary">You are on the list.</h3>
                   <p className="mt-3 text-ink-secondary">
@@ -157,7 +155,7 @@ export function WaitlistSection() {
                   ref={formRef}
                   onSubmit={onSubmit}
                   noValidate
-                  className="rounded-2xl border border-line bg-white p-7 shadow-sm sm:p-8"
+                  className={cn(cardSurface, 'p-7 sm:p-8')}
                 >
                   <div className="flex items-center gap-3">
                     <ShieldMark className="h-7" />
