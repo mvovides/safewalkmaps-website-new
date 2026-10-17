@@ -9,6 +9,10 @@ import { ShieldMark } from './ShieldMark';
  * the brand green — matching the supplied horizontal logo rather than shipping
  * a second raster of it. Live text keeps the lockup crisp at every size and
  * readable to screen readers.
+ *
+ * Like the mark, the wordmark is pinned to the logo: its family, its
+ * single-storey "a" (Inter's cv11) and its colours are literal, so a change to
+ * the site's theme never redraws the logo.
  */
 
 export type LogoProps = {
@@ -38,11 +42,11 @@ export function Logo({
       {!markOnly && (
         <span
           className={cn(
-            'text-[1.21em] font-extrabold leading-none tracking-[-0.04em]',
-            inverse ? 'text-white' : 'text-navy-800',
+            "font-wordmark text-[1.21em] font-extrabold leading-none tracking-[-0.04em] [font-feature-settings:'cv11'_1]",
+            inverse ? 'text-white' : 'text-[#062A5E]',
           )}
         >
-          Safe<span className={inverse ? 'text-green-500' : 'text-[#32D583]'}>Walk</span>Maps
+          Safe<span className={inverse ? 'text-[#17F58B]' : 'text-[#32D583]'}>Walk</span>Maps
         </span>
       )}
     </span>

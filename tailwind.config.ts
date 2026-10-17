@@ -2,7 +2,13 @@ import type { Config } from 'tailwindcss';
 import plugin from 'tailwindcss/plugin';
 
 import { tokensToCssVariables } from './src/theme/cssVariables';
-import { defaultTokens, GREEN_STEPS, NAVY_STEPS, TYPE_STEPS } from './src/theme/tokens';
+import {
+  defaultTokens,
+  FONT_STACKS,
+  GREEN_STEPS,
+  NAVY_STEPS,
+  TYPE_STEPS,
+} from './src/theme/tokens';
 
 /**
  * SafeWalkMaps design system.
@@ -93,6 +99,9 @@ const config: Config = {
         sans: 'var(--font-sans)',
         display: 'var(--font-display)',
         mono: 'var(--font-mono)',
+        // The logo's wordmark. Part of the brand mark, so it is fixed rather
+        // than a theme token: it stays Inter whatever the body family is.
+        wordmark: FONT_STACKS.inter,
       },
       fontSize: Object.fromEntries(
         TYPE_STEPS.map((step) => [
