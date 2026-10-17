@@ -77,6 +77,17 @@ export type TypeStep = (typeof TYPE_STEPS)[number];
 export type RadiusKey = (typeof RADIUS_KEYS)[number];
 export type ShadowKey = (typeof SHADOW_KEYS)[number];
 
+/**
+ * Stacks for the families the site bundles through @fontsource. Each package
+ * registers its family with a " Variable" suffix — "Inter Variable", not
+ * "Inter" — and a stack that leaves it out silently falls through to the
+ * system font.
+ */
+export const FONT_STACKS = {
+  inter:
+    "'Inter Variable', Inter, -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif",
+} as const;
+
 export type TypeStyle = { size: string; lineHeight: string; letterSpacing: string };
 export type HeadingWeight = 500 | 600 | 700 | 800;
 
@@ -165,9 +176,7 @@ export const defaultTokens: ThemeTokens = {
     warning: { base: '#F79009', ink: '#B54708', soft: '#FFFAEB' },
   },
   typography: {
-    // `@fontsource-variable/inter` registers the family as "Inter Variable" —
-    // with the space. Without it the whole stack falls through to the system font.
-    sans: "'Inter Variable', Inter, -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif",
+    sans: FONT_STACKS.inter,
     display: null,
     mono: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
     headingWeight: 600,

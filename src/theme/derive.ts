@@ -79,7 +79,13 @@ export function intensityMotion(intensity: Intensity): ThemeTokens['motion'] {
         revealScale: 1.4,
       };
     default:
-      return defaultTokens.motion;
+      // Spelled out rather than read from `defaultTokens`: the site's own motion
+      // is a choice of intensity, so it cannot also define what "standard" means.
+      return {
+        duration: { fast: '150ms', base: '240ms', slow: '420ms', slower: '700ms' },
+        ease,
+        revealScale: 1,
+      };
   }
 }
 

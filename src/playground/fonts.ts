@@ -1,5 +1,5 @@
-import { primaryFamily } from '@/theme/export';
-import { defaultTokens, type ThemeTokens } from '@/theme/tokens';
+import { BUNDLED_FAMILIES, familyKey, primaryFamily } from '@/theme/export';
+import { defaultTokens, FONT_STACKS, type ThemeTokens } from '@/theme/tokens';
 
 export type FontRole = 'sans' | 'display' | 'mono';
 export type FontOption = {
@@ -22,7 +22,7 @@ export const fontOptions: FontOption[] = [
   {
     id: 'inter',
     label: 'Inter (bundled)',
-    stack: defaultTokens.typography.sans,
+    stack: FONT_STACKS.inter,
     googleCss: null,
     roles: ['sans', 'display'],
   },
@@ -127,14 +127,22 @@ export const fontOptions: FontOption[] = [
   },
 ];
 
+/** Matches by first family, so "'Inter'" and "'Inter Variable'" find the same option. */
 export function findFontOption(stack: string | null): FontOption | undefined {
   if (!stack) return undefined;
-  const family = primaryFamily(stack).toLowerCase();
-  return fontOptions.find((option) => primaryFamily(option.stack).toLowerCase() === family);
+  const family = familyKey(primaryFamily(stack));
+  return fontOptions.find((option) => familyKey(primaryFamily(option.stack)) === family);
 }
 
-/** Adds the stylesheet for a hosted family once per document. Unknown and bundled stacks do nothing. */
+const BUNDLED = new Set(BUNDLED_FAMILIES.map((family) => family.toLowerCase()));
+
+/**
+ * Adds the stylesheet for a hosted family once per document. Unknown stacks,
+ * and stacks led by a family under the exact name its bundled package
+ * registers, do nothing.
+ */
 export function ensureFontLoaded(doc: Document, stack: string | null): void {
+  if (stack && BUNDLED.has(primaryFamily(stack).toLowerCase())) return;
   const option = findFontOption(stack);
   if (!option?.googleCss) return;
   const id = `swm-font-${option.id}`;

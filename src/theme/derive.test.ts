@@ -39,6 +39,14 @@ describe('derive', () => {
     expect(shadowSet('dramatic', '#062A5E', '#031B3D', '#0A9159').md).toMatch(/36px/);
   });
 
+  it('standard motion is fixed, whatever the site itself uses', () => {
+    expect(intensityMotion('standard')).toEqual({
+      duration: { fast: '150ms', base: '240ms', slow: '420ms', slower: '700ms' },
+      ease: defaultTokens.motion.ease,
+      revealScale: 1,
+    });
+  });
+
   it('motion intensity none stops the reveals', () => {
     const none = intensityMotion('none');
     expect(none.revealScale).toBe(0);

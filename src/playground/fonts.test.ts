@@ -8,6 +8,7 @@ describe('fonts', () => {
   it('matches a stack to its option by first family', () => {
     expect(findFontOption("'Manrope', sans-serif")?.id).toBe('manrope');
     expect(findFontOption(defaultTokens.typography.sans)?.id).toBe('inter');
+    expect(findFontOption("'Inter', sans-serif")?.id).toBe('inter');
     expect(findFontOption("'Comic Neue', cursive")).toBeUndefined();
   });
 

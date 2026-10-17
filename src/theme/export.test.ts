@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import {
   exportFileName,
+  familyKey,
   flattenChoices,
+  isBundledFamily,
   primaryFamily,
   toCss,
   toJson,
@@ -88,6 +90,14 @@ describe('helpers', () => {
   it('extracts the first family of a stack', () => {
     expect(primaryFamily("'Inter Variable', Inter, sans-serif")).toBe('Inter Variable');
     expect(primaryFamily('ui-monospace, Menlo')).toBe('ui-monospace');
+  });
+
+  it('compares families without the suffix @fontsource registers them under', () => {
+    expect(familyKey('Inter Variable')).toBe('inter');
+    expect(familyKey('Inter')).toBe('inter');
+    expect(isBundledFamily('Inter')).toBe(true);
+    expect(isBundledFamily('Inter Variable')).toBe(true);
+    expect(isBundledFamily('Manrope')).toBe(false);
   });
 
   it('flattens every non-token choice', () => {

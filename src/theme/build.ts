@@ -10,7 +10,13 @@ import {
   type ShadowLevel,
   type TypeScaleName,
 } from './derive';
-import { defaultTokens, TYPE_STEPS, type HeadingWeight, type ThemeTokens } from './tokens';
+import {
+  defaultTokens,
+  FONT_STACKS,
+  TYPE_STEPS,
+  type HeadingWeight,
+  type ThemeTokens,
+} from './tokens';
 
 export type DeepPartial<T> = { [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K] };
 
@@ -77,7 +83,7 @@ export function buildTokens(options: BuildOptions): ThemeTokens {
       warning: defaultTokens.colors.warning,
     },
     typography: {
-      sans: options.sans ?? defaultTokens.typography.sans,
+      sans: options.sans ?? FONT_STACKS.inter,
       display: options.display ?? null,
       mono: options.mono ?? defaultTokens.typography.mono,
       headingWeight: options.headingWeight ?? 600,
