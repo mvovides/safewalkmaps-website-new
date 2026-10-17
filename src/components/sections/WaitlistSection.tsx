@@ -108,7 +108,7 @@ export function WaitlistSection() {
               <Eyebrow index="04" className="mb-6">
                 Early access
               </Eyebrow>
-              <h2 className="text-display-lg font-semibold text-ink-primary">
+              <h2 className="text-display-lg text-ink-primary">
                 SafeWalkMaps is coming
                 <span className="block text-ink-tertiary">to iPhone.</span>
               </h2>
@@ -129,9 +129,7 @@ export function WaitlistSection() {
                   role="status"
                 >
                   <SuccessMark animate={!reduced} />
-                  <h3 className="mt-6 text-display-sm font-semibold text-ink-primary">
-                    You are on the list.
-                  </h3>
+                  <h3 className="mt-6 text-display-sm text-ink-primary">You are on the list.</h3>
                   <p className="mt-3 text-ink-secondary">
                     We will email you when the iOS build is ready to hand out. No newsletter, no
                     drip campaign.
@@ -163,9 +161,7 @@ export function WaitlistSection() {
                 >
                   <div className="flex items-center gap-3">
                     <ShieldMark className="h-7" />
-                    <h3 className="text-body-lg font-semibold text-ink-primary">
-                      Join the iOS waitlist
-                    </h3>
+                    <h3 className="text-body-lg text-ink-primary">Join the iOS waitlist</h3>
                   </div>
 
                   <div className="mt-6 space-y-4">

@@ -176,7 +176,7 @@ function HeroMain() {
       <div className="relative" data-reveal-stagger>
         <StatusPill className="mb-7">Coming soon on iOS</StatusPill>
 
-        <h1 className="text-display-xl font-semibold text-ink-primary">
+        <h1 className="text-display-xl text-ink-primary">
           The safer route.
           <span className="block text-ink-tertiary">Not just the fastest one.</span>
         </h1>

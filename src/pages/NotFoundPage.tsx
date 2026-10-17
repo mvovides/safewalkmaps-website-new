@@ -46,7 +46,7 @@ export function NotFoundPage() {
           <span aria-hidden="true" className="eyebrow-rule" />
           <span>Route not found</span>
         </p>
-        <h1 className="mt-5 max-w-[22ch] text-display-lg font-semibold text-ink-primary">
+        <h1 className="mt-5 max-w-[22ch] text-display-lg text-ink-primary">
           This path does not go anywhere.
         </h1>
         <p className="mt-6 max-w-prose text-body-lg text-ink-secondary">

@@ -123,9 +123,7 @@ export function SafetyLayerSection() {
           <Eyebrow index="02" className="mb-5">
             The safety layer
           </Eyebrow>
-          <h2 className="max-w-[20ch] text-display-lg font-semibold">
-            Many signals. One clearer route.
-          </h2>
+          <h2 className="max-w-[20ch] text-display-lg">Many signals. One clearer route.</h2>
           <p className="mt-6 max-w-prose text-body-lg text-ink-secondary">{FINAL_COPY.body}</p>
 
           <div className="mt-12 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-14">

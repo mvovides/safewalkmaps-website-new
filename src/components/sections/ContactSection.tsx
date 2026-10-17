@@ -49,7 +49,7 @@ export function ContactSection() {
     <Section id="contact">
       <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-16">
         <div data-reveal-stagger>
-          <h2 className="text-display-md font-semibold text-ink-primary">Get in touch.</h2>
+          <h2 className="text-display-md text-ink-primary">Get in touch.</h2>
           <p className="mt-5 max-w-prose text-body-lg text-ink-secondary">
             Questions, feedback, a bug, or a city you want us to cover next. We read everything,
             and a person replies.
@@ -69,7 +69,7 @@ export function ContactSection() {
               role="status"
               className="rounded-2xl border border-green-200 bg-green-50 p-7 sm:p-8"
             >
-              <h3 className="text-body-lg font-semibold text-green-900">Message sent.</h3>
+              <h3 className="text-body-lg text-green-900">Message sent.</h3>
               <p className="mt-2.5 text-green-900/80">
                 Thanks — we will get back to you within a day or two.
               </p>

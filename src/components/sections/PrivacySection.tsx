@@ -85,7 +85,7 @@ export function PrivacySection() {
           <ul className="divide-y divide-line border-y border-line" data-reveal-stagger>
             {privacyPoints.map((point) => (
               <li key={point.title} className="py-7">
-                <h3 className="flex items-start gap-3 text-body-lg font-semibold text-ink-primary">
+                <h3 className="flex items-start gap-3 text-body-lg text-ink-primary">
                   <span
                     aria-hidden="true"
                     className="mt-[0.55em] h-1.5 w-1.5 shrink-0 rounded-full bg-green-500"

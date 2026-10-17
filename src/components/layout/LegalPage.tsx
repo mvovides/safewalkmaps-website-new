@@ -116,7 +116,7 @@ export function LegalPage({ title, intro, updated, sections }: LegalPageProps) {
             <span aria-hidden="true" className="eyebrow-rule" />
             <span>Legal</span>
           </p>
-          <h1 className="max-w-[24ch] text-display-lg font-semibold text-ink-primary">{title}</h1>
+          <h1 className="max-w-[24ch] text-display-lg text-ink-primary">{title}</h1>
           <p className="mt-6 max-w-prose-lg text-body-lg text-ink-secondary">{intro}</p>
           <p className="mt-7 text-caption text-ink-tertiary">Last updated {formatted}</p>
         </div>
@@ -151,7 +151,7 @@ export function LegalPage({ title, intro, updated, sections }: LegalPageProps) {
               id={section.id}
               className={cn('scroll-mt-28', index > 0 && 'mt-14 border-t border-line pt-14')}
             >
-              <h2 className="flex items-baseline gap-3 text-display-sm font-semibold text-ink-primary">
+              <h2 className="flex items-baseline gap-3 text-display-sm text-ink-primary">
                 <span className="tabular text-body-sm font-semibold text-green-800">
                   {String(index + 1).padStart(2, '0')}
                 </span>
@@ -164,7 +164,7 @@ export function LegalPage({ title, intro, updated, sections }: LegalPageProps) {
           ))}
 
           <div className="mt-16 rounded-2xl border border-line bg-surface-secondary p-7">
-            <h2 className="text-body-lg font-semibold text-ink-primary">Questions about this?</h2>
+            <h2 className="text-body-lg text-ink-primary">Questions about this?</h2>
             <p className="mt-2.5 text-ink-secondary">
               Email us and a person will reply. We read everything.
             </p>

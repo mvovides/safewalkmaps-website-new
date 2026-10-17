@@ -105,10 +105,7 @@ export function FinalCtaSection() {
           </svg>
         </div>
 
-        <h2
-          className="mt-4 max-w-[17ch] text-display-xl font-semibold text-ink-primary"
-          data-reveal
-        >
+        <h2 className="mt-4 max-w-[17ch] text-display-xl text-ink-primary" data-reveal>
           Take the route that considers more.
         </h2>
 

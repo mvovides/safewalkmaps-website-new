@@ -29,7 +29,7 @@ function FeatureCard({ title, headingTag: Heading, body, icon, className, childr
           {icon}
         </span>
       )}
-      <Heading className="text-body-lg font-semibold text-ink-primary">{title}</Heading>
+      <Heading className="text-body-lg text-ink-primary">{title}</Heading>
       <p className="mt-2.5 text-ink-secondary">{body}</p>
       {children}
     </article>
@@ -137,7 +137,7 @@ export function FeatureSection({ headingAs = 'h2', className }: FeatureSectionPr
             <span className="mb-5 grid h-10 w-10 place-items-center rounded-xl bg-white/10 text-green-500">
               <MapPinned aria-hidden="true" className="h-5 w-5" />
             </span>
-            <CardHeading className="text-display-sm font-semibold text-white">
+            <CardHeading className="text-display-sm text-white">
               Turn-by-turn, with the score in view
             </CardHeading>
             <p className="mt-3.5 max-w-prose text-white/60">

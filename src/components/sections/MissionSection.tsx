@@ -33,7 +33,7 @@ export function MissionSection({ headingAs: Heading = 'h2', className }: Mission
             The mission
           </Eyebrow>
 
-          <Heading className="text-display-lg font-semibold text-white">
+          <Heading className="text-display-lg text-white">
             Walking should not mean choosing between
             <span className="text-green-500"> convenience</span> and
             <span className="text-green-500"> confidence</span>.

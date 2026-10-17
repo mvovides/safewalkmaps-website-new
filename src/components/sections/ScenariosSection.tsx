@@ -43,7 +43,7 @@ export function ScenariosSection() {
                 <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-green-500" />
                 {scenario.time}
               </p>
-              <h3 className="mt-5 text-body-lg font-semibold text-ink-primary">
+              <h3 className="mt-5 text-body-lg text-ink-primary">
                 {scenario.title}
               </h3>
               <p className="mt-2.5 text-ink-secondary">{scenario.body}</p>
