@@ -27,7 +27,7 @@ export function ScenariosSection() {
 
       {/* Mobile: a scroll rail. Desktop: a staggered grid. */}
       <ul
-        className="fade-edges-x -mx-gutter mt-14 flex snap-x snap-mandatory gap-4 overflow-x-auto px-gutter pb-2 lg:mx-0 lg:mt-16 lg:grid lg:grid-cols-3 lg:gap-6 lg:overflow-visible lg:px-0 lg:pb-0"
+        className="fade-edges-x -mx-gutter mt-14 flex snap-x snap-mandatory gap-4 overflow-x-auto px-gutter pb-2 lg:mx-0 lg:mt-16 lg:grid lg:grid-cols-3 lg:gap-6 lg:overflow-visible lg:px-0 lg:pb-0 lg:[mask-image:none]"
         data-reveal-stagger
       >
         {scenarios.map((scenario, index) => (
